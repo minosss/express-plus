@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "name": "快递助手",
+  "manifest_version": 2,
+  "homepage_url": "https://github.com/minosss/express-plus",
+  "description": "轻松管理你的快递",
+  "browser_action": {
+    "default_icon": "images/icon.png",
+    "default_popup": "popup.html",
+    "browser_style": true
+  },
+  "icons": {
+    "128": "images/icon.png"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "alarms",
+    "storage",
+    "notifications",
+    "unlimitedStorage",
+    "<all_urls>"
+  ],
+  "content_security_policy": "default-src 'self'; script-src 'self' http://localhost:8080 'unsafe-eval'; connect-src https://www.kuaidi100.com http://localhost:8080 ws://localhost:8080; style-src * 'unsafe-inline' 'self' blob:; img-src 'self' data:;"
+}

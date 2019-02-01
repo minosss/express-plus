@@ -1,0 +1,5 @@
+doctype html
+html
+  head
+    script(src= env == 'prod' ? '/commons.chunk.js' : 'http://localhost:8080/commons.chunk.js')
+    script(src= env == 'prod' ? '/background.js' : 'http://localhost:8080/background.js')

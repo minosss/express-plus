@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    title 快递助手
+    if env == 'prod'
+      link(rel="stylesheet", href="/popup.css")
+  body
+    #root
+    script(src= env == 'prod' ? '/commons.chunk.js' : 'http://localhost:8080/commons.chunk.js')
+    script(src= env == 'prod' ? '/popup.js' : 'http://localhost:8080/popup.js')
