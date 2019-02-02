@@ -1,6 +1,7 @@
 # 快递助手(Express+)
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+![](https://badgen.net/badge/license/MIT/blue)
+[![code style: prettier](https://badgen.net/badge/code%20style/prettier/ff69b4)](https://github.com/prettier/prettier)
 
 ## What is this?
 
@@ -24,18 +25,24 @@
 
 ## Features
 
-- [x] 0.1.x版本功能迁移 (0.2.x)
-- [ ] 服务网点查询 (0.3.x)
-- [ ] 寄件费用查询 (0.3.x)
+- 自动识别单号
+- 自动查询更新信息
+- 桌面提醒
+
+## Screenshots
+
+<img src='./screenshots/1.png' width=200 height=300>
+<img src='./screenshots/2.png' width=200 height=300>
+<img src='./screenshots/3.png' width=200 height=300>
 
 ## Install
 
-- [Chrome Web Store](https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg)
-
-## Build
-
-TODO
+[![](https://badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+[![](https://badgen.net/chrome-web-store/rating/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+[![](https://badgen.net/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg)][cws]
 
 ## License
 
 MIT, [License](LICENSE)
+
+[cws]: https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg "Chrome Web Store"
