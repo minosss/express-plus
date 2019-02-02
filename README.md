@@ -31,9 +31,11 @@
 
 ## Screenshots
 
-<img src='./screenshots/1.png' width=200 height=300 inline>
-<img src='./screenshots/2.png' width=200 height=300 inline>
-<img src='./screenshots/3.png' width=200 height=300 inline>
+<div>
+  <img src='./screenshots/1.png' width=280>
+  <img src='./screenshots/2.png' width=280>
+  <img src='./screenshots/3.png' width=280>
+</div>
 
 ## Install
 
