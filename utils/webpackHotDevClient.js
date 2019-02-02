@@ -45,7 +45,7 @@ ErrorOverlay.startReportingRuntimeErrors({
   onError: function() {
     hadRuntimeError = true;
   },
-  filename: '/static/js/bundle.js',
+  filename: 'popup.js',
 });
 
 if (module.hot && typeof module.hot.dispose === 'function') {
@@ -56,7 +56,7 @@ if (module.hot && typeof module.hot.dispose === 'function') {
 }
 
 // Connect to WebpackDevServer via a socket.
-var connection = new SockJS(`http://localhost:8080/sockjs-node`);
+var connection = new SockJS(`http://0.0.0.0:3000/sockjs-node`);
 
 // Unlike WebpackDevServer client, we won't try to reconnect
 // to avoid spamming the console. Disconnect usually happens

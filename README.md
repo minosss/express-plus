@@ -11,12 +11,16 @@
 - `babel-preset-react-app` - Babel配置，而不自己导入 `@babel/env` 等
 - `eslint-config-react-app` - eslint配置，基础中加入 prettier
 - `react-dev-utils` - 工具库，一些修改的在 `utils` 文件夹。比如 `webpackHotDevClient.js` 文件中，SockJS连接的 `webpack-dev-server` 地址无法自定义
+- `react-dev-utils/InterpolateHtmlPlugin` - 替换 html 中的自定义参数，比如 `%PUBLIC_URL%`，需要安装 `html-webpack-plugin@next`，`InterpolateHtmlPlugin` 没有兼容3.x。
+- `react-error-overlay` - 在 `webpackHotDevClient` 中使用，在发生错误的时候直接在 react 页面中显示，默认是添加了 `static/js/bundle.js` 的侦听
 
 其它相关库
 
 - `dayjs` 没有使用有关时间日期的组件，所以不用加载 `moment`
 - `ky` 反正也不用支持低版本浏览器，直接使用 `ky` 比 `axios` 什么的小多了
 - `immer` 用来做数据的脏检查更新
+- ~~`html-webpack-harddisk-plugin` `html-webpack-plugin` 在 devServer 下是不会生成 html 文件到 publicPath 的，可插件加载的时候需要 html 文件，不能使用 http。~~
+- ~~`write-file-webpack-plugin` 上面那个只把 html 写入到磁盘中，需要全部文件用这个，比如 `copy-webpack-plugin` 在 3.x 后已经不会在 devServer 下写入磁盘~~
 
 ## Features
 
@@ -27,6 +31,10 @@
 ## Install
 
 - [Chrome Web Store](https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg)
+
+## Build
+
+TODO
 
 ## License
 

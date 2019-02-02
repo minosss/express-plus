@@ -1,4 +1,5 @@
 import React from 'react';
+import {hot} from 'react-hot-loader';
 import {HashRouter as Router, Route, Switch, Link} from 'react-router-dom';
 import {Layout, Empty} from 'antd';
 import dayjs from 'dayjs';
@@ -74,6 +75,4 @@ function App({initialState = {}, platformMiddlewares = []}) {
   );
 }
 
-App.StateContext = StateContext;
-
-export default App;
+export default hot(module)(App);

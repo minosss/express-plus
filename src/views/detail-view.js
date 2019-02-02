@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useContext, useCallback} from 'react';
-import Helmet from 'react-helmet';
 import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert} from 'antd';
 import TagGroup from '../components/tag-group';
 import KuaidiService from '../services/KuaidiService';
@@ -99,64 +98,54 @@ export default function DetailView({defaultData, match}) {
   });
 
   return (
-    <>
-      <Helmet title='查询结果' />
-      <Spin tip='加载中' spinning={isLoading}>
-        <div className='content'>
+    <Spin tip='加载中' spinning={isLoading}>
+      <div className='content'>
+        <div>
           <div>
-            <div>
-              <h2 style={{display: 'inline-block'}}>{result.postId}</h2>
-              <Tooltip title='刷新'>
-                <Button
-                  style={{marginLeft: 10}}
-                  icon='sync'
-                  shape='circle'
-                  type='dashed'
-                  onClick={handleRefresh}
-                />
-              </Tooltip>
-              <Tooltip title='收藏'>
-                <Button
-                  style={{marginLeft: 10}}
-                  shape='circle'
-                  type='dashed'
-                  onClick={handleToggleFavorite}
-                >
-                  <Icon
-                    type='star'
-                    theme={isFavorite ? 'filled' : 'outlined'}
-                  />
-                </Button>
-              </Tooltip>
-            </div>
-            <table>
-              <tbody>
-                <tr>
-                  <td>快递：</td>
-                  <td>{KuaidiService.getCompanyName(result.type)}</td>
-                </tr>
-                <tr>
-                  <td>状态：</td>
-                  <td>{KuaidiService.getStateLabel(result.state)}</td>
-                </tr>
-                <tr>
-                  <td style={{whiteSpace: 'nowrap'}}>标签：</td>
-                  <td>
-                    <TagGroup
-                      tags={result.tags}
-                      onChange={updateTags}
-                      editable
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <h2 style={{display: 'inline-block'}}>{result.postId}</h2>
+            <Tooltip title='刷新'>
+              <Button
+                style={{marginLeft: 10}}
+                icon='sync'
+                shape='circle'
+                type='dashed'
+                onClick={handleRefresh}
+              />
+            </Tooltip>
+            <Tooltip title='收藏'>
+              <Button
+                style={{marginLeft: 10}}
+                shape='circle'
+                type='dashed'
+                onClick={handleToggleFavorite}
+              >
+                <Icon type='star' theme={isFavorite ? 'filled' : 'outlined'} />
+              </Button>
+            </Tooltip>
           </div>
-          <Divider />
-          {message && <Alert message={message} type='error' showIcon />}
-          <TimelineList data={result.data || []} />
+          <table>
+            <tbody>
+              <tr>
+                <td>快递：</td>
+                <td>{KuaidiService.getCompanyName(result.type)}</td>
+              </tr>
+              <tr>
+                <td>状态：</td>
+                <td>{KuaidiService.getStateLabel(result.state)}</td>
+              </tr>
+              <tr>
+                <td style={{whiteSpace: 'nowrap'}}>标签：</td>
+                <td>
+                  <TagGroup tags={result.tags} onChange={updateTags} editable />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </Spin>
-    </>
+        <Divider />
+        {message && <Alert message={message} type='error' showIcon />}
+        <TimelineList data={result.data || []} />
+      </div>
+    </Spin>
   );
 }

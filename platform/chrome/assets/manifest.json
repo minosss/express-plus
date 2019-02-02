@@ -22,5 +22,5 @@
     "unlimitedStorage",
     "<all_urls>"
   ],
-  "content_security_policy": "default-src 'self'; script-src 'self' http://localhost:8080 'unsafe-eval'; connect-src https://www.kuaidi100.com http://localhost:8080 ws://localhost:8080; style-src * 'unsafe-inline' 'self' blob:; img-src 'self' data:;"
+  "content_security_policy": "script-src 'self' chrome-extension-resource: 'sha256-678jBJ5yr+DnYBRrhcPKnbjHB5G9KPTT9rlmQEJIMQc='; object-src 'self'"
 }

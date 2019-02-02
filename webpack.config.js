@@ -5,26 +5,27 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const TerserPlugin = require('terser-webpack-plugin');
-// utils
-// const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+// react-dev-utils
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
+const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+// const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const paths = require('./utils/paths');
 
 // resource regex
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const lessRegex = /\.less$/;
-// const lessModuleRegex = /\.module\.less$/;
-// const sassRegex = /\.(scss|sass)$/;
-// const sassModuleRegex = /\.module\.(scss|sass)$/;
+const lessModuleRegex = /\.module\.less$/;
 
 // env mode
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 //
-const publicPath = isProd ? '' : isDev && 'http://localhost:8080/';
+const publicPath = isProd ? '/' : isDev && '/';
 
 function getStyleLoaders(cssOptions, preProcessor) {
   const loaders = [
@@ -68,32 +69,33 @@ function getStyleLoaders(cssOptions, preProcessor) {
   return loaders;
 }
 
+const env = {
+  PUBLIC_URL: publicPath.slice(0, -1),
+};
+
+const entry = {
+  popup: [
+    isDev && path.resolve(__dirname, 'utils/webpackHotDevClient'),
+    paths.platformPopupJs,
+  ].filter(Boolean),
+  background: [
+    isDev && path.resolve(__dirname, 'utils/webpackHotDevClient'),
+    paths.platformBackgroundJs,
+  ].filter(Boolean),
+};
+
 const config = {
   mode: isProd ? 'production' : isDev && 'development',
   bail: isProd,
   devtool: isProd ? 'source-map' : isProd && 'eval-source-map',
-  entry: {
-    popup: [
-      isDev && path.resolve(__dirname, 'utils/webpackHotDevClient'),
-      paths.platformPopupJs,
-    ].filter(Boolean),
-    background: [
-      isDev && path.resolve(__dirname, 'utils/webpackHotDevClient'),
-      paths.platformBackgroundJs,
-    ].filter(Boolean),
-  },
+  entry,
   output: {
-    path: isProd ? paths.appBuild : undefined,
+    path: paths.appBuild,
     pathinfo: isDev,
     filename: '[name].js',
     chunkFilename: '[name].chunk.js',
     publicPath: publicPath,
     globalObject: 'this',
-  },
-  devServer: {
-    hot: true,
-    contentBase: paths.appBuild,
-    disableHostCheck: true,
   },
   resolve: {
     modules: ['node_modules', paths.appSrc],
@@ -109,9 +111,9 @@ const config = {
       {parser: {requireEnsure: false}},
       // TODO should I need run linter?
       {
-        test: /\.js$/,
+        test: /\.(js|mjs|jsx|ts|tsx)$/,
         use: [
-          'thread-loader',
+          // 'thread-loader',
           {
             loader: 'babel-loader',
             options: {
@@ -121,23 +123,24 @@ const config = {
               babelrc: false,
               configFile: false,
               presets: ['babel-preset-react-app'],
-              cacheIdentifier: getCacheIdentifier('development', [
-                'babel-preset-react-app',
-                'react-dev-utils',
-              ]),
+              cacheIdentifier: getCacheIdentifier(
+                isProd ? 'production' : isDev && 'development',
+                ['babel-preset-react-app', 'react-dev-utils']
+              ),
               plugins: [
                 // 让 antd 可以按需求加载样式
                 // ['import', {libraryName: 'antd', style: true}],
                 // 装饰器
                 // ['@babel/plugin-proposal-decorators', {legacy: true}],
+                'react-hot-loader/babel',
               ],
               cacheDirectory: true,
-              cacheCompression: false,
-              compact: false,
+              cacheCompression: isProd,
+              compact: isProd,
             },
           },
         ],
-        exclude: [/\/node_modules\//],
+        exclude: /node_modules/,
       },
       {
         test: cssRegex,
@@ -151,6 +154,7 @@ const config = {
       {
         // 为了更方便定义antd样式选用less
         test: lessRegex,
+        exclude: lessModuleRegex,
         use: getStyleLoaders(
           {
             importLoaders: 1,
@@ -163,21 +167,34 @@ const config = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      inject: true,
-      chunks: ['commons', 'popup'],
-      template: './public/popup.html',
-      filename: 'popup-auto.html',
-      // template: '!!html-webpack-plugin/lib/loader.js!./public/popup.html',
-    }),
+    // 先清除发布目录
+    new CleanWebpackPlugin([paths.appBuild]),
+    // 根据入口文件需要生成多个 html
+    ...Object.keys(entry).map(
+      file =>
+        new HtmlWebpackPlugin({
+          inject: true,
+          chunks: ['commons', file],
+          template: path.resolve(paths.platformSrc, `${file}.html`),
+          filename: `${file}.html`,
+        })
+    ),
+    // new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/]),
+    // 替换 html 的参数，比如 %PUBLIC_URL%
+    // require html-webpack-plugin 4.x
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env),
+    // 复制资源文件
+    new CopyWebpackPlugin([{from: paths.platformAssets}]),
     new ModuleNotFoundPlugin(paths.appPath),
     isDev && new webpack.HotModuleReplacementPlugin(),
     isDev && new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+    // 生产模式取出样式到独立文件
     isProd &&
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[name].chunk.css',
       }),
+    // 过滤moment资源缩小体积
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ].filter(Boolean),
   optimization: {
@@ -241,15 +258,10 @@ const config = {
       }),
     ],
     splitChunks: {
-      cacheGroups: {
-        // 把共用的代码分离
-        commons: {
-          name: 'commons',
-          chunks: 'initial',
-          minChunks: 2,
-        },
-      },
+      chunks: 'all',
+      name: false,
     },
+    runtimeChunk: true,
   },
   node: {
     module: 'empty',
