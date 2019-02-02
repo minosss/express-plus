@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import produce from 'immer';
+import browser from 'webextension-polyfill';
 
 const defaultData = {
   settings: {
@@ -11,65 +12,43 @@ const defaultData = {
 };
 
 export default class StorageService {
-  static save(data) {
-    return new Promise(resolve => {
-      chrome.storage.local.set(data, () => {
-        console.log('set', data);
-        resolve(data);
-      });
-    });
+  static async save(data) {
+    const savedData = await browser.storage.local.set(data);
+    return savedData;
   }
 
-  static getAll() {
-    return new Promise(resolve => {
-      chrome.storage.local.get(defaultData, data => {
-        console.log('get: ', data);
-        resolve(data);
-      });
-    });
+  static async get(data = defaultData) {
+    const savedData = await browser.storage.local.get(data);
+    return savedData;
   }
 
   static async shouldFilterDelivered() {
-    return new Promise(resolve => {
-      chrome.storage.local.get({setings: {}}, ({settings}) => {
-        if (settings.enableFilterDelivered) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      });
-    });
+    const {enableFilterDelivered} = await StorageService.get('settings');
+    return !!enableFilterDelivered;
   }
 
   static async getQueryFavorites() {
-    return new Promise(resolve => {
-      chrome.storage.local.get({favorites: []}, ({favorites}) => {
-        resolve(favorites.filter(favorite => favorite.state !== '3'));
-      });
-    });
+    const {favorites} = await StorageService.get('favorites');
+    return favorites.filter(favorite => favorite.state !== '3');
   }
 
   static async updateFavorite(nextFavorite) {
-    return new Promise((resolve, _) => {
-      chrome.storage.local.get({favorites: []}, ({favorites}) => {
-        let changed = false;
-        const nextFavorites = produce(favorites, draft => {
-          const index = favorites.findIndex(
-            favorite => favorite.postId === nextFavorite.postId
-          );
-          if (index !== -1) {
-            draft[index] = nextFavorite;
-            changed = true;
-          }
-        });
-        if (changed) {
-          chrome.storage.local.set({favorites: nextFavorites}, () => {
-            resolve();
-          });
-        } else {
-          resolve();
-        }
-      });
+    const {favorites} = await StorageService.get('favorites');
+    let changed = false;
+    const nextFavorites = produce(favorites, draft => {
+      const index = favorites.findIndex(
+        favorite => favorite.postId === nextFavorite.postId
+      );
+      if (index !== -1) {
+        draft[index] = nextFavorite;
+        changed = true;
+      }
     });
+
+    if (changed) {
+      await StorageService.save({favorites: nextFavorites});
+      return true;
+    }
+    return false;
   }
 }

@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import KuaidiService from '@/services/KuaidiService';
+import browser from 'webextension-polyfill';
 
 async function runAutoUpdate() {
   const messages = await KuaidiService.update();
@@ -28,20 +29,17 @@ function showNotification({
   ...others
 }) {
   const id = new Date().getTime().toString();
-  chrome.notifications.create(id, 'messages', {
+  browser.notifications.create(id, 'messages', {
     iconUrl: 'images/icon-32.png',
     type,
     title,
     message,
     ...others,
   });
-  // setTimeout(() => {
-  //   chrome.notifications.clear(id);
-  // }, 5000);
 }
 
 // TODO 改用 sendMessage 跟其它页面通信
-chrome.storage.onChanged.addListener(({settings}, _) => {
+browser.storage.onChanged.addListener(({settings}, _) => {
   const {oldValue, newValue} = settings;
   if (newValue.enableAuto) {
     if (
@@ -49,28 +47,28 @@ chrome.storage.onChanged.addListener(({settings}, _) => {
       newValue.autoInterval !== oldValue.autoInterval
     ) {
       // 需要重新设置
-      chrome.alarms.clearAll();
+      browser.alarms.clearAll();
       // periodInMinutes - If set, the onAlarm event should fire every periodInMinutes minutes after the initial event specified by when or delayInMinutes. If not set, the alarm will only fire once.
-      chrome.alarms.create({
+      browser.alarms.create({
         periodInMinutes:
           // - 最短间隔 30 分钟 - 请求速度太快会导致 ip 被封。
           newValue.autoInterval < 30 ? 30 : newValue.autoInterval,
       });
     }
   } else {
-    chrome.alarms.clearAll();
+    browser.alarms.clearAll();
   }
 });
 
 // 闹钟处理，目前只有自动查询
-chrome.alarms.onAlarm.addListener(() => {
+browser.alarms.onAlarm.addListener(() => {
   runAutoUpdate();
 });
 
 // - 版本升级处理，处理一些崩溃性的数据更改 -
 function handleUpdate_0112() {
   try {
-    chrome.alarms.clearAll();
+    browser.alarms.clearAll();
     const preRawData = window.localStorage.getItem('ngStorage-marks');
     const preData = JSON.parse(preRawData);
     if (Array.isArray(preData)) {
@@ -98,7 +96,7 @@ function handleUpdate_0112() {
 // -
 
 // 应用安装、更新、浏览器更新都会触发
-chrome.runtime.onInstalled.addListener((reason, previousVersion) => {
+browser.runtime.onInstalled.addListener((reason, previousVersion) => {
   if (reason === 'update') {
     if (previousVersion === '0.1.12') handleUpdate_0112();
   }

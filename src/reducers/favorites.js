@@ -31,20 +31,6 @@ export default function favorites(state = [], action) {
       case DELETE_FAVORITE:
         draft.splice(index, 1);
         break;
-      // case REQUEST_FAVORITES:
-      //   // eslint-disable-next-line no-undef
-      //   chrome.storage.local.get({ favorites: [] }, ({ favorites }) => {
-      //     console.log(favorites);
-      //     favorites.forEach((item) => {
-      //       draft.push(item);
-      //     });
-      //   });
-      //   break;
-      // case 'RECEIVE_FAVORITES':
-      //   action.payload.forEach((item) => {
-      //     draft.push(item);
-      //   });
-      //   break;
       default:
     }
   });

@@ -13,11 +13,14 @@ const storageMiddleware = () => next => async action => {
   return nextState;
 };
 
-StorageService.getAll().then(data => {
+async function launch() {
+  const savedData = await StorageService.get();
   render(
-    <App initialState={data} platformMiddlewares={[storageMiddleware]} />,
+    <App initialState={savedData} platformMiddlewares={[storageMiddleware]} />,
     document.querySelector('#root')
   );
-});
+}
+
+launch();
 
 serviceWorker.unregister();
