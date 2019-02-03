@@ -36,15 +36,15 @@ function App({initialState = {}, platformMiddlewares = []}) {
           <Content>
             <Switch>
               <Route
-                path='/'
                 exact
+                path='/'
                 render={props => (
                   <FavoritesView favorites={state.favorites} {...props} />
                 )}
               />
               <Route
-                path='/settings'
                 exact
+                path='/settings'
                 render={props => (
                   <SettingView settings={state.settings} {...props} />
                 )}

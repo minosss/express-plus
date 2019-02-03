@@ -1,4 +1,4 @@
-import produce from 'immer';
+import {produce} from 'immer';
 
 export const CREATE_FAVORITE = 'CREATE_FAVORITE';
 export const DELETE_FAVORITE = 'DELETE_FAVORITE';
@@ -17,16 +17,19 @@ export default function favorites(state = [], action) {
         if (!isExist) {
           draft.push(action.payload);
         }
+
         break;
       case UPDATE_TAGS:
         if (isExist) {
           draft[index].tags = action.payload.tags;
         }
+
         break;
       case UPDATE_FAVORITE:
         if (isExist) {
           draft[index] = action.payload;
         }
+
         break;
       case DELETE_FAVORITE:
         draft.splice(index, 1);

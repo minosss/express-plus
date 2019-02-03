@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {useContext} from 'react';
 import dayjs from 'dayjs';
 import {List, Icon, Tag} from 'antd';
@@ -21,29 +20,31 @@ export default function FavoritesView({favorites = []}) {
       renderItem={item => (
         <List.Item
           actions={[
-            <Link to={`/detail/${item.postId}/${item.type}`}>
+            <Link key='action-search' to={`/detail/${item.postId}/${item.type}`}>
               <Icon type='search' />
             </Link>,
             <a
+              key='action-refresh'
               href='#'
               onClick={() => {
-                // set item is loading
+                // Set item is loading
                 // and send update message to background
               }}
             >
               <Icon type='sync' />
             </a>,
             <a
+              key='action-delete'
               href='#'
               onClick={() => {
                 dispatch({
                   type: DELETE_FAVORITE,
-                  payload: {postId: item.postId},
+                  payload: {postId: item.postId}
                 });
               }}
             >
               <Icon type='delete' style={{color: '#eb2f96'}} />
-            </a>,
+            </a>
           ]}
         >
           <List.Item.Meta

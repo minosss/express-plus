@@ -1,8 +1,8 @@
-import produce from 'immer';
+import {produce} from 'immer';
 import favorites from './favorites';
 import settings from './settings';
 
-// from redux
+// From redux
 function combineReducers(reducers) {
   const reducersKeys = Object.keys(reducers);
   return (state = {}, action) => {
@@ -19,5 +19,5 @@ function combineReducers(reducers) {
 
 export default combineReducers({
   favorites,
-  settings,
+  settings
 });

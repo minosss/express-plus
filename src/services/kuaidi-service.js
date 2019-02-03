@@ -1,7 +1,7 @@
 import ky from 'ky';
 import pMap from 'p-map';
-import StorageService from './StorageService';
-import FavoriteModel from '../model/FavoriteModel';
+import FavoriteModel from '../model/favorite-model';
+import StorageService from './storage-service';
 
 // TODO 把代码映射放到独立文件
 export const comCodeMap = {
@@ -31,7 +31,7 @@ export const comCodeMap = {
   xinbangwuliu: '新邦物流',
   rufengda: '如风达',
   baishiwuliu: '百世快运',
-  youshuwuliu: '优速快递',
+  youshuwuliu: '优速快递'
 };
 
 // 状态码
@@ -43,7 +43,7 @@ export const stateMap = {
   4: '退签',
   5: '同城派送中',
   6: '退回',
-  7: '转单',
+  7: '转单'
 };
 
 export const STATE_IN_TRANSIT = '0';
@@ -53,11 +53,11 @@ export const STATE_DELIVERED = '3';
 // API 结果
 export const statusMap = {
   200: 'ok',
-  604: '非法访问:IP禁止访问',
+  604: '非法访问:IP禁止访问'
 };
 
 const api = ky.extend({
-  prefixUrl: 'https://www.kuaidi100.com',
+  prefixUrl: 'https://www.kuaidi100.com'
 });
 
 let updating = false;
@@ -74,16 +74,16 @@ export default class KuaidiService {
 
   /**
    * 自动识别
-   * @number 快递单号
-   * @return 数组，返回可能的快递类型
+   * @param {string} number 快递单号
+   * @returns {array} 数组，返回可能的快递类型
    */
   static async auto(number) {
     const data = await api
       .get('autonumber/autoComNum', {
         searchParams: {
           resultv2: 1,
-          text: number,
-        },
+          text: number
+        }
       })
       .json();
 
@@ -92,9 +92,9 @@ export default class KuaidiService {
 
   /**
    * 查询快递
-   * @postid 快递单号
-   * @type 快递类型
-   * @return FavoriteModel
+   * @param {string} postid 快递单号
+   * @param {string} type 快递类型
+   * @returns {FavoriteModel} 收藏
    */
   static async query(postid, type) {
     const data = await api
@@ -102,8 +102,8 @@ export default class KuaidiService {
         searchParams: {
           type,
           postid,
-          temp: Math.random(),
-        },
+          temp: Math.random()
+        }
       })
       .json()
       .then(json => FavoriteModel.fromJson(json));
@@ -112,10 +112,13 @@ export default class KuaidiService {
 
   // TODO 改为订阅形式，比如传入个callback或者可订阅快递的更新事件
   static async update() {
-    if (updating) return [];
+    if (updating) {
+      return [];
+    }
+
     updating = true;
     const favorites = await StorageService.getQueryFavorites();
-    if (favorites && favorites.length) {
+    if (Array.isArray(favorites) && favorites.length > 0) {
       // -
       let messages = await pMap(
         favorites,
@@ -123,7 +126,8 @@ export default class KuaidiService {
           try {
             const result = await KuaidiService.query(postId, type);
             if (
-              result.data.length &&
+              Array.isArray(result.data) &&
+              result.data.length > 0 &&
               result.data[0].time !== lastestData.time
             ) {
               const nextFavorite = FavoriteModel.fromObject(result);
@@ -132,6 +136,7 @@ export default class KuaidiService {
               await StorageService.updateFavorite(nextFavorite);
               return nextFavorite;
             }
+
             return null;
           } catch (_) {
             return null;

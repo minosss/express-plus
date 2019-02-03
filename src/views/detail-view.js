@@ -1,25 +1,26 @@
 import React, {useState, useEffect, useContext, useCallback} from 'react';
 import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert} from 'antd';
+import {produce} from 'immer';
 import TagGroup from '../components/tag-group';
-import KuaidiService from '../services/KuaidiService';
-import FavoriteModel from '../model/FavoriteModel';
+import KuaidiService from '../services/kuaidi-service';
+import FavoriteModel from '../model/favorite-model';
 import {StateContext} from '../app';
 import {
   DELETE_FAVORITE,
   CREATE_FAVORITE,
   UPDATE_TAGS,
-  UPDATE_FAVORITE,
+  UPDATE_FAVORITE
 } from '../reducers/favorites';
-import produce from 'immer';
 
 const TimelineList = React.memo(({data}) => (
   <Timeline>
     {data.map((item, index) => (
       <Timeline.Item
+        // eslint-disable-next-line react/no-array-index-key
         key={`list-item-${index}`}
-        color={index !== 0 ? '#666' : '#222'}
+        color={index === 0 ? '#222' : '#666'}
       >
-        <span style={{color: index !== 0 ? '#666' : '#222'}}>
+        <span style={{color: index === 0 ? '#222' : '#666'}}>
           {item.context}
         </span>
       </Timeline.Item>
@@ -33,43 +34,40 @@ export default function DetailView({defaultData, match}) {
   const dispatch = useContext(StateContext);
   const [message, setMessage] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(!!defaultData);
+  const [isFavorite, setIsFavorite] = useState(Boolean(defaultData));
   const [result, setResult] = useState(() => {
     const res = defaultData || {postId, type};
     return res;
   });
 
-  useEffect(() => {
-    KuaidiService.query(postId, type)
-      .then(jsonData => {
-        const nextResult = produce(result, draft => {
-          Object.keys(jsonData).forEach(key => {
-            draft[key] = jsonData[key];
-          });
+  useEffect(async () => {
+    try {
+      const jsonData = await KuaidiService.query(postId, type);
+      const nextResult = produce(result, draft => {
+        Object.keys(jsonData).forEach(key => {
+          draft[key] = jsonData[key];
         });
-        setIsLoading(false);
-        setResult(nextResult);
-        // 如果已经收藏的，查询后需要更新最新消息
-        if (isFavorite) {
-          try {
-            if (nextResult.data[0].time !== nextResult.lastestData.time) {
-              // 全覆盖更新
-              dispatch({
-                type: UPDATE_FAVORITE,
-                payload: FavoriteModel.fromObject(nextResult).update(),
-              });
-            }
-          } catch (_) {
-            // ignore
-          }
-        }
-      })
-      .catch(err => {
-        setIsLoading(false);
-        setMessage(err.message);
       });
-    // TODO maybe need cancel query, when query was not finished.
-    return () => {};
+      setIsLoading(false);
+      setResult(nextResult);
+      // 如果已经收藏的，查询后需要更新最新消息
+      if (isFavorite) {
+        if (
+          nextResult.data &&
+          nextResult.data.length > 0 &&
+          nextResult.data[0].time !== nextResult.lastestData.time
+        ) {
+          // 全覆盖更新
+          dispatch({
+            type: UPDATE_FAVORITE,
+            payload: FavoriteModel.fromObject(nextResult).update()
+          });
+        }
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setMessage(error.message);
+    }
   }, []);
 
   const handleToggleFavorite = () => {
@@ -77,11 +75,12 @@ export default function DetailView({defaultData, match}) {
     if (nextIsFavorite) {
       dispatch({
         type: CREATE_FAVORITE,
-        payload: FavoriteModel.fromObject(result),
+        payload: FavoriteModel.fromObject(result)
       });
     } else {
       dispatch({type: DELETE_FAVORITE, payload: {postId}});
     }
+
     setIsFavorite(nextIsFavorite);
   };
 
@@ -136,14 +135,14 @@ export default function DetailView({defaultData, match}) {
               <tr>
                 <td style={{whiteSpace: 'nowrap'}}>标签：</td>
                 <td>
-                  <TagGroup tags={result.tags} onChange={updateTags} editable />
+                  <TagGroup editable tags={result.tags} onChange={updateTags} />
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
         <Divider />
-        {message && <Alert message={message} type='error' showIcon />}
+        {message && <Alert showIcon message={message} type='error' />}
         <TimelineList data={result.data || []} />
       </div>
     </Spin>

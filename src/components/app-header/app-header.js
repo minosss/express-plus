@@ -1,8 +1,7 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {useState} from 'react';
 import {Icon, Input, Tooltip, AutoComplete, Dropdown, Menu} from 'antd';
 import {Link} from 'react-router-dom';
-import KuaidiService from '@/services/KuaidiService';
+import KuaidiService from '../../services/kuaidi-service';
 
 const menu = (
   <Menu>
@@ -51,16 +50,21 @@ export default function AppHeader() {
   const [dataSource, setDataSrouce] = useState([]);
 
   const handleSearch = async value => {
-    if (String(value).length < 6) return;
+    if (String(value).length < 6) {
+      return;
+    }
+
     let data = await KuaidiService.auto(value);
     data =
-      data && data.length ? data.map(item => ({...item, postId: value})) : [];
+      data && data.length > 0 ?
+        data.map(item => ({...item, postId: value})) :
+        [];
     setDataSrouce(data);
   };
 
   const handleSelect = item => {
     console.log(item);
-    // jump to detial
+    // Jump to detial
   };
 
   return (
@@ -72,10 +76,10 @@ export default function AppHeader() {
       </div>
       <div className='end'>
         <AutoComplete
+          optionLabelProp='text'
           dataSource={dataSource.map(renderOption)}
           onSearch={handleSearch}
           onSelect={handleSelect}
-          optionLabelProp='text'
         >
           <Input placeholder='输入快递单号' prefix={<Icon type='search' />} />
         </AutoComplete>

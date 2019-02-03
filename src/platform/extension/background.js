@@ -1,23 +1,22 @@
-/* eslint-disable no-undef */
-import KuaidiService from '@/services/KuaidiService';
 import browser from 'webextension-polyfill';
+import KuaidiService from '../../services/kuaidi-service';
 
 async function runAutoUpdate() {
   const messages = await KuaidiService.update();
 
-  if (messages.length) {
+  if (messages.length > 0) {
     // 通知 list 格式
     const items = messages.map(msg => {
       return {
         title: msg.postId,
-        message: msg.lastestData.context,
+        message: msg.lastestData.context
       };
     });
 
     showNotification({
       type: 'list',
       message: `有 ${items.length} 个快递有新的信息！`,
-      items,
+      items
     });
   }
 }
@@ -34,7 +33,7 @@ function showNotification({
     type,
     title,
     message,
-    ...others,
+    ...others
   });
 }
 
@@ -48,11 +47,11 @@ browser.storage.onChanged.addListener(({settings}, _) => {
     ) {
       // 需要重新设置
       browser.alarms.clearAll();
-      // periodInMinutes - If set, the onAlarm event should fire every periodInMinutes minutes after the initial event specified by when or delayInMinutes. If not set, the alarm will only fire once.
+      // PeriodInMinutes - If set, the onAlarm event should fire every periodInMinutes minutes after the initial event specified by when or delayInMinutes. If not set, the alarm will only fire once.
       browser.alarms.create({
         periodInMinutes:
           // - 最短间隔 30 分钟 - 请求速度太快会导致 ip 被封。
-          newValue.autoInterval < 30 ? 30 : newValue.autoInterval,
+          newValue.autoInterval < 30 ? 30 : newValue.autoInterval
       });
     }
   } else {
@@ -66,6 +65,7 @@ browser.alarms.onAlarm.addListener(() => {
 });
 
 // - 版本升级处理，处理一些崩溃性的数据更改 -
+// eslint-disable-next-line camelcase
 function handleUpdate_0112() {
   try {
     browser.alarms.clearAll();
@@ -79,17 +79,18 @@ function handleUpdate_0112() {
           tags: item.tags,
           lastestData: {
             time: item.time,
-            context: item.text,
+            context: item.text
           },
-          state: item.check ? '3' : '0',
+          state: item.check ? '3' : '0'
         };
       });
     }
+
     showNotification({title: '版本升级', message: '全新的界面，数据迁移成功'});
-  } catch (err) {
+  } catch (error) {
     showNotification({
       title: '错误',
-      message: '数据迁移出现错误 ' + err.message,
+      message: '数据迁移出现错误 ' + error.message
     });
   }
 }
@@ -98,6 +99,8 @@ function handleUpdate_0112() {
 // 应用安装、更新、浏览器更新都会触发
 browser.runtime.onInstalled.addListener((reason, previousVersion) => {
   if (reason === 'update') {
-    if (previousVersion === '0.1.12') handleUpdate_0112();
+    if (previousVersion === '0.1.12') {
+      handleUpdate_0112();
+    }
   }
 });

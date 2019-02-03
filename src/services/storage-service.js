@@ -1,14 +1,13 @@
-/* eslint-disable no-undef */
-import produce from 'immer';
+import {produce} from 'immer';
 import browser from 'webextension-polyfill';
 
 const defaultData = {
   settings: {
     enableAuto: false,
     autoInterval: 30,
-    enableFilterDelivered: false,
+    enableFilterDelivered: false
   },
-  favorites: [],
+  favorites: []
 };
 
 export default class StorageService {
@@ -24,7 +23,7 @@ export default class StorageService {
 
   static async shouldFilterDelivered() {
     const {enableFilterDelivered} = await StorageService.get('settings');
-    return !!enableFilterDelivered;
+    return Boolean(enableFilterDelivered);
   }
 
   static async getQueryFavorites() {
@@ -49,6 +48,7 @@ export default class StorageService {
       await StorageService.save({favorites: nextFavorites});
       return true;
     }
+
     return false;
   }
 }

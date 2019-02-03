@@ -16,7 +16,7 @@ const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMi
 const {
   choosePort,
   createCompiler,
-  prepareUrls,
+  prepareUrls
 } = require('react-dev-utils/WebpackDevServerUtils');
 const paths = require('../utils/paths');
 const webpackConfig = require('../webpack.config');
@@ -41,7 +41,7 @@ async function start() {
     // 添加了 react-hot-loader 支持组件热更新
     hot: true,
     contentBase: paths.appBuild,
-    // watchContentBase: true,
+    // WatchContentBase: true,
     // 关闭 host 的检测，在 chrome 中是在 chrome:// 下
     disableHostCheck: true,
     // 开启 gzip 压缩生成的文件
@@ -49,7 +49,7 @@ async function start() {
     // 日志输出
     clientLogLevel: 'none',
     host,
-    // publicPath: '/',
+    // PublicPath: '/',
     overlay: false,
     // 不输出打包日志
     quiet: true,
@@ -61,7 +61,7 @@ async function start() {
     // src/node_modules is not ignored to support absolute imports
     // https://github.com/facebook/create-react-app/issues/1065
     watchOptions: {
-      ignored: ignoredFiles(paths.appSrc),
+      ignored: ignoredFiles(paths.appSrc)
     },
     before(app, server) {
       // This lets us fetch source contents from webpack for the error overlay
@@ -75,21 +75,23 @@ async function start() {
       // it used the same host and port.
       // https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
       app.use(noopServiceWorkerMiddleware());
-    },
+    }
   });
 
   devServer.listen(port, host, err => {
     if (err) {
       return console.log(err);
     }
+
     if (isInteractive) {
       clearConsole();
     }
+
     console.log(chalk.cyan('Starting the development server...\n'));
   });
 
-  ['SIGINT', 'SIGTERM'].forEach(function(sig) {
-    process.on(sig, function() {
+  ['SIGINT', 'SIGTERM'].forEach(sig => {
+    process.on(sig, () => {
       devServer.close();
       process.exit();
     });

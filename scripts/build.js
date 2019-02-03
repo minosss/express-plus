@@ -10,6 +10,7 @@ const fs = require('fs-extra');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
+const {checkBrowsers} = require('react-dev-utils/browsersHelper');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config');
 const paths = require('../utils/paths');
@@ -17,11 +18,8 @@ const paths = require('../utils/paths');
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 const isInteractive = process.stdout.isTTY;
-const measureFileSizesBeforeBuild =
-  FileSizeReporter.measureFileSizesBeforeBuild;
-const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
+const {measureFileSizesBeforeBuild, printFileSizesAfterBuild} = FileSizeReporter;
 
-const {checkBrowsers} = require('react-dev-utils/browsersHelper');
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
     return measureFileSizesBeforeBuild(paths.appBuild);
@@ -32,7 +30,7 @@ checkBrowsers(paths.appPath, isInteractive)
   })
   .then(
     ({stats, previousFileSizes, warnings}) => {
-      if (warnings.length) {
+      if (warnings.length > 0) {
         console.log(chalk.yellow('Compiled with warnings.\n'));
         console.log(warnings.join('\n\n'));
         console.log(
@@ -62,18 +60,18 @@ checkBrowsers(paths.appPath, isInteractive)
     err => {
       console.log(chalk.red('Failed to compile.\n'));
       printBuildError(err);
-      process.exit(1);
+      // Process.exit(1);
     }
   )
-  .catch(err => {
-    if (err && err.message) {
-      console.log(err.message);
+  .catch(error => {
+    if (error && error.message) {
+      console.log(error.message);
     }
-    process.exit(1);
+    // Process.exit(1);
   });
 
 async function build(previousFileSizes) {
-  let compiler = webpack(webpackConfig);
+  const compiler = webpack(webpackConfig);
 
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
@@ -82,28 +80,32 @@ async function build(previousFileSizes) {
         if (!err.message) {
           return reject(err);
         }
+
         messages = formatWebpackMessages({
           errors: [err.message],
-          warnings: [],
+          warnings: []
         });
       } else {
         messages = formatWebpackMessages(
           stats.toJson({all: false, warnings: true, errors: true})
         );
       }
-      if (messages.errors.length) {
+
+      if (messages.errors.length > 0) {
         // Only keep the first error. Others are often indicative
         // of the same problem, but confuse the reader with noise.
         if (messages.errors.length > 1) {
           messages.errors.length = 1;
         }
+
         return reject(new Error(messages.errors.join('\n\n')));
       }
+
       if (
         process.env.CI &&
         (typeof process.env.CI !== 'string' ||
           process.env.CI.toLowerCase() !== 'false') &&
-        messages.warnings.length
+        messages.warnings.length > 0
       ) {
         console.log(
           chalk.yellow(
@@ -117,10 +119,10 @@ async function build(previousFileSizes) {
       const resolveArgs = {
         stats,
         previousFileSizes,
-        warnings: messages.warnings,
+        warnings: messages.warnings
       };
 
-      // if (writeStatsJson) {
+      // If (writeStatsJson) {
       //   return bfj
       //     .write(paths.appBuild + '/bundle-stats.json', stats.toJson())
       //     .then(() => resolve(resolveArgs))

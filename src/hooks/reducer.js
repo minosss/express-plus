@@ -1,6 +1,6 @@
 import {useState, useCallback} from 'react';
 
-// from redux
+// From redux
 function compose(...funcs) {
   if (funcs.length === 0) {
     return arg => arg;
@@ -26,7 +26,7 @@ export default function useAsyncReducer(
     dispatch: async action => {
       const nextState = await reducer(state, action);
       return nextState;
-    },
+    }
   };
 
   const dispatch = useCallback(

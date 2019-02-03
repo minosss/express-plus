@@ -1,4 +1,4 @@
-import produce from 'immer';
+import {produce} from 'immer';
 
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
 

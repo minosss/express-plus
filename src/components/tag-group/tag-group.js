@@ -3,12 +3,12 @@ import {Input, Tag, Icon} from 'antd';
 
 function TagGroup({tags = [], editable = false, onChange = () => {}}) {
   const [addNew, setAddNew] = useState(false);
-  // const [tags, setTags] = useState(defaultTags);
+  // Const [tags, setTags] = useState(defaultTags);
   const inputRef = useRef(null);
 
   const handleClose = removedTag => {
     const nextTags = tags.filter(t => t !== removedTag);
-    // setTags(nextTags);
+    // SetTags(nextTags);
     onChange(nextTags);
   };
 
@@ -16,9 +16,10 @@ function TagGroup({tags = [], editable = false, onChange = () => {}}) {
     const inputValue = inputRef.current.input.value;
     if (inputValue && tags.indexOf(inputValue) === -1) {
       const nextTags = [...tags, inputValue];
-      // setTags(nextTags);
+      // SetTags(nextTags);
       onChange(nextTags);
     }
+
     setAddNew(false);
   };
 
@@ -40,8 +41,8 @@ function TagGroup({tags = [], editable = false, onChange = () => {}}) {
       {addNew && (
         <Input
           ref={inputRef}
-          size='small'
           autoFocus
+          size='small'
           style={{width: 78}}
           onBlur={handleInputConfirm}
           onPressEnter={handleInputConfirm}
@@ -49,10 +50,10 @@ function TagGroup({tags = [], editable = false, onChange = () => {}}) {
       )}
       {editable && !addNew && (
         <Tag
+          style={{background: '#fff', borderStyle: 'dashed'}}
           onClick={() => {
             setAddNew(true);
           }}
-          style={{background: '#fff', borderStyle: 'dashed'}}
         >
           <Icon type='plus' /> 添加
         </Tag>

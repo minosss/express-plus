@@ -10,8 +10,8 @@ export default function SettingsView({settings}) {
     dispatch({
       type: UPDATE_SETTINGS,
       payload: {
-        [name]: value,
-      },
+        [name]: value
+      }
     });
   };
 
@@ -24,9 +24,10 @@ export default function SettingsView({settings}) {
       <List.Item
         actions={[
           <Switch
+            key='enableAuto'
             defaultChecked={settings.enableAuto}
             onChange={handleUpdateSetting('enableAuto')}
-          />,
+          />
         ]}
       >
         <List.Item.Meta
@@ -37,6 +38,7 @@ export default function SettingsView({settings}) {
       <List.Item
         actions={[
           <Select
+            key='autoInterval'
             disabled={!settings.enableAuto}
             defaultValue={settings.autoInterval}
             onChange={handleUpdateSetting('autoInterval')}
@@ -44,7 +46,7 @@ export default function SettingsView({settings}) {
             <Select.Option value={30}>30</Select.Option>
             <Select.Option value={60}>60</Select.Option>
             <Select.Option value={120}>120</Select.Option>
-          </Select>,
+          </Select>
         ]}
       >
         <List.Item.Meta
@@ -55,9 +57,10 @@ export default function SettingsView({settings}) {
       <List.Item
         actions={[
           <Switch
+            key='enableFilterDelivered'
             defaultChecked={settings.enableFilterDelivered}
             onChange={handleUpdateSetting('enableFilterDelivered')}
-          />,
+          />
         ]}
       >
         <List.Item.Meta

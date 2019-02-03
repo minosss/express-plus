@@ -4,8 +4,8 @@
   "scripts": {
     "start": "node scripts/start",
     "build": "node scripts/build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "xo",
+    "lint:fix": "xo --fix"
   },
   "dependencies": {
     "antd": "^3.12.3",
@@ -19,22 +19,17 @@
     "webextension-polyfill": "^0.3.1"
   },
   "devDependencies": {
-    "babel-eslint": "9.x",
     "babel-plugin-import": "^1.11.0",
     "babel-preset-react-app": "^7.0.0",
+    "chalk": "^2.4.2",
     "clean-webpack-plugin": "^1.0.1",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
     "dot-json": "^1.1.0",
-    "eslint": "5.x",
-    "eslint-config-prettier": "^3.4.0",
-    "eslint-config-react-app": "^3.0.6",
-    "eslint-plugin-flowtype": "2.x",
-    "eslint-plugin-import": "2.x",
-    "eslint-plugin-jsx-a11y": "6.x",
-    "eslint-plugin-prettier": "^3.0.1",
+    "eslint": "^5.13.0",
+    "eslint-config-xo-react": "^0.18.0",
+    "eslint-config-xo-space": "^0.21.0",
     "eslint-plugin-react": "^7.12.4",
-    "eslint-plugin-react-hooks": "^0.0.0",
     "fs-extra": "^7.0.1",
     "html-webpack-plugin": "^4.0.0-beta.5",
     "less": "^3.9.0",
@@ -54,7 +49,42 @@
     "thread-loader": "^2.1.1",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "xo": "^0.24.0"
+  },
+  "xo": {
+    "extends": [
+      "xo-space/esnext",
+      "xo-react"
+    ],
+    "overrides": [
+      {
+        "files": ["src/**/*.js", "platform/**/*.js"],
+        "envs": ["browser"]
+      }
+    ],
+    "rules": {
+      "jsx-quotes": ["error", "prefer-single"],
+      "react/prop-types": "off",
+      "react/jsx-indent": [2, 2],
+      "react/jsx-indent-props": [2, 2],
+      "react/jsx-tag-spacing": [
+        "error",
+        {
+          "closingSlash": "never",
+          "beforeSelfClosing": "always",
+          "afterOpening": "never",
+          "beforeClosing": "allow"
+        }
+      ],
+      "import/no-unassigned-import": [
+        "error",
+        {
+          "allow": ["dayjs/locale/*", "**/*.less"]
+        }
+      ]
+    },
+    "ignores": ["utils/webpackHotDevClient.js"]
   },
   "browserslist": [
     ">0.2%",
