@@ -22,5 +22,5 @@
     "unlimitedStorage",
     "<all_urls>"
   ],
-  "content_security_policy": "script-src 'self' chrome-extension-resource: 'sha256-678jBJ5yr+DnYBRrhcPKnbjHB5G9KPTT9rlmQEJIMQc='; object-src 'self'"
+  "content_security_policy": "script-src 'self' chrome-extension-resource: 'sha256-cN1Sfc6171M9m5d5PIOCLDsyMDeKmJ8TFbKNGQq7OpM='; object-src 'self'"
 }

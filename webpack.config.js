@@ -7,11 +7,12 @@ const safePostCssParser = require('postcss-safe-parser');
 const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 // Const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const paths = require('./utils/paths');
 
@@ -23,7 +24,7 @@ const lessModuleRegex = /\.module\.less$/;
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 //
-const publicPath = isProd ? '/' : isDev && '/';
+const publicPath = isProd ? '/' : '/';
 
 function getStyleLoaders(cssOptions, preProcessor) {
   const loaders = [
@@ -37,23 +38,23 @@ function getStyleLoaders(cssOptions, preProcessor) {
     {
       loader: 'css-loader',
       options: cssOptions
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        ident: 'postcss',
+        plugins: () => [
+          require('postcss-flexbugs-fixes'),
+          require('postcss-preset-env')({
+            autoprefixer: {
+              flexbox: 'no-2009'
+            },
+            stage: 3
+          })
+        ],
+        sourceMap: isProd
+      }
     }
-    // {
-    //   loader: 'postcss-loader',
-    //   options: {
-    //     ident: 'postcss',
-    //     plugins: () => [
-    //       require('postcss-flexbugs-fixes'),
-    //       require('postcss-preset-env')({
-    //         autoprefixer: {
-    //           flexbox: 'no-2009'
-    //         },
-    //         stage: 3
-    //       })
-    //     ],
-    //     sourceMap: isProd
-    //   }
-    // },
   ].filter(Boolean);
   if (preProcessor) {
     loaders.push({
@@ -91,8 +92,10 @@ const config = {
   output: {
     path: paths.appBuild,
     pathinfo: isDev,
-    filename: '[name].js',
-    chunkFilename: '[name].chunk.js',
+    filename: 'js/[name].js',
+    chunkFilename: 'js/[name].chunk.js',
+    hotUpdateChunkFilename: 'update/[id].[hash].hot-update.js',
+    hotUpdateMainFilename: 'update/[hash].hot-update.json',
     publicPath,
     globalObject: 'this'
   },
@@ -100,8 +103,14 @@ const config = {
     modules: ['node_modules', paths.appSrc],
     extensions: ['.jsx', '.js', '.json'],
     alias: {
-      '@': paths.appSrc
-    }
+      '@': paths.appSrc,
+      // 避免打包全部的图标，打包小了一半
+      '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/icons.js')
+    },
+    plugins: [
+      // 阻止引入 src 以外的文件
+      new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson])
+    ]
   },
   module: {
     strictExportPresence: true,
@@ -112,13 +121,11 @@ const config = {
       {
         test: /\.(js|mjs|jsx|ts|tsx)$/,
         use: [
-          // 'thread-loader',
+          'thread-loader',
           {
             loader: 'babel-loader',
             options: {
-              customize: require.resolve(
-                'babel-preset-react-app/webpack-overrides'
-              ),
+              customize: require.resolve('babel-preset-react-app/webpack-overrides'),
               babelrc: false,
               configFile: false,
               presets: ['babel-preset-react-app'],
@@ -173,7 +180,7 @@ const config = {
       file =>
         new HtmlWebpackPlugin({
           inject: true,
-          chunks: ['commons', file],
+          chunks: [file],
           template: path.resolve(paths.platformPath, `${file}.html`),
           filename: `${file}.html`
         })
@@ -186,12 +193,14 @@ const config = {
     new CopyWebpackPlugin([{from: paths.platformAssets}]),
     new ModuleNotFoundPlugin(paths.appPath),
     isDev && new webpack.HotModuleReplacementPlugin(),
+    // 避免输入错误的路径
+    isDev && new CaseSensitivePathsPlugin(),
     isDev && new WatchMissingNodeModulesPlugin(paths.appNodeModules),
     // 生产模式取出样式到独立文件
     isProd &&
       new MiniCssExtractPlugin({
-        filename: '[name].css',
-        chunkFilename: '[name].chunk.css'
+        filename: 'css/[name].css',
+        chunkFilename: 'css/[name].chunk.css'
       }),
     // 过滤moment资源缩小体积
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)

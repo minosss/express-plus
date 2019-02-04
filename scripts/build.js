@@ -60,14 +60,16 @@ checkBrowsers(paths.appPath, isInteractive)
     err => {
       console.log(chalk.red('Failed to compile.\n'));
       printBuildError(err);
-      // Process.exit(1);
+      // ignore
+      // process.exit(1);
     }
   )
   .catch(error => {
     if (error && error.message) {
       console.log(error.message);
     }
-    // Process.exit(1);
+    // ignore
+    // process.exit(1);
   });
 
 async function build(previousFileSizes) {
@@ -121,13 +123,6 @@ async function build(previousFileSizes) {
         previousFileSizes,
         warnings: messages.warnings
       };
-
-      // If (writeStatsJson) {
-      //   return bfj
-      //     .write(paths.appBuild + '/bundle-stats.json', stats.toJson())
-      //     .then(() => resolve(resolveArgs))
-      //     .catch(error => reject(new Error(error)));
-      // }
 
       return resolve(resolveArgs);
     });

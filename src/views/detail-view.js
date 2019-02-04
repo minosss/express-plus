@@ -40,7 +40,7 @@ export default function DetailView({defaultData, match}) {
     return res;
   });
 
-  useEffect(async () => {
+  async function queryData() {
     try {
       const jsonData = await KuaidiService.query(postId, type);
       const nextResult = produce(result, draft => {
@@ -68,6 +68,11 @@ export default function DetailView({defaultData, match}) {
       setIsLoading(false);
       setMessage(error.message);
     }
+  }
+
+  useEffect(() => {
+    queryData();
+    return () => {};
   }, []);
 
   const handleToggleFavorite = () => {

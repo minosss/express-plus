@@ -16,7 +16,7 @@
 
 const SockJS = require('sockjs-client');
 const stripAnsi = require('strip-ansi');
-// Var url = require('url');
+const url = require('url');
 const launchEditorEndpoint = require('react-dev-utils/launchEditorEndpoint');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const ErrorOverlay = require('react-error-overlay');
@@ -45,7 +45,7 @@ ErrorOverlay.startReportingRuntimeErrors({
   onError() {
     hadRuntimeError = true;
   },
-  filename: 'popup.js'
+  filename: 'js/popup.js'
 });
 
 if (module.hot && typeof module.hot.dispose === 'function') {
@@ -56,7 +56,14 @@ if (module.hot && typeof module.hot.dispose === 'function') {
 }
 
 // Connect to WebpackDevServer via a socket.
-const connection = new SockJS('http://0.0.0.0:3000/sockjs-node');
+const connection = new SockJS(
+  url.format({
+    protocol: 'http',
+    hostname: process.env.HOST || '0.0.0.0',
+    port: parseInt(process.env.PORT, 10) || 3000,
+    pathname: '/sockjs-node'
+  })
+);
 
 // Unlike WebpackDevServer client, we won't try to reconnect
 // to avoid spamming the console. Disconnect usually happens

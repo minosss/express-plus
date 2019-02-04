@@ -8,6 +8,7 @@
     "lint:fix": "xo --fix"
   },
   "dependencies": {
+    "@ant-design/icons": "^1.1.16",
     "antd": "^3.12.3",
     "dayjs": "^1.8.0",
     "immer": "^1.12.1",
@@ -21,14 +22,15 @@
   "devDependencies": {
     "babel-plugin-import": "^1.11.0",
     "babel-preset-react-app": "^7.0.0",
+    "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "chalk": "^2.4.2",
     "clean-webpack-plugin": "^1.0.1",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
     "dot-json": "^1.1.0",
     "eslint": "^5.13.0",
+    "eslint-config-xo": "^0.26.0",
     "eslint-config-xo-react": "^0.18.0",
-    "eslint-config-xo-space": "^0.21.0",
     "eslint-plugin-react": "^7.12.4",
     "fs-extra": "^7.0.1",
     "html-webpack-plugin": "^4.0.0-beta.5",
@@ -54,20 +56,40 @@
   },
   "xo": {
     "extends": [
-      "xo-space/esnext",
+      "xo/esnext",
       "xo-react"
     ],
     "overrides": [
       {
-        "files": ["src/**/*.js", "platform/**/*.js"],
-        "envs": ["browser"]
+        "files": [
+          "src/**/*.js"
+        ],
+        "envs": [
+          "browser"
+        ]
       }
     ],
     "rules": {
-      "jsx-quotes": ["error", "prefer-single"],
+      "indent": [
+        2,
+        2,
+        {
+          "SwitchCase": 1
+        }
+      ],
+      "jsx-quotes": [
+        "error",
+        "prefer-single"
+      ],
       "react/prop-types": "off",
-      "react/jsx-indent": [2, 2],
-      "react/jsx-indent-props": [2, 2],
+      "react/jsx-indent": [
+        2,
+        2
+      ],
+      "react/jsx-indent-props": [
+        2,
+        2
+      ],
       "react/jsx-tag-spacing": [
         "error",
         {
@@ -80,11 +102,16 @@
       "import/no-unassigned-import": [
         "error",
         {
-          "allow": ["dayjs/locale/*", "**/*.less"]
+          "allow": [
+            "dayjs/locale/*",
+            "**/*.less"
+          ]
         }
       ]
     },
-    "ignores": ["utils/webpackHotDevClient.js"]
+    "ignores": [
+      "utils/webpackHotDevClient.js"
+    ]
   },
   "browserslist": [
     ">0.2%",

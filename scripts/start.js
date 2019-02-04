@@ -14,21 +14,17 @@ const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware')
 const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware');
 const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware');
 const {
-  choosePort,
   createCompiler,
   prepareUrls
 } = require('react-dev-utils/WebpackDevServerUtils');
 const paths = require('../utils/paths');
 const webpackConfig = require('../webpack.config');
 
-const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
+const port = parseInt(process.env.PORT, 10) || 3000;
 const host = process.env.HOST || '0.0.0.0';
 const isInteractive = process.stdout.isTTY;
 
 async function start() {
-  // 检测端口是否被占用
-  // 如果端口被占用提示是否需要替换端口
-  const port = await choosePort(host, DEFAULT_PORT);
   // 返回本地和当前网络的地址
   const urls = prepareUrls('http', host, port);
   // 获取app名称在输出信息中显示
