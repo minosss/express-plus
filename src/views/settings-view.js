@@ -1,19 +1,21 @@
-import React, {useContext} from 'react';
+import React, {useCallback} from 'react';
+import {useDispatch, useMappedState} from 'redux-react-hook';
 import {List, Switch, Select} from 'antd';
-import {UPDATE_SETTINGS} from '../reducers/settings';
-import {StateContext} from '../app';
+import {UPDATE_SETTINGS} from '../store/actions';
 
-export default function SettingsView({settings}) {
-  const dispatch = useContext(StateContext);
+export default function SettingsView() {
+  const mapState = useCallback(state => ({
+    settings: state.settings
+  }), []);
+  const {settings} = useMappedState(mapState);
 
-  const handleUpdateSetting = name => value => {
-    dispatch({
-      type: UPDATE_SETTINGS,
-      payload: {
-        [name]: value
-      }
-    });
-  };
+  const dispatch = useDispatch();
+  const handleUpdateSetting = useCallback(name => value => dispatch({
+    type: UPDATE_SETTINGS,
+    settings: {
+      [name]: value
+    }
+  }), []);
 
   return (
     <List

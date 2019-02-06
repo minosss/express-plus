@@ -1,22 +1,24 @@
 import React from 'react';
 import {render} from 'react-dom';
-import * as serviceWorker from '../../service-worker';
+import {StoreContext} from 'redux-react-hook';
+import * as serviceWorker from '../../serviceWorker';
 import App from '../../app';
 import StorageService from '../../services/storage-service';
+import store from '../../store';
 import './style.less';
-
-// Storage middlware, save state after updated.
-const storageMiddleware = () => next => async action => {
-  console.log('storage action <', action);
-  const nextState = await next(action);
-  StorageService.save(nextState);
-  return nextState;
-};
 
 async function launch() {
   const savedData = await StorageService.get();
+  store.dispatch({type: 'RECEIVE_DATA', ...savedData});
+  store.subscribe(() => {
+    const state = store.getState();
+    StorageService.save(state);
+  });
+
   render(
-    <App initialState={savedData} platformMiddlewares={[storageMiddleware]} />,
+    <StoreContext.Provider value={store}>
+      <App />
+    </StoreContext.Provider>,
     document.querySelector('#root')
   );
 }

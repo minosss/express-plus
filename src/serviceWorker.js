@@ -1,4 +1,4 @@
-/* eslint-disable promise/prefer-await-to-then */
+/* eslint-disable promise/prefer-await-to-then, unicorn/filename-case */
 // This optional code is used to register a service worker.
 // register() is not called by default.
 

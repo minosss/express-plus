@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Icon, Input, Tooltip, AutoComplete, Dropdown, Menu} from 'antd';
+import React, {useState, useCallback} from 'react';
+import {Icon, Input, Tooltip, AutoComplete, Dropdown, Menu, message} from 'antd';
 import {Link} from 'react-router-dom';
 import KuaidiService from '../../services/kuaidi-service';
 
@@ -49,18 +49,23 @@ function renderOption(item, _) {
 export default function AppHeader() {
   const [dataSource, setDataSrouce] = useState([]);
 
-  const handleSearch = async value => {
+  const handleSearch = useCallback(async value => {
     if (String(value).length < 6) {
       return;
     }
 
-    let data = await KuaidiService.auto(value);
-    data =
-      data && data.length > 0 ?
-        data.map(item => ({...item, postId: value})) :
-        [];
-    setDataSrouce(data);
-  };
+    try {
+      let data = await KuaidiService.auto(value);
+      data =
+        data && data.length > 0 ?
+          data.map(item => ({...item, postId: value})) :
+          [];
+      setDataSrouce(data);
+    } catch (error) {
+      message.error(error.message);
+      setDataSrouce([]);
+    }
+  });
 
   const handleSelect = item => {
     console.log(item);

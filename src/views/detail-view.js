@@ -1,16 +1,16 @@
-import React, {useState, useEffect, useContext, useCallback} from 'react';
-import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert} from 'antd';
+import React, {useState, useEffect, useCallback} from 'react';
+import {Spin, Timeline, Divider, Button, Tooltip, Icon, message} from 'antd';
 import {produce} from 'immer';
+import {useDispatch, useMappedState} from 'redux-react-hook';
 import TagGroup from '../components/tag-group';
 import KuaidiService from '../services/kuaidi-service';
 import FavoriteModel from '../model/favorite-model';
-import {StateContext} from '../app';
 import {
   DELETE_FAVORITE,
   CREATE_FAVORITE,
   UPDATE_TAGS,
   UPDATE_FAVORITE
-} from '../reducers/favorites';
+} from '../store/actions';
 
 const TimelineList = React.memo(({data}) => (
   <Timeline>
@@ -28,11 +28,11 @@ const TimelineList = React.memo(({data}) => (
   </Timeline>
 ));
 
-export default function DetailView({defaultData, match}) {
+export default function DetailView({match}) {
   const {postId, type} = match.params;
-
-  const dispatch = useContext(StateContext);
-  const [message, setMessage] = useState();
+  const selectFavoriteByPostId = useCallback(state => state.favorites.find(f => f.postId === postId), [postId]);
+  const defaultData = useMappedState(selectFavoriteByPostId);
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(Boolean(defaultData));
   const [result, setResult] = useState(() => {
@@ -60,13 +60,14 @@ export default function DetailView({defaultData, match}) {
           // 全覆盖更新
           dispatch({
             type: UPDATE_FAVORITE,
-            payload: FavoriteModel.fromObject(nextResult).update()
+            favorite: FavoriteModel.fromObject(nextResult).update()
           });
         }
       }
     } catch (error) {
       setIsLoading(false);
-      setMessage(error.message);
+      message.eror(error.message);
+      // setMessage(error.message);
     }
   }
 
@@ -80,10 +81,10 @@ export default function DetailView({defaultData, match}) {
     if (nextIsFavorite) {
       dispatch({
         type: CREATE_FAVORITE,
-        payload: FavoriteModel.fromObject(result)
+        favorite: FavoriteModel.fromObject(result)
       });
     } else {
-      dispatch({type: DELETE_FAVORITE, payload: {postId}});
+      dispatch({type: DELETE_FAVORITE, postId});
     }
 
     setIsFavorite(nextIsFavorite);
@@ -98,7 +99,9 @@ export default function DetailView({defaultData, match}) {
       })
     );
     // TODO 跟更新合并只更新个别属性
-    dispatch({type: UPDATE_TAGS, payload: {postId, tags}});
+    if (isFavorite) {
+      dispatch({type: UPDATE_TAGS, postId, tags});
+    }
   });
 
   return (
@@ -147,7 +150,6 @@ export default function DetailView({defaultData, match}) {
           </table>
         </div>
         <Divider />
-        {message && <Alert showIcon message={message} type='error' />}
         <TimelineList data={result.data || []} />
       </div>
     </Spin>

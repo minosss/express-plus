@@ -37,7 +37,7 @@ async function start() {
     // 添加了 react-hot-loader 支持组件热更新
     hot: true,
     contentBase: paths.appBuild,
-    // WatchContentBase: true,
+    watchContentBase: true,
     // 关闭 host 的检测，在 chrome 中是在 chrome:// 下
     disableHostCheck: true,
     // 开启 gzip 压缩生成的文件

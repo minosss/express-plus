@@ -20,7 +20,6 @@
     "storage",
     "notifications",
     "unlimitedStorage",
-    "<all_urls>"
-  ],
-  "content_security_policy": "script-src 'self' chrome-extension-resource: 'sha256-cN1Sfc6171M9m5d5PIOCLDsyMDeKmJ8TFbKNGQq7OpM='; object-src 'self'"
+    "https://www.kuaidi100.com/*"
+  ]
 }

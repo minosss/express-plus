@@ -22,18 +22,17 @@ const lessRegex = /\.less$/;
 const lessModuleRegex = /\.module\.less$/;
 
 const isDev = process.env.NODE_ENV === 'development';
-const isProd = process.env.NODE_ENV === 'production';
-//
-const publicPath = isProd ? '/' : '/';
+const publicPath = isDev ? '/' : '/';
 
 function getStyleLoaders(cssOptions, preProcessor) {
   const loaders = [
     // Creates style nodes from JS strings
-    isDev && {loader: 'style-loader'},
-    isProd && {
-      loader: MiniCssExtractPlugin.loader,
-      options: {}
-    },
+    isDev ?
+      {loader: 'style-loader'} :
+      {
+        loader: MiniCssExtractPlugin.loader,
+        options: {}
+      },
     // Translates CSS into CommonJS
     {
       loader: 'css-loader',
@@ -52,7 +51,7 @@ function getStyleLoaders(cssOptions, preProcessor) {
             stage: 3
           })
         ],
-        sourceMap: isProd
+        sourceMap: !isDev
       }
     }
   ].filter(Boolean);
@@ -60,7 +59,7 @@ function getStyleLoaders(cssOptions, preProcessor) {
     loaders.push({
       loader: preProcessor,
       options: {
-        sourceMap: isProd,
+        sourceMap: !isDev,
         javascriptEnabled: true
       }
     });
@@ -85,9 +84,9 @@ const entry = {
 };
 
 const config = {
-  mode: isProd ? 'production' : isDev && 'development',
-  bail: isProd,
-  devtool: isProd ? 'source-map' : isProd && 'eval-source-map',
+  mode: isDev ? 'development' : 'production',
+  bail: !isDev,
+  devtool: isDev ? 'eval' : 'source-map',
   entry,
   output: {
     path: paths.appBuild,
@@ -130,7 +129,7 @@ const config = {
               configFile: false,
               presets: ['babel-preset-react-app'],
               cacheIdentifier: getCacheIdentifier(
-                isProd ? 'production' : isDev && 'development',
+                isDev ? 'development' : 'production',
                 ['babel-preset-react-app', 'react-dev-utils']
               ),
               plugins: [
@@ -138,11 +137,12 @@ const config = {
                 // ['import', {libraryName: 'antd', style: true}],
                 // 装饰器
                 // ['@babel/plugin-proposal-decorators', {legacy: true}],
-                'react-hot-loader/babel'
+                // 感觉不能设置到很完美更新，先不用，直接刷新页面
+                // 'react-hot-loader/babel'
               ],
               cacheDirectory: true,
-              cacheCompression: isProd,
-              compact: isProd
+              cacheCompression: !isDev,
+              compact: !isDev
             }
           }
         ],
@@ -153,7 +153,7 @@ const config = {
         exclude: cssModuleRegex,
         use: getStyleLoaders({
           importLoaders: 1,
-          sourceMap: isProd
+          sourceMap: !isDev
         }),
         sideEffects: true
       },
@@ -164,7 +164,7 @@ const config = {
         use: getStyleLoaders(
           {
             importLoaders: 1,
-            sourceMap: isProd
+            sourceMap: !isDev
           },
           'less-loader'
         ),
@@ -192,21 +192,24 @@ const config = {
     // 复制资源文件
     new CopyWebpackPlugin([{from: paths.platformAssets}]),
     new ModuleNotFoundPlugin(paths.appPath),
-    isDev && new webpack.HotModuleReplacementPlugin(),
-    // 避免输入错误的路径
-    isDev && new CaseSensitivePathsPlugin(),
-    isDev && new WatchMissingNodeModulesPlugin(paths.appNodeModules),
-    // 生产模式取出样式到独立文件
-    isProd &&
+    //
+    ...(isDev ? [
+      new webpack.HotModuleReplacementPlugin(),
+      // 避免输入错误的路径
+      new CaseSensitivePathsPlugin(),
+      new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+    ] : [
+      // 生产模式取出样式到独立文件
       new MiniCssExtractPlugin({
         filename: 'css/[name].css',
         chunkFilename: 'css/[name].chunk.css'
-      }),
+      })
+    ]),
     // 过滤moment资源缩小体积
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-  ].filter(Boolean),
+  ],
   optimization: {
-    minimize: isProd,
+    minimize: !isDev,
     minimizer: [
       // This is only used in production mode
       new TerserPlugin({

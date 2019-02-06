@@ -8,5 +8,6 @@ export {
   SearchOutline,
   DeleteOutline,
   MenuOutline,
-  ClockCircleOutline
+  ClockCircleOutline,
+  DownOutline
 } from '@ant-design/icons';
