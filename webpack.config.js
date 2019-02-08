@@ -86,7 +86,7 @@ const entry = {
 const config = {
   mode: isDev ? 'development' : 'production',
   bail: !isDev,
-  devtool: isDev ? 'eval' : 'source-map',
+  devtool: isDev ? 'eval-source-map' : 'source-map',
   entry,
   output: {
     path: paths.appBuild,

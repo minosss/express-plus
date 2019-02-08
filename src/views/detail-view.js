@@ -32,16 +32,16 @@ export default function DetailView({match}) {
   const {postId, type} = match.params;
   const selectFavoriteByPostId = useCallback(state => state.favorites.find(f => f.postId === postId), [postId]);
   const defaultData = useMappedState(selectFavoriteByPostId);
+
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(Boolean(defaultData));
-  const [result, setResult] = useState(() => {
-    const res = defaultData || {postId, type};
-    return res;
-  });
+
+  const [result, setResult] = useState({postId, type, ...defaultData});
 
   async function queryData() {
     try {
+      setIsLoading(true);
       const jsonData = await KuaidiService.query(postId, type);
       const nextResult = produce(result, draft => {
         Object.keys(jsonData).forEach(key => {
@@ -66,15 +66,15 @@ export default function DetailView({match}) {
       }
     } catch (error) {
       setIsLoading(false);
-      message.eror(error.message);
-      // setMessage(error.message);
+      setResult({postId, type, state: '999'});
+      message.error(error.message);
     }
   }
 
   useEffect(() => {
     queryData();
     return () => {};
-  }, []);
+  }, [type]);
 
   const handleToggleFavorite = () => {
     const nextIsFavorite = !isFavorite;
@@ -90,7 +90,9 @@ export default function DetailView({match}) {
     setIsFavorite(nextIsFavorite);
   };
 
-  const handleRefresh = () => {};
+  const handleRefresh = () => {
+    queryData();
+  };
 
   const updateTags = useCallback(tags => {
     setResult(

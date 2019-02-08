@@ -35,20 +35,22 @@ export const comCodeMap = {
 };
 
 // 状态码
-export const stateMap = {
-  0: '在途中', // In transit
-  1: '已揽收', // Accepted
-  2: '疑难',
-  3: '已签收', // Delivered
-  4: '退签',
-  5: '同城派送中',
-  6: '退回',
-  7: '转单'
-};
-
 export const STATE_IN_TRANSIT = '0';
 export const STATE_ACCEPTED = '1';
 export const STATE_DELIVERED = '3';
+export const STATE_ERROR = '999';
+
+export const stateMap = {
+  [STATE_IN_TRANSIT]: '在途中', // In transit
+  [STATE_ACCEPTED]: '已揽收', // Accepted
+  2: '疑难',
+  [STATE_DELIVERED]: '已签收', // Delivered
+  4: '退签',
+  5: '同城派送中',
+  6: '退回',
+  7: '转单',
+  [STATE_ERROR]: '异常'
+};
 
 // API 结果
 export const statusMap = {
