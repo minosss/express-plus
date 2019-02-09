@@ -10,5 +10,6 @@ export {
   MenuOutline,
   ClockCircleOutline,
   DownOutline,
-  CloseCircleFill
+  CloseCircleFill,
+  CheckCircleFill
 } from '@ant-design/icons';

@@ -41,12 +41,12 @@
 
 ## Install
 
-[![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
-[![](https://flat.badgen.net/chrome-web-store/rating/hghlokkgbicmblinhepcibacaiegldeg)][cws]
-[![](https://flat.badgen.net/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+- Chrome: [![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+- Firefox: [![](https://flat.badgen.net/amo/v/express-plus)][amo]
 
 ## License
 
 MIT, [License](LICENSE)
 
 [cws]: https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg "Chrome Web Store"
+[amo]: https://addons.mozilla.org/en-US/firefox/addon/express-plus/ "Firefox Add-ons"

@@ -13,7 +13,6 @@ const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeM
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
-// Const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const paths = require('./utils/paths');
 
 const cssRegex = /\.css$/;
@@ -185,7 +184,6 @@ const config = {
           filename: `${file}.html`
         })
     ),
-    // New InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/]),
     // 替换 html 的参数，比如 %PUBLIC_URL%
     // require html-webpack-plugin 4.x
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, env),

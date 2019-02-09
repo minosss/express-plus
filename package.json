@@ -4,8 +4,11 @@
   "scripts": {
     "start": "node scripts/start",
     "build": "node scripts/build",
+    "release": "run-s build update-version release-*",
+    "release-amo": "cd build && web-ext-submit",
+    "update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; dot-json build/manifest.json content_security_policy --delete",
     "lint": "xo",
-    "lint:fix": "xo --fix"
+    "lint-fix": "xo --fix"
   },
   "dependencies": {
     "@ant-design/icons": "^1.1.16",
@@ -52,6 +55,8 @@
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.2.1",
     "thread-loader": "^2.1.1",
+    "utc-version": "^1.1.0",
+    "web-ext-submit": "^2.9.3",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14",
