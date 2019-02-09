@@ -1,6 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import {Icon, Input, Tooltip, AutoComplete, Dropdown, Menu, message} from 'antd';
 import {Link} from 'react-router-dom';
+import debounce from 'lodash.debounce';
 import KuaidiService from '../../services/kuaidi-service';
 
 const menu = (
@@ -27,10 +28,10 @@ const menu = (
   </Menu>
 );
 
-function renderOption(item, _) {
+function renderOption(item, index) {
   return (
     <AutoComplete.Option
-      key={`${item.postId}-${item.comCode}`}
+      key={`${item.postId}-${item.comCode}-${index}`}
       text={item.postId}
     >
       <Link to={`/detail/${item.postId}/${item.comCode}`}>
@@ -49,7 +50,7 @@ function renderOption(item, _) {
 export default function AppHeader() {
   const [dataSource, setDataSrouce] = useState([]);
 
-  const handleSearch = useCallback(async value => {
+  const handleSearch = useCallback(debounce(async value => {
     if (String(value).length < 6) {
       return;
     }
@@ -58,19 +59,14 @@ export default function AppHeader() {
       let data = await KuaidiService.auto(value);
       data =
         data && data.length > 0 ?
-          data.map(item => ({...item, postId: value})) :
+          data.map(item => ({...item, postId: value})).slice(0, 3) :
           [];
       setDataSrouce(data);
     } catch (error) {
       message.error(error.message);
       setDataSrouce([]);
     }
-  });
-
-  const handleSelect = item => {
-    console.log(item);
-    // Jump to detial
-  };
+  }, 200), []);
 
   return (
     <div className='app-header'>
@@ -84,7 +80,6 @@ export default function AppHeader() {
           optionLabelProp='text'
           dataSource={dataSource.map(renderOption)}
           onSearch={handleSearch}
-          onSelect={handleSelect}
         >
           <Input placeholder='输入快递单号' prefix={<Icon type='search' />} />
         </AutoComplete>
