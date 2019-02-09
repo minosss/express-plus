@@ -5,7 +5,10 @@
 
 ## What is this?
 
-本项目使用 `create-react-app` 创建，最初目的是使用 `react-scripts` 来处理打包问题。实际上，我需要在chrome的插件上访问资源，原有的功能无法实现这一点，需要自定义 webpack 配置打包。之前使用 vue 写到半路又转 react 纯属蛋疼，顺便用下 antd 和 hooks。再顺便尝试维护一个多端的项目如何。
+本项目使用 `create-react-app` 创建，最初目的是使用 `react-scripts` 来处理打包问题。<br>
+实际上，我需要在chrome的插件上访问资源，原有的功能无法实现这一点，需要自定义 webpack 配置打包。<br>
+在最后使用 webpack 的参数将文件写到磁盘，而不是通过 http 请求。<br>
+之前使用 vue 写到半路又转 react 纯属蛋疼，顺便用下 antd 和 hooks。再顺便尝试维护一个多端的项目如何。
 
 在原有的结构目录下来定义配置，设置也尽量使用 CRA 的原有设置。
 
@@ -24,6 +27,7 @@
 - ~~`write-file-webpack-plugin` 上面那个只把 html 写入到磁盘中，需要全部文件用这个，比如 `copy-webpack-plugin` 在 3.x 后已经不会在 devServer 下写入磁盘~~
 - `webextension-polyfill` 统一 Chrome 和 Firefox 的请求，并且让 API 支持 Promise，方便用 `async/await`。
 - `@ant-design/icons` 为了不全部打包图标文件，在 webpack 配置将图标路径指向到 `icons.js`，小了500KB
+- `lodash.debounce` 避免在输入快递单的时候多次请求接口
 
 ## Features
 
