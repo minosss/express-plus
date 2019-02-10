@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
-import KuaidiService from '../../services/kuaidi-service';
+import KuaidiService, {STATE_DELIVERED, STATE_IN_TRANSIT} from '../../services/kuaidi-service';
+import StorageService from '../../services/storage-service';
 
 async function runAutoUpdate() {
   const messages = await KuaidiService.update();
@@ -42,6 +43,7 @@ browser.storage.onChanged.addListener(({settings}, _) => {
   const {oldValue, newValue} = settings;
   if (newValue.enableAuto) {
     if (
+      !oldValue ||
       newValue.enableAuto !== oldValue.enableAuto ||
       newValue.autoInterval !== oldValue.autoInterval
     ) {
@@ -72,7 +74,7 @@ function handleUpdate_0112() {
     const preRawData = window.localStorage.getItem('ngStorage-marks');
     const preData = JSON.parse(preRawData);
     if (Array.isArray(preData)) {
-      preData.map(item => {
+      const favorites = preData.map(item => {
         return {
           postId: item.id,
           type: item.com,
@@ -81,9 +83,10 @@ function handleUpdate_0112() {
             time: item.time,
             context: item.text
           },
-          state: item.check ? '3' : '0'
+          state: item.check ? STATE_DELIVERED : STATE_IN_TRANSIT
         };
       });
+      StorageService.save({favorites});
     }
 
     showNotification({title: '版本升级', message: '全新的界面，数据迁移成功'});
