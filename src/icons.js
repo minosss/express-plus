@@ -8,6 +8,7 @@ export {
   SearchOutline,
   DeleteOutline,
   MenuOutline,
+  SmileOutline,
   ClockCircleOutline,
   DownOutline,
   CloseCircleFill,

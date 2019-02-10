@@ -4,6 +4,18 @@ import {Link} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import KuaidiService from '../../services/kuaidi-service';
 
+function getStoreUri() {
+  try {
+    // eslint-disable-next-line no-useless-escape
+    if (/(firefox)\/v?([\w\.]+)/i.test(window.navigator.userAgent)) {
+      return 'https://addons.mozilla.org/en-US/firefox/addon/express-plus/';
+    }
+  } catch (_) {
+  }
+
+  return 'https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg';
+}
+
 const menu = (
   <Menu>
     <Menu.Item key='0'>
@@ -23,6 +35,15 @@ const menu = (
         rel='noopener noreferrer'
       >
         <Icon type='github' /> 去 Github 报错
+      </a>
+    </Menu.Item>
+    <Menu.Item key='3'>
+      <a
+        href={getStoreUri()}
+        target='_blank'
+        rel='noopener noreferrer'
+      >
+        <Icon type='smile' /> 去商店评价
       </a>
     </Menu.Item>
   </Menu>
