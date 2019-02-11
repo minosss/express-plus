@@ -40,6 +40,10 @@ function showNotification({
 
 // TODO 改用 sendMessage 跟其它页面通信
 browser.storage.onChanged.addListener(({settings}, _) => {
+  if (!settings) {
+    return;
+  }
+
   const {oldValue, newValue} = settings;
   if (newValue.enableAuto) {
     if (
@@ -87,6 +91,7 @@ function handleUpdate_0112() {
         };
       });
       StorageService.save({favorites});
+      window.localStorage.removeItem('ngStorage-marks');
     }
 
     showNotification({title: '版本升级', message: '全新的界面，数据迁移成功'});
@@ -100,7 +105,7 @@ function handleUpdate_0112() {
 // -
 
 // 应用安装、更新、浏览器更新都会触发
-browser.runtime.onInstalled.addListener((reason, previousVersion) => {
+browser.runtime.onInstalled.addListener(({reason, previousVersion}) => {
   if (reason === 'update') {
     if (previousVersion === '0.1.12') {
       handleUpdate_0112();
