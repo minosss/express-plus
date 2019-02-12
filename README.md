@@ -1,7 +1,8 @@
 # 快递助手(Express+)
 
-![](https://flat.badgen.net/badge/license/MIT/blue)
+![License MIT](https://flat.badgen.net/badge/license/MIT/blue)
 [![XO code style](https://flat.badgen.net/badge/code%20style/XO/5ed9c7)](https://github.com/xojs/xo)
+[![Coverage Status](https://coveralls.io/repos/github/minosss/express-plus/badge.svg?branch=master)](https://coveralls.io/github/minosss/express-plus?branch=master)
 
 ## What is this?
 
