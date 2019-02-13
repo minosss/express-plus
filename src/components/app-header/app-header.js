@@ -34,7 +34,7 @@ const menu = (
         target='_blank'
         rel='noopener noreferrer'
       >
-        <Icon type='github' /> 去 Github 报错
+        <Icon type='github' /> 去 Github 报错 <Icon type='logout' />
       </a>
     </Menu.Item>
     <Menu.Item key='3'>
@@ -43,7 +43,7 @@ const menu = (
         target='_blank'
         rel='noopener noreferrer'
       >
-        <Icon type='smile' /> 去商店评价
+        <Icon type='smile' /> 去商店评价 <Icon type='logout' />
       </a>
     </Menu.Item>
   </Menu>
@@ -76,16 +76,27 @@ export default function AppHeader() {
       return;
     }
 
+    let data = [];
     try {
-      let data = await KuaidiService.auto(value);
+      data = await KuaidiService.auto(value);
       data =
         data && data.length > 0 ?
           data.map(item => ({...item, postId: value})).slice(0, 3) :
           [];
-      setDataSrouce(data);
     } catch (error) {
       message.error(error.message);
-      setDataSrouce([]);
+    }
+
+    if (data.length > 0) {
+      setDataSrouce(data.map(renderOption));
+    } else {
+      setDataSrouce([(
+        <AutoComplete.Option key='push-to-type-options' text={value}>
+          <Link to={`/select/${value}`}>
+            去选择快递
+          </Link>
+        </AutoComplete.Option>
+      )]);
     }
   }, 200), []);
 
@@ -99,7 +110,7 @@ export default function AppHeader() {
       <div className='end'>
         <AutoComplete
           optionLabelProp='text'
-          dataSource={dataSource.map(renderOption)}
+          dataSource={dataSource}
           onSearch={handleSearch}
         >
           <Input placeholder='输入快递单号' prefix={<Icon type='search' />} />

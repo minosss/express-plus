@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {Spin, Timeline, Divider, Button, Tooltip, Icon, message} from 'antd';
+import {Link} from 'react-router-dom';
 import {produce} from 'immer';
 import {useDispatch, useMappedState} from 'redux-react-hook';
 import TagGroup from '../components/tag-group';
@@ -136,7 +137,14 @@ export default function DetailView({match}) {
             <tbody>
               <tr>
                 <td>快递：</td>
-                <td>{KuaidiService.getCompanyName(result.type)}</td>
+                <td>
+                  {KuaidiService.getCompanyName(result.type)}
+                  <Tooltip title='选择快递'>
+                    <Link to={`/select/${result.postId}`} style={{marginLeft: 10}}>
+                      <Icon type='edit' />
+                    </Link>
+                  </Tooltip>
+                </td>
               </tr>
               <tr>
                 <td>状态：</td>

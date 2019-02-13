@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Redirect, Switch, Link} from 'react-router-dom';
+import {HashRouter as Router, Route, Switch, Link} from 'react-router-dom';
 import {Layout, Empty, message} from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -8,6 +8,7 @@ import AppHeader from './components/app-header';
 import FavoritesView from './views/favorites-view';
 import DetailView from './views/detail-view';
 import SettingView from './views/settings-view';
+import TypeOptionsView from './views/type-options-view';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -28,7 +29,6 @@ function App() {
         </Header>
         <Content>
           <Switch>
-            <Redirect from='/popup.html' to='/' />
             <Route
               exact
               path='/'
@@ -42,6 +42,10 @@ function App() {
             <Route
               path='/detail/:postId/:type'
               component={DetailView}
+            />
+            <Route
+              path='/select/:postId'
+              component={TypeOptionsView}
             />
             <Route
               render={() => (
