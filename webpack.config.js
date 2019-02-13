@@ -21,6 +21,7 @@ const lessRegex = /\.less$/;
 const lessModuleRegex = /\.module\.less$/;
 
 const isDev = process.env.NODE_ENV === 'development';
+const shouldUseSourceMap = isDev || process.env.GENERATE_SOURCEMAP !== 'false';
 const publicPath = isDev ? '/' : '/';
 
 function getStyleLoaders(cssOptions, preProcessor) {
@@ -50,7 +51,7 @@ function getStyleLoaders(cssOptions, preProcessor) {
             stage: 3
           })
         ],
-        sourceMap: !isDev
+        sourceMap: shouldUseSourceMap
       }
     }
   ].filter(Boolean);
@@ -58,7 +59,7 @@ function getStyleLoaders(cssOptions, preProcessor) {
     loaders.push({
       loader: preProcessor,
       options: {
-        sourceMap: !isDev,
+        sourceMap: shouldUseSourceMap,
         javascriptEnabled: true
       }
     });
@@ -85,7 +86,7 @@ const entry = {
 const config = {
   mode: isDev ? 'development' : 'production',
   bail: !isDev,
-  devtool: isDev ? 'eval-source-map' : 'source-map',
+  devtool: isDev ? 'eval-source-map' : shouldUseSourceMap && 'source-map',
   entry,
   output: {
     path: paths.appBuild,
@@ -152,7 +153,7 @@ const config = {
         exclude: cssModuleRegex,
         use: getStyleLoaders({
           importLoaders: 1,
-          sourceMap: !isDev
+          sourceMap: shouldUseSourceMap
         }),
         sideEffects: true
       },
@@ -163,7 +164,7 @@ const config = {
         use: getStyleLoaders(
           {
             importLoaders: 1,
-            sourceMap: !isDev
+            sourceMap: shouldUseSourceMap
           },
           'less-loader'
         ),
@@ -251,19 +252,19 @@ const config = {
         parallel: true,
         // Enable file caching
         cache: true,
-        sourceMap: true
+        sourceMap: shouldUseSourceMap
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: {
           parser: safePostCssParser,
-          map: {
+          map: shouldUseSourceMap ? {
             // `inline: false` forces the sourcemap to be output into a
             // separate file
             inline: false,
             // `annotation: true` appends the sourceMappingURL to the end of
             // the css file, helping the browser find the sourcemap
             annotation: true
-          }
+          } : false
         }
       })
     ],
