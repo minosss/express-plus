@@ -42,12 +42,19 @@
   <img src='./screenshots/1.png' width=280>
   <img src='./screenshots/2.png' width=280>
   <img src='./screenshots/3.png' width=280>
+  <img src='./screenshots/4.png' width=280>
 </div>
 
 ## Install
 
 - Chrome: [![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
 - Firefox: [![](https://flat.badgen.net/amo/v/express-plus)][amo]
+
+## Questions
+
+### 快递选择页面只有20多个，快递类型支持哪些？
+
+快递选择页面只是目前收集有中文的展示，并不是只支持那些。插件使用的快递100的接口 ，那边支持的就支持，不可避免会出现识别错误的情况（或者单号过期），这个时候可以自行选择快递。不过在日常使用中我并不需要太多快递类型，如果遇到需要增加的提交 Issue 或者欢迎 PR。
 
 ## License
 
