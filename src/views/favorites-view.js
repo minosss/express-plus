@@ -3,7 +3,7 @@ import {useDispatch, useMappedState} from 'redux-react-hook';
 import dayjs from 'dayjs';
 import {List, Icon, Tag, Popconfirm, message} from 'antd';
 import {Link} from 'react-router-dom';
-import KuaidiService from '../services/kuaidi-service';
+import KuaidiService, {STATE_DELIVERED} from '../services/kuaidi-service';
 import {DELETE_FAVORITE} from '../store/actions';
 
 // React.memo like pureComponent
@@ -14,18 +14,27 @@ const Tags = React.memo(({children, data}) => (
   </div>
 ));
 
+// 签收的往后排
+function sortFavorites(a, b) {
+  if (a.state !== STATE_DELIVERED && b.state === STATE_DELIVERED) {
+    return -1;
+  }
+
+  return 1;
+}
+
 export default function FavoritesView() {
   const mapState = useCallback(state => ({
-    favorites: state.favorites
+    sortedFavorites: state.favorites.sort(sortFavorites)
   }), []);
 
   const dispatch = useDispatch();
-  const {favorites} = useMappedState(mapState);
+  const {sortedFavorites} = useMappedState(mapState);
 
   return (
     <List
       className='favorites-list'
-      dataSource={favorites}
+      dataSource={sortedFavorites}
       renderItem={item => (
         <List.Item
           actions={[
