@@ -18,32 +18,37 @@ function getStoreUri() {
 
 const menu = (
   <Menu>
-    <Menu.Item key='0'>
+    <Menu.Item key='favorite'>
       <Link to='/'>
         <Icon type='inbox' /> 收藏列表
       </Link>
     </Menu.Item>
-    <Menu.Item key='1'>
+    <Menu.Item key='history'>
+      <Link to='/history'>
+        <Icon type='clock-circle' /> 查询记录
+      </Link>
+    </Menu.Item>
+    <Menu.Item key='setting'>
       <Link to='/settings'>
         <Icon type='setting' /> 设置
       </Link>
     </Menu.Item>
-    <Menu.Item key='2'>
+    <Menu.Item key='github'>
       <a
         href='https://github.com/minosss/express-plus/issues'
         target='_blank'
         rel='noopener noreferrer'
       >
-        <Icon type='github' /> 去 Github 报错 <Icon type='logout' />
+        <Icon type='github' /> 去 Github 报错 <Icon type='export' />
       </a>
     </Menu.Item>
-    <Menu.Item key='3'>
+    <Menu.Item key='store'>
       <a
         href={getStoreUri()}
         target='_blank'
         rel='noopener noreferrer'
       >
-        <Icon type='smile' /> 去商店评价 <Icon type='logout' />
+        <Icon type='smile' /> 去商店评价 <Icon type='export' />
       </a>
     </Menu.Item>
   </Menu>

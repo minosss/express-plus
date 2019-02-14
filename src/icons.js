@@ -13,6 +13,7 @@ export {
   DownOutline,
   CloseCircleFill,
   CheckCircleFill,
-  LogoutOutline,
-  EditOutline
+  ExportOutline,
+  EditOutline,
+  RightOutline
 } from '@ant-design/icons';

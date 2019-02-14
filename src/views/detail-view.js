@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import {produce} from 'immer';
 import {useDispatch, useMappedState} from 'redux-react-hook';
 import TagGroup from '../components/tag-group';
-import KuaidiService from '../services/kuaidi-service';
+import KuaidiService, {STATE_ERROR} from '../services/kuaidi-service';
 import FavoriteModel from '../model/favorite-model';
 import {
   DELETE_FAVORITE,
@@ -41,35 +41,41 @@ export default function DetailView({match}) {
   const [result, setResult] = useState({postId, type, ...defaultData});
 
   async function queryData() {
-    try {
-      setIsLoading(true);
-      const jsonData = await KuaidiService.query(postId, type);
-      const nextResult = produce(result, draft => {
-        Object.keys(jsonData).forEach(key => {
-          draft[key] = jsonData[key];
-        });
+    // try {
+    setIsLoading(true);
+    const jsonData = await KuaidiService.query(postId, type);
+    const nextResult = produce(result, draft => {
+      Object.keys(jsonData).forEach(key => {
+        draft[key] = jsonData[key];
       });
-      setIsLoading(false);
-      setResult(nextResult);
-      // 如果已经收藏的，查询后需要更新最新消息
-      if (isFavorite) {
-        if (
-          nextResult.data &&
-          nextResult.data.length > 0 &&
-          nextResult.data[0].time !== nextResult.lastestData.time
-        ) {
-          // 全覆盖更新
-          dispatch({
-            type: UPDATE_FAVORITE,
-            favorite: FavoriteModel.fromObject(nextResult).update()
-          });
-        }
-      }
-    } catch (error) {
-      setIsLoading(false);
-      setResult({postId, type, state: '999'});
-      message.error(error.message);
+    });
+    setIsLoading(false);
+    setResult(nextResult);
+
+    if (jsonData.state === STATE_ERROR) {
+      message.error(jsonData.message);
+      return;
     }
+
+    // 如果已经收藏的，查询后需要更新最新消息
+    if (isFavorite) {
+      if (
+        nextResult.data &&
+        nextResult.data.length > 0 &&
+        nextResult.data[0].time !== nextResult.lastestData.time
+      ) {
+        // 全覆盖更新
+        dispatch({
+          type: UPDATE_FAVORITE,
+          favorite: FavoriteModel.fromObject(nextResult).update()
+        });
+      }
+    }
+    // } catch (error) {
+    //   setIsLoading(false);
+    //   setResult({postId, type, state: '999'});
+    //   message.error(error.message);
+    // }
   }
 
   useEffect(() => {

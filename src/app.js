@@ -9,6 +9,7 @@ import FavoritesView from './views/favorites-view';
 import DetailView from './views/detail-view';
 import SettingView from './views/settings-view';
 import TypeOptionsView from './views/type-options-view';
+import HistoryView from './views/history-view';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -46,6 +47,10 @@ function App() {
             <Route
               path='/select/:postId'
               component={TypeOptionsView}
+            />
+            <Route
+              path='/history'
+              component={HistoryView}
             />
             <Route
               render={() => (

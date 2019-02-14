@@ -75,6 +75,26 @@ a, a:focus {
       font-size: 12px;
     }
   }
+
+  &.history-list {
+    .ant-list-item {
+      position: relative;
+    }
+
+    .ant-list-item-content {
+      flex-grow: 0;
+    }
+
+    .ant-list-item-mask {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+  }
 }
 
 .ant-empty-image {
@@ -83,7 +103,6 @@ a, a:focus {
 
 .content {
   padding: @content-padding;
-  width: 100%;
 }
 
 // app-header

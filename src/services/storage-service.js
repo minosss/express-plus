@@ -10,6 +10,8 @@ const defaultData = {
   favorites: []
 };
 
+const HISTORY_KEY = 'ep-history';
+
 export default class StorageService {
   static async save(data) {
     const savedData = await browser.storage.local.set(data);
@@ -50,5 +52,40 @@ export default class StorageService {
     }
 
     return false;
+  }
+
+  static isLocalStoreAvailable() {
+    return window && window.localStorage;
+  }
+
+  static saveHistory({postId, type, state, data}) {
+    if (StorageService.isLocalStoreAvailable()) {
+      const historyData = JSON.parse(window.localStorage.getItem(HISTORY_KEY)) || [];
+      if (historyData && Array.isArray(historyData)) {
+        const newItem = {postId, type, state};
+        if (data && data.length > 0) {
+          newItem.time = data[0].time;
+          newItem.context = data[0].context;
+        }
+
+        // 已单号为标准，删除本来的记录
+        const index = historyData.findIndex(h => h.postId === postId);
+        if (index !== -1) {
+          historyData.splice(index, 1);
+        }
+
+        historyData.unshift(newItem);
+        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
+      }
+    }
+  }
+
+  static getAllHistory() {
+    if (StorageService.isLocalStoreAvailable()) {
+      const historyData = JSON.parse(window.localStorage.getItem(HISTORY_KEY));
+      return historyData && Array.isArray(historyData) ? historyData : [];
+    }
+
+    return [];
   }
 }

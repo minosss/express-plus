@@ -36,12 +36,12 @@ const GroupedMap = React.memo(props => {
 export default function TypeOptionsView({match, history}) {
   const {postId} = match.params;
   const handlePush = useCallback(e => {
-    const comType = e.target.dataset.type;
-    if (comType === undefined) {
+    const {type} = e.target.dataset;
+    if (type === undefined) {
       return;
     }
 
-    history.push(`/detail/${postId}/${comType}`);
+    history.push(`/detail/${postId}/${type}`);
   }, [postId]);
 
   return (

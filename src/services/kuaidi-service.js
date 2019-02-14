@@ -94,21 +94,30 @@ export default class KuaidiService {
 
   /**
    * 查询快递
-   * @param {string} postid 快递单号
+   * @param {string} postId 快递单号
    * @param {string} type 快递类型
+   * @param {boolean} saveHistory 保存记录
    * @returns {FavoriteModel} 收藏
    */
-  static async query(postid, type) {
+  static async query(postId, type, saveHistory = true) {
     const data = await api
       .get('query', {
         searchParams: {
           type,
-          postid,
+          postid: postId,
           temp: Math.random()
         }
       })
       .json()
-      .then(json => FavoriteModel.fromJson(json));
+      .then(json => FavoriteModel.fromJson(json))
+      .catch(error => {
+        return {postId, type, state: STATE_ERROR, message: error.message};
+      });
+
+    if (saveHistory) {
+      StorageService.saveHistory(data);
+    }
+
     return data;
   }
 
@@ -126,7 +135,7 @@ export default class KuaidiService {
         favorites,
         async ({postId, type, lastestData, tags}) => {
           try {
-            const result = await KuaidiService.query(postId, type);
+            const result = await KuaidiService.query(postId, type, false);
             if (
               Array.isArray(result.data) &&
               result.data.length > 0 &&

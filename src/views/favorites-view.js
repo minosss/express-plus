@@ -1,10 +1,11 @@
 import React, {useCallback} from 'react';
 import {useDispatch, useMappedState} from 'redux-react-hook';
-import dayjs from 'dayjs';
 import {List, Icon, Tag, Popconfirm, message} from 'antd';
 import {Link} from 'react-router-dom';
-import KuaidiService, {STATE_DELIVERED} from '../services/kuaidi-service';
+import {STATE_DELIVERED} from '../services/kuaidi-service';
 import {DELETE_FAVORITE} from '../store/actions';
+import TypeTag from '../components/type-tag';
+import LatestMessage from '../components/latest-message';
 
 // React.memo like pureComponent
 const Tags = React.memo(({children, data}) => (
@@ -76,12 +77,9 @@ export default function FavoritesView() {
             title={item.postId}
             description={
               <div>
-                <p>
-                  {dayjs(item.lastestData.time).fromNow()}{' '}
-                  <Icon type='clock-circle' /> {item.lastestData.context}
-                </p>
+                <LatestMessage {...item.lastestData} />
                 <Tags data={item.tags}>
-                  <Tag color='geekblue'>{KuaidiService.getCompanyName(item.type)}</Tag>
+                  <TypeTag type={item.type} />
                 </Tags>
               </div>
             }
