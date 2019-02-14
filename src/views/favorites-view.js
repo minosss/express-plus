@@ -1,4 +1,5 @@
 import React, {useCallback} from 'react';
+import dayjs from 'dayjs';
 import {useDispatch, useMappedState} from 'redux-react-hook';
 import {List, Icon, Tag, Popconfirm, message} from 'antd';
 import {Link} from 'react-router-dom';
@@ -17,16 +18,28 @@ const Tags = React.memo(({children, data}) => (
 
 // 签收的往后排
 function sortFavorites(a, b) {
+  let r = 1;
   if (a.state !== STATE_DELIVERED && b.state === STATE_DELIVERED) {
-    return -1;
+    r = -1;
   }
 
-  return 1;
+  const aMsg = a.latestMessage || a.lastestData;
+  const bMsg = b.latestMessage || b.lastestData;
+  if (aMsg && bMsg) {
+    if (dayjs(aMsg.time).isAfter(dayjs(bMsg.time))) {
+      r = -1;
+    } else {
+      r = 1;
+    }
+  }
+
+  return r;
 }
 
 export default function FavoritesView() {
   const mapState = useCallback(state => ({
-    sortedFavorites: state.favorites.sort(sortFavorites)
+    // 可能直接弄个copy不太好
+    sortedFavorites: state.favorites.slice().sort(sortFavorites)
   }), []);
 
   const dispatch = useDispatch();

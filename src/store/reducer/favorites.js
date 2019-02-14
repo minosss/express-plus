@@ -10,7 +10,7 @@ export default function favorites(state = [], action) {
     switch (action.type) {
       case CREATE_FAVORITE:
         if (!isExist) {
-          draft.push(action.favorite);
+          draft.push({...action.favorite});
         }
 
         return;
