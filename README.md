@@ -35,6 +35,7 @@
 - 自动识别单号
 - 自动查询更新信息
 - 桌面提醒
+- 查询记录
 
 ## Screenshots
 
@@ -43,6 +44,7 @@
   <img src='./screenshots/2.png' width=280>
   <img src='./screenshots/3.png' width=280>
   <img src='./screenshots/4.png' width=280>
+  <img src='./screenshots/5.png' width=280>
 </div>
 
 ## Install
