@@ -1,17 +1,18 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {List, Icon} from 'antd';
+import dayjs from 'dayjs';
+import {List} from 'antd';
 import TypeTag from '../components/type-tag';
 import StorageService from '../services/storage-service';
 import LatestMessage from '../components/latest-message';
 
-function renderItem({postId, type, time, context}) {
+function renderItem({postId, type, latestMessage, updatedAt}) {
   return (
     <List.Item key={`${postId}-${type}`}>
       <List.Item.Meta
         title={<>{postId}{' '}<TypeTag type={type} /></>}
-        description={<LatestMessage time={time} context={context} />}
+        description={<LatestMessage {...latestMessage} />}
       />
-      <Icon type='right' />
+      {updatedAt && dayjs(updatedAt).fromNow()}
       <div className='ant-list-item-mask' data-post-id={postId} data-type={type} />
     </List.Item>
   );

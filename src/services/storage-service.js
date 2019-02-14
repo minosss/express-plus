@@ -58,14 +58,16 @@ export default class StorageService {
     return window && window.localStorage;
   }
 
-  static saveHistory({postId, type, state, data}) {
+  static saveHistory({postId, type, state, data, updatedAt}) {
     if (StorageService.isLocalStoreAvailable()) {
       const historyData = JSON.parse(window.localStorage.getItem(HISTORY_KEY)) || [];
       if (historyData && Array.isArray(historyData)) {
-        const newItem = {postId, type, state};
+        const newItem = {postId, type, state, updatedAt};
         if (data && data.length > 0) {
-          newItem.time = data[0].time;
-          newItem.context = data[0].context;
+          newItem.latestMessage = {
+            time: data[0].time,
+            context: data[0].context
+          };
         }
 
         // 已单号为标准，删除本来的记录

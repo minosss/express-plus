@@ -114,6 +114,9 @@ export default class KuaidiService {
         return {postId, type, state: STATE_ERROR, message: error.message};
       });
 
+    // -
+    data.updatedAt = Date.now();
+
     if (saveHistory) {
       StorageService.saveHistory(data);
     }
