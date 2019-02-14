@@ -17,7 +17,7 @@ export default class FavoriteModel {
       postId,
       type,
       state,
-      lastestData:
+      latestMessage:
         data && data.length > 0 ?
           {time: data[0].time, context: data[0].context} :
           {

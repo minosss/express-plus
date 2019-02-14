@@ -77,7 +77,7 @@ export default function FavoritesView() {
             title={item.postId}
             description={
               <div>
-                <LatestMessage {...item.lastestData} />
+                <LatestMessage {...(item.latestMessage || item.lastestData)} />
                 <Tags data={item.tags}>
                   <TypeTag type={item.type} />
                 </Tags>
