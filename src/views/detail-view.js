@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {Spin, Timeline, Divider, Button, Tooltip, Icon, message} from 'antd';
+import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert} from 'antd';
 import {Link} from 'react-router-dom';
 import {produce} from 'immer';
 import {useDispatch, useMappedState} from 'redux-react-hook';
@@ -41,7 +41,6 @@ export default function DetailView({match}) {
   const [result, setResult] = useState({postId, type, ...defaultData});
 
   async function queryData() {
-    // try {
     setIsLoading(true);
     const jsonData = await KuaidiService.query(postId, type);
     const nextResult = produce(result, draft => {
@@ -53,7 +52,6 @@ export default function DetailView({match}) {
     setResult(nextResult);
 
     if (jsonData.state === STATE_ERROR) {
-      message.error(jsonData.message);
       return;
     }
 
@@ -71,11 +69,6 @@ export default function DetailView({match}) {
         });
       }
     }
-    // } catch (error) {
-    //   setIsLoading(false);
-    //   setResult({postId, type, state: '999'});
-    //   message.error(error.message);
-    // }
   }
 
   useEffect(() => {
@@ -166,6 +159,7 @@ export default function DetailView({match}) {
           </table>
         </div>
         <Divider />
+        {result.message && <Alert message={result.message} type='warning' />}
         <TimelineList data={result.data || []} />
       </div>
     </Spin>

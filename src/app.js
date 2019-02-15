@@ -16,7 +16,8 @@ dayjs.extend(relativeTime);
 
 message.config({
   top: 288,
-  maxCount: 1
+  maxCount: 1,
+  duration: 2
 });
 
 const {Content, Header} = Layout;
