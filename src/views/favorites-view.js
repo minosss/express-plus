@@ -8,6 +8,15 @@ import {DELETE_FAVORITE} from '../store/actions';
 import TypeTag from '../components/type-tag';
 import LatestMessage from '../components/latest-message';
 
+const MetaTitle = React.memo(({postId, state}) => {
+  return (
+    <>
+      {postId}{' '}
+      {state === STATE_DELIVERED && <Icon type='check' style={{color: '#23d160'}} />}
+    </>
+  );
+});
+
 // React.memo like pureComponent
 const Tags = React.memo(({children, data}) => (
   <div>
@@ -87,7 +96,7 @@ export default function FavoritesView() {
           ]}
         >
           <List.Item.Meta
-            title={item.postId}
+            title={<MetaTitle postId={item.postId} state={item.state} />}
             description={
               <div>
                 <LatestMessage {...(item.latestMessage || item.lastestData)} />
