@@ -60,7 +60,7 @@ export default function DetailView({match}) {
       if (
         nextResult.data &&
         nextResult.data.length > 0 &&
-        nextResult.data[0].time !== nextResult.lastestData.time
+        nextResult.data[0].time !== nextResult.latestMessage.time
       ) {
         // 全覆盖更新
         dispatch({

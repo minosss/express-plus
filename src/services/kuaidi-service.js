@@ -136,13 +136,13 @@ export default class KuaidiService {
       // -
       let messages = await pMap(
         favorites,
-        async ({postId, type, lastestData, tags}) => {
+        async ({postId, type, latestMessage, tags}) => {
           try {
             const result = await KuaidiService.query(postId, type, false);
             if (
               Array.isArray(result.data) &&
               result.data.length > 0 &&
-              result.data[0].time !== lastestData.time
+              result.data[0].time !== latestMessage.time
             ) {
               const nextFavorite = FavoriteModel.fromObject(result);
               nextFavorite.tags = tags;

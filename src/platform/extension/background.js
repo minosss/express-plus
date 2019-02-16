@@ -10,7 +10,7 @@ async function runAutoUpdate() {
     const items = messages.map(msg => {
       return {
         title: msg.postId,
-        message: msg.lastestData.context
+        message: msg.latestMessage.context
       };
     });
 
@@ -83,7 +83,7 @@ function handleUpdate_0112() {
           postId: item.id,
           type: item.com,
           tags: item.tags,
-          lastestData: {
+          latestMessage: {
             time: item.time,
             context: item.text
           },
