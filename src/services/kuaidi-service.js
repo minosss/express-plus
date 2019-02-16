@@ -162,7 +162,7 @@ export default class KuaidiService {
       messages = messages.filter(msg => msg !== null);
 
       // 是否开启过滤未签收快递
-      if (await StorageService.shouldFilterChecked()) {
+      if (await StorageService.shouldFilterDelivered()) {
         messages = messages.filter(msg => msg.state === '3');
       }
 
