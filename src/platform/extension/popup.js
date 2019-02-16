@@ -3,6 +3,7 @@ import {render} from 'react-dom';
 import {StoreContext} from 'redux-react-hook';
 import * as serviceWorker from '../../serviceWorker';
 import App from '../../app';
+import withSentry from '../../sentry';
 import StorageService from '../../services/storage-service';
 import store from '../../store';
 import './style.less';
@@ -15,10 +16,14 @@ async function launch() {
     StorageService.save(state);
   });
 
-  render(
+  const Root = withSentry(() => (
     <StoreContext.Provider value={store}>
       <App />
-    </StoreContext.Provider>,
+    </StoreContext.Provider>
+  ));
+
+  render(
+    <Root />,
     document.querySelector('#root')
   );
 }

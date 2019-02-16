@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^1.1.16",
+    "@sentry/browser": "^4.6.1",
     "antd": "^3.13.2",
     "dayjs": "^1.8.5",
     "immer": "^2.0.0",
