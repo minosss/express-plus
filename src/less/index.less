@@ -163,3 +163,36 @@ a, a:focus {
   font-size: 1.2em;
   text-align: center;
 }
+
+.detail-data-timeline {
+  .ant-timeline-item {
+    color: #666;
+
+    .timedot {
+      color: #666;
+    }
+
+    &.is-active {
+      color: #222;
+      .timedot {
+        color: #222;
+      }
+    }
+  }
+
+  .ant-timeline-item-tail {
+    left: 28px;
+  }
+
+  .ant-timeline-item-content {
+    top: 0;
+    margin-left: 72px;
+    min-height: 42px;
+  }
+
+  .ant-timeline-item-head-custom {
+    top: 0;
+    left: 28px;
+    transform: translateX(-50%);
+  }
+}

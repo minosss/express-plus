@@ -13,17 +13,26 @@ import {
   UPDATE_FAVORITE
 } from '../store/actions';
 
+const TimeDot = React.memo(({time}) => {
+  const ary = time.split(' ');
+  return (
+    <div className='timedot'>
+      {ary[1]}<br />
+      <small>{ary[0]}</small>
+    </div>
+  );
+});
+
 const TimelineList = React.memo(({data}) => (
-  <Timeline>
+  <Timeline className='detail-data-timeline'>
     {data.map((item, index) => (
       <Timeline.Item
         // eslint-disable-next-line react/no-array-index-key
         key={`list-item-${index}`}
-        color={index === 0 ? '#222' : '#666'}
+        dot={<TimeDot time={item.time} />}
+        className={index === 0 ? 'is-active' : ''}
       >
-        <span style={{color: index === 0 ? '#222' : '#666'}}>
-          {item.context}
-        </span>
+        {item.context}
       </Timeline.Item>
     ))}
   </Timeline>
