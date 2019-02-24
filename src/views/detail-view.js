@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert} from 'antd';
 import {Link} from 'react-router-dom';
 import {produce} from 'immer';
@@ -45,18 +45,22 @@ export default function DetailView({match}) {
 
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(Boolean(defaultData));
 
+  const isFavorite = Boolean(defaultData);
   const [result, setResult] = useState({postId, type, ...defaultData});
 
-  async function queryData() {
+  async function queryData(force = false) {
+    let preResult = result;
+
     setIsLoading(true);
+    if (force) {
+      preResult = {postId, type, ...defaultData};
+      setResult(preResult);
+    }
+
     const jsonData = await KuaidiService.query(postId, type);
-    const nextResult = produce(result, draft => {
-      Object.keys(jsonData).forEach(key => {
-        draft[key] = jsonData[key];
-      });
-    });
+    const nextResult = {...preResult, ...jsonData};
+
     setIsLoading(false);
     setResult(nextResult);
 
@@ -81,9 +85,9 @@ export default function DetailView({match}) {
   }
 
   useEffect(() => {
-    queryData();
+    queryData(true);
     return () => {};
-  }, [type]);
+  }, [postId, type]);
 
   const handleToggleFavorite = () => {
     const nextIsFavorite = !isFavorite;
@@ -95,8 +99,6 @@ export default function DetailView({match}) {
     } else {
       dispatch({type: DELETE_FAVORITE, postId});
     }
-
-    setIsFavorite(nextIsFavorite);
   };
 
   const handleRefresh = () => {

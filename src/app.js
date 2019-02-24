@@ -42,14 +42,17 @@ function App() {
               component={SettingView}
             />
             <Route
+              exact
               path='/detail/:postId/:type'
               component={DetailView}
             />
             <Route
+              exact
               path='/select/:postId'
               component={TypeOptionsView}
             />
             <Route
+              exact
               path='/history'
               component={HistoryView}
             />
