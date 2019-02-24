@@ -29,6 +29,19 @@ a, a:focus {
     > .ant-layout-content {
       overflow-y: auto;
       overflow-x: hidden;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #efefef;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #ccc;
+      }
+
     }
   }
 }
