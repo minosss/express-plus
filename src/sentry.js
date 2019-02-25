@@ -1,6 +1,14 @@
 import React from 'react';
 import * as Sentry from '@sentry/browser';
 
+const useSentry = process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN;
+
+if (useSentry) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN
+  });
+}
+
 class SentryBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -23,11 +31,7 @@ class SentryBoundary extends React.Component {
 }
 
 export default function withSentry(App) {
-  if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
-    Sentry.init({
-      dsn: process.env.SENTRY_DSN
-    });
-
+  if (useSentry) {
     return (
       <SentryBoundary>
         <App />
