@@ -112,3 +112,23 @@ browser.runtime.onInstalled.addListener(({reason, previousVersion}) => {
     }
   }
 });
+
+function onBeforeSendHeaders(details) {
+  for (let i = 0; i < details.requestHeaders.length; i++) {
+    if (details.requestHeaders[i].name === 'Referer') {
+      details.requestHeaders.splice(i, 1);
+    }
+  }
+
+  details.requestHeaders.push({
+    name: 'Referer',
+    value: 'https://biz.trace.ickd.cn/'
+  });
+  return {
+    requestHeaders: details.requestHeaders
+  };
+}
+
+browser.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
+  urls: ['https://biz.trace.ickd.cn/*']
+}, ['requestHeaders', 'blocking']);

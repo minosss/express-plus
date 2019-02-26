@@ -25,7 +25,10 @@
     "storage",
     "notifications",
     "unlimitedStorage",
-    "https://www.kuaidi100.com/*"
+    "webRequestBlocking",
+    "webRequest",
+    "https://www.kuaidi100.com/*",
+    "https://biz.trace.ickd.cn/*"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
 }

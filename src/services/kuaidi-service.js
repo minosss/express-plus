@@ -1,7 +1,8 @@
-import ky from 'ky';
 import pMap from 'p-map';
+import pRetry from 'p-retry';
 import FavoriteModel from '../model/favorite-model';
 import StorageService from './storage-service';
+import kuaidiApis from './kuaidi';
 
 // TODO 把代码映射放到独立文件
 export const comCodeMap = {
@@ -58,11 +59,26 @@ export const statusMap = {
   604: '非法访问:IP禁止访问'
 };
 
-const api = ky.extend({
-  prefixUrl: 'https://www.kuaidi100.com'
-});
-
 let updating = false;
+
+function makeRetryApis(method) {
+  const filteredApis = kuaidiApis.filter(api => api[method] && typeof api[method] === 'function');
+
+  let index = 0;
+  const retryFn = async (...args) => {
+    const api = filteredApis[index++];
+    const data = await api[method](...args);
+    return data;
+  };
+
+  return (...args) => {
+    index = 0;
+    return pRetry(() => retryFn(...args), {retries: filteredApis.length - 1});
+  };
+}
+
+const retryAuto = makeRetryApis('auto');
+const retryQuery = makeRetryApis('query');
 
 // 所有跟快递服务器相关的处理
 export default class KuaidiService {
@@ -80,16 +96,8 @@ export default class KuaidiService {
    * @returns {array} 数组，返回可能的快递类型
    */
   static async auto(number) {
-    const data = await api
-      .get('autonumber/autoComNum', {
-        searchParams: {
-          resultv2: 1,
-          text: number
-        }
-      })
-      .json();
-
-    return data.autoDest || data.auto || [];
+    const data = await retryAuto(number);
+    return data;
   }
 
   /**
@@ -100,28 +108,18 @@ export default class KuaidiService {
    * @returns {FavoriteModel} 收藏
    */
   static async query(postId, type, saveHistory = true) {
-    const data = await api
-      .get('query', {
-        searchParams: {
-          type,
-          postid: postId,
-          temp: Math.random()
-        }
-      })
-      .json()
-      .then(json => FavoriteModel.fromJson(json))
-      .catch(error => {
-        return {postId, type, state: STATE_ERROR, message: error.message};
-      });
+    try {
+      const data = await retryQuery(postId, type);
+      data.updatedAt = Date.now();
 
-    // -
-    data.updatedAt = Date.now();
+      if (saveHistory) {
+        StorageService.saveHistory(data);
+      }
 
-    if (saveHistory) {
-      StorageService.saveHistory(data);
+      return data;
+    } catch (error) {
+      return {postId, type, state: STATE_ERROR, message: error.message};
     }
-
-    return data;
   }
 
   // TODO 改为订阅形式，比如传入个callback或者可订阅快递的更新事件
