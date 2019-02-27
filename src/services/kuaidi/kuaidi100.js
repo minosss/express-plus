@@ -20,13 +20,19 @@ class Kuaidi100 extends BaseApi {
   }
 
   async query(postId, type) {
+    const searchParams = {
+      type,
+      postid: postId,
+      temp: Math.random()
+    };
+
+    if (type === 'shunfeng') {
+      searchParams.phone = 1111;
+    }
+
     const data = await this.request
       .get('query', {
-        searchParams: {
-          type,
-          postid: postId,
-          temp: Math.random()
-        }
+        searchParams
       })
       .json();
 
