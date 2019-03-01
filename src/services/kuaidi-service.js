@@ -2,38 +2,7 @@ import pMap from 'p-map';
 import pRetry from 'p-retry';
 import FavoriteModel from '../model/favorite-model';
 import StorageService from './storage-service';
-import kuaidiApis from './kuaidi';
-
-// TODO 把代码映射放到独立文件
-export const comCodeMap = {
-  shunfeng: '顺丰',
-  zhaijisong: '宅急送',
-  zhongtong: '中通',
-  yuantong: '圆通',
-  yunda: '韵达',
-  shentong: '申通',
-  tiantian: '天天',
-  quanfengkuaidi: '全峰快递',
-  debangwuliu: '德邦物流',
-  jd: '京东物流',
-  ems: 'EMS',
-  emsen: 'EMS(EN)',
-  emsguoji: 'EMS国际',
-  youzhengguoji: '邮政国际',
-  youzhengguonei: '邮政国内',
-  usp: 'USP',
-  usps: 'USPS',
-  dhlde: 'DHL(DE)',
-  dhlen: 'DHL(EN)',
-  dhl: 'DHL',
-  ecmsglobal: 'ECMS',
-  ecmscn: '易客满',
-  wanxiangwuliu: '万象物流',
-  xinbangwuliu: '新邦物流',
-  rufengda: '如风达',
-  baishiwuliu: '百世快运',
-  youshuwuliu: '优速快递'
-};
+import kuaidiApis, {codeMap} from './kuaidi';
 
 // 状态码
 export const STATE_IN_TRANSIT = '0';
@@ -82,8 +51,8 @@ const retryQuery = makeRetryApis('query');
 
 // 所有跟快递服务器相关的处理
 export default class KuaidiService {
-  static getCompanyName(comCode) {
-    return comCodeMap[comCode] || comCode;
+  static getCompanyName(code) {
+    return codeMap[code] ? codeMap[code].name : code;
   }
 
   static getStateLabel(state) {

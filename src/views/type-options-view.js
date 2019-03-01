@@ -1,30 +1,19 @@
 import React, {useCallback} from 'react';
 import {Tag} from 'antd';
-import {comCodeMap} from '../services/kuaidi-service';
+import {groupedCodeMap} from '../services/kuaidi';
 
 const leters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 const GroupedMap = React.memo(props => {
-  const data = Object.keys(comCodeMap).reduce((result, curr) => {
-    const char = curr[0];
-    if (Array.isArray(result[char])) {
-      result[char].push(curr);
-    } else {
-      result[char] = [curr];
-    }
-
-    return result;
-  }, {});
-
   return (
     <div {...props}>
       {leters.map(key => {
-        return data[key] ?
+        return groupedCodeMap[key] ?
           <div key={`group-${key}`} className='company-group'>
             <h3 className='company-group-label'>{key}</h3>
             <div className='company-group-content'>
-              {data[key].map(code => (
-                <Tag key={`tag-${code}`} data-type={code}>{comCodeMap[code]}</Tag>
+              {groupedCodeMap[key].map(({code, name}) => (
+                <Tag key={`tag-${code}`} data-type={code}>{name || code}</Tag>
               ))}
             </div>
           </div> : null;
