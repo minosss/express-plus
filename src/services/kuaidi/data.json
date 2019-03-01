@@ -1,0 +1,122 @@
+[{
+  "name": "顺丰速运",
+  "code": "shunfeng",
+  "homepage": "http://www.sf-express.com",
+  "phone": "95338"
+}, {
+  "name": "宅急送",
+  "code": "zhaijisong",
+  "homepage": "http://www.zjs.com.cn",
+  "phone": "400-6789-000"
+}, {
+  "name": "京东物流",
+  "code": "jd",
+  "homepage": "http://www.jdwl.com",
+  "phone": "950616"
+}, {
+  "name": "中通快递",
+  "code": "zhongtong",
+  "homepage": "http://www.zto.cn",
+  "phone": "95311"
+}, {
+  "name": "圆通速递",
+  "code": "yuantong",
+  "homepage": "http://www.yto.net.cn",
+  "phone": "95554"
+}, {
+  "code": "yunda",
+  "name": "韵达",
+  "phone": "95546"
+}, {
+  "code": "shentong",
+  "name": "申通",
+  "phone": "95543"
+}, {
+  "code": "tiantian",
+  "name": "天天",
+  "phone": "400-188-8888",
+  "homepage": "http://www.ttkdex.com"
+}, {
+  "code": "quanfengkuaidi",
+  "name": "全峰快递",
+  "phone": "400-100-0001",
+  "homepage": "http://www.qfkd.com.cn"
+}, {
+  "code": "debangwuliu",
+  "name": "德邦快递",
+  "phone": "95353",
+  "homepage": "http://www.deppon.com"
+}, {
+  "code": "ems",
+  "name": "EMS",
+  "phone": "11183",
+  "homepage": "http://www.ems.com.cn"
+}, {
+  "code": "emsen",
+  "name": "EMS(EN)"
+}, {
+  "code": "emsguoji",
+  "name": "EMS国际",
+  "phone": "11183",
+  "homepage": "http://www.ems.com.cn"
+}, {
+  "code": "youzhengguoji",
+  "name": "邮政国际",
+  "phone": "11185",
+  "homepage": "http://intmail.183.com.cn"
+}, {
+  "code": "youzhengguonei",
+  "name": "邮政国内",
+  "phone": "11183",
+  "homepage": "http://yjcx.chinapost.com.cn"
+}, {
+  "code": "ups",
+  "name": "UPS",
+  "phone": "400-820-8388",
+  "homepage": "http://www.ups.com/cn"
+}, {
+  "code": "usps",
+  "name": "USPS美国邮政",
+  "phone": "1-800-275-8777",
+  "homepage": "https://zh.usps.com"
+}, {
+  "code": "dhlde",
+  "name": "DHL德国"
+}, {
+  "code": "dhlen",
+  "name": "DHL国际"
+}, {
+  "code": "dhl",
+  "name": "DHL",
+  "phone": "95380",
+  "homepage": "http://www.cn.dhl.com"
+}, {
+  "code": "ecmsglobal",
+  "name": "ECMS"
+}, {
+  "code": "ecmscn",
+  "name": "易客满",
+  "phone": "",
+  "homepage": "http://www.ecmsglobal.com"
+}, {
+  "code": "wanxiangwuliu",
+  "name": "万象物流"
+}, {
+  "code": "xinbangwuliu",
+  "name": "新邦物流"
+}, {
+  "code": "rufengda",
+  "name": "如风达",
+  "phone": "400-010-6660",
+  "homepage": "http://www.rufengda.com"
+}, {
+  "code": "baishiwuliu",
+  "name": "百世快运",
+  "phone": "400-8856-561",
+  "homepage": "http://www.800best.com"
+}, {
+  "code": "youshuwuliu",
+  "name": "优速快递",
+  "phone": "95349",
+  "homepage": "http://www.uce.cn"
+}]
