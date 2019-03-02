@@ -1,11 +1,14 @@
 import {produce} from 'immer';
 import browser from 'webextension-polyfill';
 
+const MAX_RECENT_HISTORY = 1000;
+
 const defaultData = {
   settings: {
     enableAuto: false,
     autoInterval: 30,
-    enableFilterDelivered: false
+    enableFilterDelivered: false,
+    recentHistory: 100
   },
   favorites: []
 };
@@ -58,9 +61,9 @@ export default class StorageService {
     return window && window.localStorage;
   }
 
-  static saveHistory({postId, type, state, data, updatedAt}) {
+  static async saveHistory({postId, type, state, data, updatedAt}) {
     if (StorageService.isLocalStoreAvailable()) {
-      const historyData = JSON.parse(window.localStorage.getItem(HISTORY_KEY)) || [];
+      let historyData = JSON.parse(window.localStorage.getItem(HISTORY_KEY)) || [];
       if (historyData && Array.isArray(historyData)) {
         const newItem = {postId, type, state, updatedAt};
         if (data && data.length > 0) {
@@ -77,6 +80,10 @@ export default class StorageService {
         }
 
         historyData.unshift(newItem);
+        //
+        const {recentHistory} = await StorageService.get('settings');
+        historyData = historyData.slice(0, Math.min(recentHistory, MAX_RECENT_HISTORY));
+
         window.localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
       }
     }
@@ -89,5 +96,11 @@ export default class StorageService {
     }
 
     return [];
+  }
+
+  static cleanAllHistory() {
+    if (StorageService.isLocalStoreAvailable()) {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify([]));
+    }
   }
 }

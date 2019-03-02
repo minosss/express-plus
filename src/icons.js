@@ -15,5 +15,6 @@ export {
   CheckCircleFill,
   ExportOutline,
   EditOutline,
-  CheckOutline
+  CheckOutline,
+  ExclamationCircleOutline
 } from '@ant-design/icons';
