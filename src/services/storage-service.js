@@ -1,6 +1,7 @@
 import {produce} from 'immer';
 import browser from 'webextension-polyfill';
 
+const DEFAULT_RECENT_HISTORY = 100;
 const MAX_RECENT_HISTORY = 1000;
 
 const defaultData = {
@@ -8,7 +9,7 @@ const defaultData = {
     enableAuto: false,
     autoInterval: 30,
     enableFilterDelivered: false,
-    recentHistory: 100
+    recentHistory: DEFAULT_RECENT_HISTORY
   },
   favorites: []
 };
@@ -27,8 +28,8 @@ export default class StorageService {
   }
 
   static async shouldFilterDelivered() {
-    const {enableFilterDelivered} = await StorageService.get('settings');
-    return Boolean(enableFilterDelivered);
+    const {settings} = await StorageService.get('settings');
+    return Boolean(settings.enableFilterDelivered);
   }
 
   static async getQueryFavorites() {
@@ -81,7 +82,8 @@ export default class StorageService {
 
         historyData.unshift(newItem);
         //
-        const {recentHistory} = await StorageService.get('settings');
+        const settings = await StorageService.get('settings');
+        const recentHistory = settings.recentHistory || DEFAULT_RECENT_HISTORY;
         historyData = historyData.slice(0, Math.min(recentHistory, MAX_RECENT_HISTORY));
 
         window.localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
