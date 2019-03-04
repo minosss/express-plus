@@ -40,9 +40,9 @@ function makeRetryApis(method) {
     return data;
   };
 
-  return (...args) => {
+  return args => {
     index = 0;
-    return pRetry(() => retryFn(...args), {retries: filteredApis.length - 1});
+    return pRetry(() => retryFn(args), {retries: filteredApis.length - 1});
   };
 }
 
@@ -65,20 +65,19 @@ export default class KuaidiService {
    * @returns {array} 数组，返回可能的快递类型
    */
   static async auto(number) {
-    const data = await retryAuto(number);
+    const data = await retryAuto({number});
     return data;
   }
 
   /**
    * 查询快递
-   * @param {string} postId 快递单号
-   * @param {string} type 快递类型
+   * @param {object} params 查询参数
    * @param {boolean} saveHistory 保存记录
    * @returns {FavoriteModel} 收藏
    */
-  static async query(postId, type, saveHistory = true) {
+  static async query({postId, type, phone}, saveHistory = true) {
     try {
-      const data = await retryQuery(postId, type);
+      const data = await retryQuery({postId, type, phone});
       data.updatedAt = Date.now();
 
       if (saveHistory) {
@@ -103,9 +102,9 @@ export default class KuaidiService {
       // -
       let messages = await pMap(
         favorites,
-        async ({postId, type, latestMessage, tags}) => {
+        async ({postId, type, phone, latestMessage, tags}) => {
           try {
-            const result = await KuaidiService.query(postId, type, false);
+            const result = await KuaidiService.query({postId, type, phone}, false);
             if (
               Array.isArray(result.data) &&
               result.data.length > 0 &&

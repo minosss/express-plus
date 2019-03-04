@@ -29,7 +29,10 @@ export default function HistoryView({history}) {
   const handlePush = useCallback(e => {
     const {postId, type} = e.target.dataset;
     if (postId && type) {
-      history.push(`/detail/${postId}/${type}`);
+      history.push({
+        pathname: '/detail',
+        search: `?postId=${postId}&type=${type}`
+      });
     }
   });
 

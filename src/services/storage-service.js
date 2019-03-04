@@ -61,11 +61,11 @@ export default class StorageService {
     return window && window.localStorage;
   }
 
-  static async saveHistory({postId, type, state, data, updatedAt}) {
+  static async saveHistory({postId, type, phone, state, data, updatedAt}) {
     if (StorageService.isLocalStoreAvailable()) {
       let historyData = JSON.parse(window.localStorage.getItem(HISTORY_KEY)) || [];
       if (historyData && Array.isArray(historyData)) {
-        const newItem = {postId, type, state, updatedAt};
+        const newItem = {postId, type, phone, state, updatedAt};
         if (data && data.length > 0) {
           newItem.latestMessage = {
             time: data[0].time,

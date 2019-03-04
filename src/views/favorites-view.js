@@ -61,7 +61,13 @@ export default function FavoritesView() {
       renderItem={item => (
         <List.Item
           actions={[
-            <Link key='action-search' to={`/detail/${item.postId}/${item.type}`}>
+            <Link
+              key='action-search'
+              to={{
+                pathname: '/detail',
+                search: `?postId=${item.postId}&type=${item.type}&phone=${item.phone || ''}`
+              }}
+            >
               <Icon type='search' />
             </Link>,
             // <a
@@ -79,8 +85,6 @@ export default function FavoritesView() {
               placement='left'
               title='确认删除？'
               okType='danger'
-              okText='确定'
-              cancelText='取消'
               onConfirm={() => {
                 dispatch({
                   type: DELETE_FAVORITE,

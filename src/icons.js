@@ -16,5 +16,7 @@ export {
   ExportOutline,
   EditOutline,
   CheckOutline,
-  ExclamationCircleOutline
+  ExclamationCircleOutline,
+  CloseOutline,
+  QuestionCircleOutline
 } from '@ant-design/icons';

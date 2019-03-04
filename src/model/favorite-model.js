@@ -11,11 +11,12 @@ export default class FavoriteModel {
 
   // 转到保存数据
   static fromObject(obj) {
-    const {postId, type, state, data, tags} = obj;
+    const {postId, type, phone, state, data, tags} = obj;
 
     return Object.assign(this.placeholder(), {
       postId,
       type,
+      phone,
       state,
       latestMessage:
         data && data.length > 0 ?

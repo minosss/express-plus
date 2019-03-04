@@ -24,8 +24,6 @@ export default function SettingsView() {
       title: '清空查询记录',
       content: '清空全部查询记录，此操作无法撤销',
       okType: 'danger',
-      okText: '确定',
-      cancelText: '取消',
       onOk() {
         return StorageService.cleanAllHistory();
       },

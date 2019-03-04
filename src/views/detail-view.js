@@ -1,9 +1,11 @@
-import React, {useState, useEffect, useCallback, useMemo} from 'react';
-import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert} from 'antd';
+import React, {useState, useEffect, useCallback} from 'react';
+import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert, Modal} from 'antd';
 import {Link} from 'react-router-dom';
 import {produce} from 'immer';
 import {useDispatch, useMappedState} from 'redux-react-hook';
+import queryString from 'query-string';
 import TagGroup from '../components/tag-group';
+import VerificationCodeInput from '../components/verification-code-input';
 import KuaidiService, {STATE_ERROR} from '../services/kuaidi-service';
 import FavoriteModel from '../model/favorite-model';
 import {
@@ -38,8 +40,16 @@ const TimelineList = React.memo(({data}) => (
   </Timeline>
 ));
 
-export default function DetailView({match}) {
-  const {postId, type} = match.params;
+export default function DetailView({location, history}) {
+  const {postId, type, phone} = queryString.parse(location.search);
+
+  // -
+  if (!postId || !type) {
+    history.goBack();
+    return;
+  }
+  // -
+
   const selectFavoriteByPostId = useCallback(state => state.favorites.find(f => f.postId === postId), [postId]);
   const defaultData = useMappedState(selectFavoriteByPostId);
 
@@ -47,18 +57,61 @@ export default function DetailView({match}) {
   const [isLoading, setIsLoading] = useState(true);
 
   const isFavorite = Boolean(defaultData);
-  const [result, setResult] = useState({postId, type, ...defaultData});
+  const [result, setResult] = useState({postId, type, phone, ...defaultData});
+
+  const showPhoneInputModel = useCallback(e => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    let inputVal;
+    Modal.confirm({
+      width: 340,
+      centered: true,
+      title: '请输入收/寄件人联系方式后四位',
+      content: (
+        <>
+          <p>查询顺丰快递需要提供联系方式后四位</p>
+          <VerificationCodeInput onComplete={val => {
+            inputVal = val;
+          }} />
+        </>
+      ),
+      onOk() {
+        history.push({
+          pathname: '/detail',
+          search: `?postId=${postId}&type=${type}&phone=${inputVal}`
+        });
+      },
+      onCancel() {
+        setIsLoading(false);
+      }
+    });
+  }, [postId, type]);
 
   async function queryData(force = false) {
     let preResult = result;
 
     setIsLoading(true);
     if (force) {
-      preResult = {postId, type, ...defaultData};
+      preResult = {postId, type, phone, ...defaultData};
       setResult(preResult);
     }
 
-    const jsonData = await KuaidiService.query(postId, type);
+    if (type === 'shunfeng' && !phone) {
+      if (preResult.phone === '') {
+        showPhoneInputModel();
+      } else {
+        history.push({
+          pathname: '/detail',
+          search: `?postId=${postId}&type=${type}&phone=${preResult.phone}`
+        });
+      }
+
+      return;
+    }
+
+    const jsonData = await KuaidiService.query({postId, type, phone});
     const nextResult = {...preResult, ...jsonData};
 
     setIsLoading(false);
@@ -87,7 +140,7 @@ export default function DetailView({match}) {
   useEffect(() => {
     queryData(true);
     return () => {};
-  }, [postId, type]);
+  }, [postId, type, phone]);
 
   const handleToggleFavorite = () => {
     const nextIsFavorite = !isFavorite;
@@ -105,7 +158,7 @@ export default function DetailView({match}) {
     queryData();
   };
 
-  const updateTags = useCallback(tags => {
+  const updateTags = tags => {
     setResult(
       produce(result, draft => {
         draft.tags = tags;
@@ -115,7 +168,7 @@ export default function DetailView({match}) {
     if (isFavorite) {
       dispatch({type: UPDATE_TAGS, postId, tags});
     }
-  });
+  };
 
   return (
     <Spin tip='加载中' spinning={isLoading}>
@@ -156,6 +209,19 @@ export default function DetailView({match}) {
                   </Tooltip>
                 </td>
               </tr>
+              {type === 'shunfeng' && (
+                <tr>
+                  <td>验证码：</td>
+                  <td>
+                    {result.phone}
+                    <Tooltip title='输入验证码'>
+                      <a href='#' style={{marginLeft: 10}} onClick={showPhoneInputModel}>
+                        <Icon type='edit' />
+                      </a>
+                    </Tooltip>
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td>状态：</td>
                 <td>{KuaidiService.getStateLabel(result.state)}</td>

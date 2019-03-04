@@ -6,7 +6,7 @@ class Kuaidi100 extends BaseApi {
     this.name = 'kuaidi100';
   }
 
-  async auto(postId) {
+  async auto({postId}) {
     const data = await this.request
       .get('autonumber/autoComNum', {
         searchParams: {
@@ -19,7 +19,7 @@ class Kuaidi100 extends BaseApi {
     return data.autoDest || data.auto || [];
   }
 
-  async query(postId, type) {
+  async query({postId, type, phone}) {
     const searchParams = {
       type,
       postid: postId,
@@ -27,7 +27,7 @@ class Kuaidi100 extends BaseApi {
     };
 
     if (type === 'shunfeng') {
-      searchParams.phone = 1111;
+      searchParams.phone = phone;
     }
 
     const data = await this.request
