@@ -63,6 +63,36 @@
 ~~顺丰官网更新后加了腾讯的[验证码](https://cloud.tencent.com/product/captcha)判断，导致无法直接调用。目前也不知道kuaidi100跟顺丰是否有谈合作，或者自行解析验证码问题。目前添加了另外一个查询接口来支持顺丰快递。~~ <br>
 kuaidi100接口添加了phone参数来针对顺丰的查询，需要在查询的时候输入寄/收件人联系方式后4位来作为验证码。查询顺丰时会弹出窗口，或者可以点击验证码编辑按钮重新输入。
 
+### 旧数据迁移或丢失问题 (0.1.12)
+
+升级的判断出现了问题，所以可能有人的数据并没有转换到新的储存方式，旧的数据储存在 `localStorage`
+
+1. 点击图标打开
+2. 右键点击 `检查(inspect)`
+3. 复制下面的代码到 Console 回车执行
+4. 重新打开
+
+```js
+const oldData = window.localStorage.getItem('ngStorage-marks');
+if (oldData) {
+  const list = JSON.parse(oldData)
+  const favorites = list.map(item => {
+    return {
+      postId: item.id,
+      type: item.com,
+      tags: item.tags,
+      latestMessage: {
+        time: item.time,
+        context: item.text
+      },
+      state: item.check ? '3' : '0'
+    };
+  });
+  chrome.storage.local.set({favorites});
+}
+window.localStorage.removeItem('ngStorage-marks');
+```
+
 ## License
 
 MIT, [License](LICENSE)
