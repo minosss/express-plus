@@ -45,7 +45,7 @@ export default function DetailView({location, history}) {
 
   // -
   if (!postId || !type) {
-    history.goBack();
+    history.push('/');
     return;
   }
   // -
