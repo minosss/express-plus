@@ -61,11 +61,11 @@ export default class KuaidiService {
 
   /**
    * 自动识别
-   * @param {string} number 快递单号
+   * @param {string} postId 快递单号
    * @returns {array} 数组，返回可能的快递类型
    */
-  static async auto(number) {
-    const data = await retryAuto({number});
+  static async auto(postId) {
+    const data = await retryAuto({postId});
     return data;
   }
 
