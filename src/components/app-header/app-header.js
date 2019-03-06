@@ -60,7 +60,12 @@ function renderOption(item, index) {
       key={`${item.postId}-${item.comCode}-${index}`}
       text={item.postId}
     >
-      <Link to={`/detail/${item.postId}/${item.comCode}`}>
+      <Link
+        to={{
+          pathname: '/detail',
+          search: `?postId=${item.postId}&type=${item.comCode}`
+        }}
+      >
         <div className='auto-option'>
           <div className='auto-postid'>{item.postId}</div>
           <div className='auto-type'>

@@ -30,7 +30,10 @@ export default function TypeOptionsView({match, history}) {
       return;
     }
 
-    history.push(`/detail/${postId}/${type}`);
+    history.push({
+      pathname: '/detail',
+      search: `?postId=${postId}&type=${type}`
+    });
   }, [postId]);
 
   return (
