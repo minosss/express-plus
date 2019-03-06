@@ -16,14 +16,58 @@ const defaultData = {
 
 const HISTORY_KEY = 'ep-history';
 
+let listenerInstalled = false;
+const areaName = 'local';
+const watchers = {};
+const storage = browser.storage[areaName];
+
 export default class StorageService {
+  static onStorageChanged(changes, areaName) {
+    for (const watcher of Object.values(watchers[areaName])) {
+      const map = {};
+      const keys = watcher.keys === '*' ? Object.keys(changes) : Array.isArray(watcher.keys) ? watcher.keys : [watcher.keys];
+
+      for (const key of keys) {
+        if (changes[key]) {
+          map[key] = changes[key].newValue;
+        }
+      }
+
+      watcher.callback(map);
+    }
+  }
+
+  static watch(keys, callback = () => {}) {
+    if (!watchers[areaName]) {
+      watchers[areaName] = {};
+    }
+
+    const area = watchers[areaName];
+
+    let id = Date.now().toString();
+    while (area[id]) {
+      id = Date.now().toString();
+    }
+
+    area[id] = {keys, callback};
+
+    if (!listenerInstalled) {
+      browser.storage.onChanged.addListener(StorageService.onStorageChanged);
+      listenerInstalled = true;
+    }
+
+    return () => {
+      delete area[id];
+    };
+  }
+
   static async save(data) {
-    const savedData = await browser.storage.local.set(data);
+    const savedData = await storage.set(data);
     return savedData;
   }
 
   static async get(data = defaultData) {
-    const savedData = await browser.storage.local.get(data);
+    const savedData = await storage.get(data);
     return savedData;
   }
 
