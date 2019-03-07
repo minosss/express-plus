@@ -2,7 +2,9 @@
 
 ![License MIT](https://flat.badgen.net/badge/license/MIT/blue)
 [![XO code style](https://flat.badgen.net/badge/code%20style/XO/5ed9c7)](https://github.com/xojs/xo)
-[![Coverage Status](https://coveralls.io/repos/github/minosss/express-plus/badge.svg?branch=master)](https://coveralls.io/github/minosss/express-plus?branch=master)
+[![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+[![](https://flat.badgen.net/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+[![](https://flat.badgen.net/chrome-web-store/rating/hghlokkgbicmblinhepcibacaiegldeg)][cws]
 
 ## What is this?
 
@@ -49,8 +51,7 @@
 
 ## Install
 
-- Chrome: [![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
-- Firefox: [![](https://flat.badgen.net/amo/v/express-plus)][amo]
+[![](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)][cws]
 
 ## Questions
 
