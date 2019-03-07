@@ -4,9 +4,8 @@
   "scripts": {
     "start": "node scripts/start",
     "build": "node scripts/build",
-    "release": "run-s build update-version release-*",
-    "release-amo": "cd build && web-ext-submit",
-    "update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; dot-json build/manifest.json content_security_policy --delete",
+    "release": "run-s build update-version",
+    "update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; dot-json build/manifest.json content_security_policy --delete; zip -r $VERSION.zip build;",
     "lint": "xo",
     "lint-fix": "xo --fix"
   },
