@@ -4,8 +4,9 @@ import * as Sentry from '@sentry/browser';
 const useSentry = process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN;
 
 if (useSentry) {
+  console.log('init sentry');
   Sentry.init({
-    dsn: process.env.SENTRY_DSN
+    dsn: process.env.APP_SENTRY_DSN
   });
 }
 
@@ -32,7 +33,7 @@ class SentryBoundary extends React.Component {
 
 export default function withSentry(App) {
   if (useSentry) {
-    return (
+    return () => (
       <SentryBoundary>
         <App />
       </SentryBoundary>

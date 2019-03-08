@@ -68,6 +68,8 @@ function getStyleLoaders(cssOptions, preProcessor) {
   return loaders;
 }
 
+const ENV_REGEX = /^APP_/i;
+
 const env = {
   PUBLIC_URL: publicPath.slice(0, -1)
 };
@@ -174,7 +176,7 @@ const config = {
   },
   plugins: [
     // 先清除发布目录
-    new CleanWebpackPlugin([paths.appBuild]),
+    new CleanWebpackPlugin(),
     // 根据入口文件需要生成多个 html
     ...Object.keys(entry).map(
       file =>
@@ -185,6 +187,14 @@ const config = {
           filename: `${file}.html`
         })
     ),
+    new webpack.DefinePlugin({
+      'process.env': Object.keys(process.env)
+        .filter(key => ENV_REGEX.test(key))
+        .reduce((env, key) => {
+          env[key] = JSON.stringify(process.env[key]);
+          return env;
+        }, {})
+    }),
     // 替换 html 的参数，比如 %PUBLIC_URL%
     // require html-webpack-plugin 4.x
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, env),
