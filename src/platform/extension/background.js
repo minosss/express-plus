@@ -114,21 +114,27 @@ browser.runtime.onInstalled.addListener(({reason, previousVersion}) => {
 });
 
 function onBeforeSendHeaders(details) {
+  let referer;
+
   for (let i = 0; i < details.requestHeaders.length; i++) {
     if (details.requestHeaders[i].name === 'Referer') {
-      details.requestHeaders.splice(i, 1);
+      referer = details.requestHeaders.splice(i, 1);
     }
   }
 
-  details.requestHeaders.push({
-    name: 'Referer',
-    value: 'https://biz.trace.ickd.cn/'
-  });
+  if (referer && referer.length > 0) {
+    const url = new URL(referer[0].value);
+    details.requestHeaders.push({
+      name: 'Referer',
+      value: url.origin
+    });
+  }
+
   return {
     requestHeaders: details.requestHeaders
   };
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
-  urls: ['https://biz.trace.ickd.cn/*']
+  urls: ['https://biz.trace.ickd.cn/*', 'https://m.kuaidi100.com/*']
 }, ['requestHeaders', 'blocking']);

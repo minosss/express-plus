@@ -28,6 +28,11 @@ const menu = (
         <Icon type='clock-circle' /> 查询记录
       </Link>
     </Menu.Item>
+    <Menu.Item key='deliver'>
+      <Link to='/deliver'>
+        <Icon type='team' /> 寄快递
+      </Link>
+    </Menu.Item>
     <Menu.Item key='setting'>
       <Link to='/settings'>
         <Icon type='setting' /> 设置

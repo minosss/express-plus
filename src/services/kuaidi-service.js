@@ -48,6 +48,7 @@ function makeRetryApis(method) {
 
 const retryAuto = makeRetryApis('auto');
 const retryQuery = makeRetryApis('query');
+const retryDeliver = makeRetryApis('deliver');
 
 // 所有跟快递服务器相关的处理
 export default class KuaidiService {
@@ -57,6 +58,11 @@ export default class KuaidiService {
 
   static getStateLabel(state) {
     return stateMap[state] || state;
+  }
+
+  static async deliver(params) {
+    const data = await retryDeliver(params);
+    return data;
   }
 
   /**

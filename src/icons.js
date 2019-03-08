@@ -18,5 +18,10 @@ export {
   CheckOutline,
   ExclamationCircleOutline,
   CloseOutline,
-  QuestionCircleOutline
+  QuestionCircleOutline,
+  InfoCircleFill,
+  PhoneOutline,
+  EnvironmentOutline,
+  LoadingOutline,
+  TeamOutline
 } from '@ant-design/icons';

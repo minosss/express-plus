@@ -21,6 +21,7 @@
     "page": "background.html"
   },
   "permissions": [
+    "geolocation",
     "alarms",
     "storage",
     "notifications",
@@ -28,6 +29,7 @@
     "webRequestBlocking",
     "webRequest",
     "https://www.kuaidi100.com/*",
+    "https://m.kuaidi100.com/*",
     "https://biz.trace.ickd.cn/*"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"

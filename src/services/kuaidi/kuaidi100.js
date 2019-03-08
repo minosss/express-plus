@@ -6,6 +6,27 @@ class Kuaidi100 extends BaseApi {
     this.name = 'kuaidi100';
   }
 
+  async deliver({latitude, longitude}) {
+    const body = new URLSearchParams();
+    body.append('latitude', latitude);
+    body.append('longitude', longitude);
+    body.append('apiversion', 7);
+    body.append('platform', 'MWWW');
+
+    const data = await this.request.post('apicenter/kdmkt.do', {
+      body,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      prefixUrl: 'https://m.kuaidi100.com',
+      searchParams: {
+        method: 'queryMyMkt'
+      }
+    }).json();
+
+    return data;
+  }
+
   async auto({postId}) {
     const data = await this.request
       .get('autonumber/autoComNum', {

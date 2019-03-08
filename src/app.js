@@ -11,6 +11,7 @@ import DetailView from './views/detail-view';
 import SettingView from './views/settings-view';
 import TypeOptionsView from './views/type-options-view';
 import HistoryView from './views/history-view';
+import DeliverView from './views/deliver-view';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -57,6 +58,11 @@ function App() {
                 exact
                 path='/history'
                 component={HistoryView}
+              />
+              <Route
+                exact
+                path='/deliver'
+                component={DeliverView}
               />
               <Route
                 render={() => (
