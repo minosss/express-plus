@@ -91,6 +91,7 @@ function DeliverView() {
   useEffect(() => {
     const {latitude, longitude} = params;
 
+    setState(state => ({...state, loading: true}));
     if (latitude && longitude) {
       KuaidiService.deliver({latitude, longitude})
         .then(({data}) => {
@@ -106,11 +107,13 @@ function DeliverView() {
   const renderItem = item => (
     <List.Item>
       <List.Item.Meta
-        title={item.name || item.mktName}
+        title={<span>{item.name || item.mktName} <Icon type='phone' /> {item.phone}</span>}
         description={
           (
             <div>
-              <span><Icon type='phone' /> {item.phone}</span>
+              <span>
+                {item.address}
+              </span>
               <div>
                 {item.comlist.map((tag, idx) => <TypeTag key={`comlist-${idx}`} type={tag.kuaidiCom} />)}
               </div>
