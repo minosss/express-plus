@@ -1,8 +1,8 @@
-/* eslint react/no-array-index-key: 1, promise/prefer-await-to-then: 1 */
+/* eslint react/no-array-index-key: 1 */
 import React, {memo, useCallback, useEffect, useState, useRef} from 'react';
 import {Spin, List, Tag, Icon, AutoComplete, Input, Typography, message} from 'antd';
 import debounce from 'lodash.debounce';
-import {useAsync} from '../hooks';
+import {useAsync, useGeolocation} from '../hooks';
 import TypeTag from '../components/type-tag';
 import KuaidiService from '../services/kuaidi-service';
 import * as amap from '../services/amap';
@@ -20,12 +20,19 @@ const OptionContent = memo(({item}) => {
 });
 
 const AmapInput = ({onPositionChange = () => {}}) => {
-  const latestPosition = useRef();
+  const latestPosition = useRef(null);
   const [state, set] = useState({loading: false, disabled: false, data: []});
 
   const setState = useCallback(value => {
     set(state => ({...state, ...value}));
   }, []);
+
+  const dispatchPositionChanged = useCallback(({latitude, longitude}) => {
+    if (latitude && longitude) {
+      latestPosition.current = {latitude, longitude};
+      onPositionChange(latestPosition.current);
+    }
+  }, [onPositionChange]);
 
   const handleSearch = debounce(async keywords => {
     if (keywords.length >= 2) {
@@ -33,9 +40,9 @@ const AmapInput = ({onPositionChange = () => {}}) => {
       const data = await amap.inputtips({keywords});
       if (data.status === '1') {
         setState({loading: false, data: data.tips});
-      } else if (data.info !== 'OK') {
+      } else {
         message.error(`amap: ${data.info} (${data.infocode})`);
-        setState({loading: false});
+        setState({loading: false, data: []});
       }
     }
   }, 1000);
@@ -44,51 +51,33 @@ const AmapInput = ({onPositionChange = () => {}}) => {
     const values = value.split(',');
     if (values.length === 2) {
       const position = {longitude: values[0], latitude: values[1]};
-      latestPosition.current = position;
-      onPositionChange(position);
+      dispatchPositionChanged(position);
     }
   };
 
+  const position = useGeolocation({timeout: 5000});
+
   useEffect(() => {
-    // geolocation 是异步的，这里用promise来处理返回的结果
-    // 可是当请求还未完成的时候切换到其他页面时，这个页面会被卸载，页面都没了调用页面的方法就会报错
-    // 这里用mounted来判断页面是否还存在
-    let mounted = true;
-    if (navigator.geolocation) {
-      setState({loading: true, disabled: true});
-      navigator.geolocation.getCurrentPosition(position => {
-        if (mounted) {
-          latestPosition.current = position;
-          onPositionChange(position);
-        }
-      }, () => {
-        if (mounted) {
-          if (latestPosition.current) {
-            message.info('使用上次定位数据');
-            onPositionChange(latestPosition.current);
-          } else {
-            message.info('无法定位，请手动输入关键字搜索');
-          }
+    const {longitude, latitude, error} = position;
 
-          setState({loading: false, disabled: false});
-        }
-      }, {timeout: 5000});
+    if (error) {
+      if (latestPosition.current) {
+        message.info('使用上次定位数据');
+        dispatchPositionChanged(latestPosition.current);
+      } else {
+        message.info('无法定位，请手动输入关键字搜索');
+      }
     } else {
-      message.info('无法定位，请手动输入关键字搜索');
-      setState({loading: false, disabled: false});
+      dispatchPositionChanged({longitude, latitude});
     }
-
-    return () => {
-      mounted = false;
-    };
-  }, [onPositionChange, setState]);
+  }, [position, dispatchPositionChanged]);
 
   return (
     <AutoComplete
       style={{
         width: 350
       }}
-      disabled={state.disabled}
+      disabled={position.loading}
       optionLabelProp='text'
       dataSource={state.data.map((item, index) => (
         <AutoComplete.Option key={`tips-${item.id}-${index}`} text={item.name} value={`${item.location}`}>
@@ -98,7 +87,7 @@ const AmapInput = ({onPositionChange = () => {}}) => {
       onSearch={handleSearch}
       onSelect={handleSelect}
     >
-      <Input placeholder='输入地址关键字' prefix={<Icon type={state.loading ? 'loading' : 'environment'} />} />
+      <Input placeholder={position.loading ? '定位中' : '输入地址关键字'} prefix={<Icon type={(position.loading || state.loading) ? 'loading' : 'environment'} />} />
     </AutoComplete>
   );
 };
@@ -107,6 +96,7 @@ function DeliverView() {
   // 查询所需的参数
   const [params, setParams] = useState({});
   const handlePositionChange = useCallback(position => {
+    console.log(position);
     setParams(position);
   }, []);
 
