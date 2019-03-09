@@ -176,7 +176,9 @@ const config = {
   },
   plugins: [
     // 先清除发布目录
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanStaleWebpackAssets: false
+    }),
     // 根据入口文件需要生成多个 html
     ...Object.keys(entry).map(
       file =>
