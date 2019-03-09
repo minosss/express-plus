@@ -1,9 +1,9 @@
 import React, {useState, useRef} from 'react';
 import {Input, Tag, Icon} from 'antd';
 
-function TagGroup({tags = [], editable = false, onChange = () => {}}) {
+function TagGroup({defaultTags = [], editable = false, onChange = () => {}}) {
   const [addNew, setAddNew] = useState(false);
-  // Const [tags, setTags] = useState(defaultTags);
+  const [tags, setTags] = useState(defaultTags);
   const inputRef = useRef(null);
 
   const handleClose = removedTag => {
@@ -16,7 +16,7 @@ function TagGroup({tags = [], editable = false, onChange = () => {}}) {
     const inputValue = inputRef.current.input.value;
     if (inputValue && tags.indexOf(inputValue) === -1) {
       const nextTags = [...tags, inputValue];
-      // SetTags(nextTags);
+      setTags(nextTags);
       onChange(nextTags);
     }
 

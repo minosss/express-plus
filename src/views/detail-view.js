@@ -1,12 +1,11 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert, Modal} from 'antd';
 import {Link} from 'react-router-dom';
-import {produce} from 'immer';
 import {useDispatch, useMappedState} from 'redux-react-hook';
 import queryString from 'query-string';
 import TagGroup from '../components/tag-group';
 import VerificationCodeInput from '../components/verification-code-input';
-import KuaidiService, {STATE_ERROR} from '../services/kuaidi-service';
+import KuaidiService from '../services/kuaidi-service';
 import FavoriteModel from '../model/favorite-model';
 import {
   DELETE_FAVORITE,
@@ -14,6 +13,7 @@ import {
   UPDATE_TAGS,
   UPDATE_FAVORITE
 } from '../store/actions';
+import {useAsync} from '../hooks';
 
 const TimeDot = React.memo(({time}) => {
   const ary = time.split(' ');
@@ -43,21 +43,50 @@ const TimelineList = React.memo(({data}) => (
 export default function DetailView({location, history}) {
   const {postId, type, phone} = queryString.parse(location.search);
 
-  // -
-  if (!postId || !type) {
-    history.push('/');
-    return;
-  }
-  // -
-
+  // 获取收藏
   const selectFavoriteByPostId = useCallback(state => state.favorites.find(f => f.postId === postId), [postId]);
   const defaultData = useMappedState(selectFavoriteByPostId);
-
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-
   const isFavorite = Boolean(defaultData);
-  const [result, setResult] = useState({postId, type, phone, ...defaultData});
+
+  const {loading, value} = useAsync(async () => {
+    if (!postId || !type) {
+      history.push('/');
+      return Promise.resolve();
+    }
+
+    if (type === 'shunfeng' && !phone) {
+      if (defaultData && defaultData.phone) {
+        history.push({
+          pathname: '/detail',
+          search: `?postId=${postId}&type=${type}&phone=${defaultData.phone}`
+        });
+        return Promise.resolve();
+      }
+
+      showPhoneInputModel();
+      return Promise.resolve({postId, type});
+    }
+
+    const jsonData = await KuaidiService.query({postId, type, phone});
+    const nextResult = {...defaultData, ...jsonData};
+
+    if (isFavorite) {
+      if (
+        nextResult.data &&
+        nextResult.data.length > 0 &&
+        nextResult.data[0].time !== nextResult.latestMessage.time
+      ) {
+        // 全覆盖更新
+        dispatch({
+          type: UPDATE_FAVORITE,
+          favorite: FavoriteModel.fromObject(nextResult).update()
+        });
+      }
+    }
+
+    return Promise.resolve(nextResult);
+  }, [type, postId, phone]);
 
   const showPhoneInputModel = useCallback(e => {
     if (e) {
@@ -84,63 +113,10 @@ export default function DetailView({location, history}) {
         });
       },
       onCancel() {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     });
-  }, [postId, type]);
-
-  async function queryData(force = false) {
-    let preResult = result;
-
-    setIsLoading(true);
-    if (force) {
-      preResult = {postId, type, phone, ...defaultData};
-      setResult(preResult);
-    }
-
-    if (type === 'shunfeng' && !phone) {
-      if (preResult.phone === '') {
-        showPhoneInputModel();
-      } else {
-        history.push({
-          pathname: '/detail',
-          search: `?postId=${postId}&type=${type}&phone=${preResult.phone}`
-        });
-      }
-
-      return;
-    }
-
-    const jsonData = await KuaidiService.query({postId, type, phone});
-    const nextResult = {...preResult, ...jsonData};
-
-    setIsLoading(false);
-    setResult(nextResult);
-
-    if (jsonData.state === STATE_ERROR) {
-      return;
-    }
-
-    // 如果已经收藏的，查询后需要更新最新消息
-    if (isFavorite) {
-      if (
-        nextResult.data &&
-        nextResult.data.length > 0 &&
-        nextResult.data[0].time !== nextResult.latestMessage.time
-      ) {
-        // 全覆盖更新
-        dispatch({
-          type: UPDATE_FAVORITE,
-          favorite: FavoriteModel.fromObject(nextResult).update()
-        });
-      }
-    }
-  }
-
-  useEffect(() => {
-    queryData(true);
-    return () => {};
-  }, [postId, type, phone]);
+  }, [postId, type, history]);
 
   const handleToggleFavorite = () => {
     const nextIsFavorite = !isFavorite;
@@ -154,28 +130,23 @@ export default function DetailView({location, history}) {
     }
   };
 
-  const handleRefresh = () => {
-    queryData();
-  };
+  const handleRefresh = useCallback(() => {}, []);
 
   const updateTags = tags => {
-    setResult(
-      produce(result, draft => {
-        draft.tags = tags;
-      })
-    );
     // TODO 跟更新合并只更新个别属性
     if (isFavorite) {
       dispatch({type: UPDATE_TAGS, postId, tags});
     }
   };
 
+  const result = {postId, type, ...value};
+
   return (
-    <Spin tip='加载中' spinning={isLoading}>
+    <Spin tip='加载中' spinning={loading}>
       <div className='content'>
         <div>
           <div>
-            <h2 style={{display: 'inline-block'}}>{result.postId}</h2>
+            <h2 style={{display: 'inline-block'}}>{postId}</h2>
             <Tooltip title='刷新'>
               <Button
                 style={{marginLeft: 10}}
@@ -201,9 +172,9 @@ export default function DetailView({location, history}) {
               <tr>
                 <td>快递：</td>
                 <td>
-                  {KuaidiService.getCompanyName(result.type)}
+                  {KuaidiService.getCompanyName(type)}
                   <Tooltip title='选择快递'>
-                    <Link to={`/select/${result.postId}`} style={{marginLeft: 10}}>
+                    <Link to={`/select/${postId}`} style={{marginLeft: 10}}>
                       <Icon type='edit' />
                     </Link>
                   </Tooltip>
@@ -213,7 +184,7 @@ export default function DetailView({location, history}) {
                 <tr>
                   <td>验证码：</td>
                   <td>
-                    {result.phone}
+                    {phone}
                     <Tooltip title='输入验证码'>
                       <a href='#' style={{marginLeft: 10}} onClick={showPhoneInputModel}>
                         <Icon type='edit' />
@@ -229,7 +200,7 @@ export default function DetailView({location, history}) {
               <tr>
                 <td style={{whiteSpace: 'nowrap'}}>标签：</td>
                 <td>
-                  <TagGroup editable tags={result.tags} onChange={updateTags} />
+                  <TagGroup editable defaultTags={result.tags} onChange={updateTags} />
                 </td>
               </tr>
             </tbody>
@@ -237,7 +208,7 @@ export default function DetailView({location, history}) {
         </div>
         <Divider />
         {result.message && <Alert message={result.message} type='warning' />}
-        <TimelineList data={result.data || []} />
+        <TimelineList data={(result.data) || []} />
       </div>
     </Spin>
   );
