@@ -16,7 +16,7 @@ export default function SettingsView() {
     settings: {
       [name]: value
     }
-  }), []);
+  }), [dispatch]);
 
   const handleCleanHistory = useCallback(() => {
     Modal.confirm({

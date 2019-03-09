@@ -34,7 +34,7 @@ export default function TypeOptionsView({match, history}) {
       pathname: '/detail',
       search: `?postId=${postId}&type=${type}`
     });
-  }, [postId]);
+  }, [postId, history]);
 
   return (
     <div className='content'>
