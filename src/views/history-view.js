@@ -12,7 +12,7 @@ function renderItem({postId, type, latestMessage, updatedAt}) {
         title={<>{postId}{' '}<TypeTag type={type} /></>}
         description={<LatestMessage {...latestMessage} />}
       />
-      {updatedAt && dayjs(updatedAt).fromNow()}
+      <span style={{alignSelf: 'center'}}>{updatedAt && dayjs(updatedAt).fromNow()}</span>
       <div className='ant-list-item-mask' data-post-id={postId} data-type={type} />
     </List.Item>
   );
@@ -34,7 +34,7 @@ export default function HistoryView({history}) {
         search: `?postId=${postId}&type=${type}`
       });
     }
-  });
+  }, [history]);
 
   return (
     <List
