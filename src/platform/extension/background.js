@@ -90,7 +90,7 @@ function handleUpdate_0112() {
           state: item.check ? STATE_DELIVERED : STATE_IN_TRANSIT
         };
       });
-      StorageService.save({favorites});
+      StorageService.set({favorites});
       window.localStorage.removeItem('ngStorage-marks');
     }
 

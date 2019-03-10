@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import dayjs from 'dayjs';
 import {List} from 'antd';
 import TypeTag from '../components/type-tag';
 import StorageService from '../services/storage-service';
 import LatestMessage from '../components/latest-message';
+import {useAsync} from '../hooks';
 
 function renderItem({postId, type, latestMessage, updatedAt}) {
   return (
@@ -19,11 +20,8 @@ function renderItem({postId, type, latestMessage, updatedAt}) {
 }
 
 export default function HistoryView({history}) {
-  const [dataSource, setDataSource] = useState([]);
-
-  useEffect(() => {
-    const data = StorageService.getAllHistory();
-    setDataSource(data);
+  const {value: dataSource} = useAsync(async () => {
+    return StorageService.getAllHistory();
   }, []);
 
   const handlePush = useCallback(e => {

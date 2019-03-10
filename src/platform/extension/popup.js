@@ -13,7 +13,7 @@ async function launch() {
   store.dispatch({type: 'RECEIVE_DATA', ...savedData});
   store.subscribe(() => {
     const state = store.getState();
-    StorageService.save(state);
+    StorageService.set(state);
   });
 
   const Root = withSentry(() => (
