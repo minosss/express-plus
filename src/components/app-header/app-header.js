@@ -3,6 +3,7 @@ import {Icon, Input, Tooltip, AutoComplete, Dropdown, Menu, message} from 'antd'
 import {Link} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import KuaidiService from '../../services/kuaidi-service';
+import {reportIssue} from '../../utils';
 
 function getStoreUri() {
   try {
@@ -40,9 +41,9 @@ const menu = (
     </Menu.Item>
     <Menu.Item key='github'>
       <a
-        href='https://github.com/minosss/express-plus/issues'
         target='_blank'
         rel='noopener noreferrer'
+        onClick={reportIssue}
       >
         <Icon type='github' /> 去 Github 报错 <Icon type='export' />
       </a>
