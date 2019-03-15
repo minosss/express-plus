@@ -124,4 +124,19 @@
   "name": "百世快递",
   "phone": "95320",
   "homepage": "http://www.800bestex.com"
+}, {
+  "code": "fedex",
+  "name": "FedEx",
+  "phone": "400-886-1888",
+  "homepage": "https://www.fedex.com/zh-cn"
+}, {
+  "code": "lianbangkuaidi",
+  "name": "联邦快递",
+  "phone": "400-889-1888",
+  "homepage": "http://cndxp.apac.fedex.com/dxp.html"
+}, {
+  "code": "tnt",
+  "name": "TNT",
+  "phone": "800-820-9868",
+  "homepage": "http://www.tnt.com.cn"
 }]
