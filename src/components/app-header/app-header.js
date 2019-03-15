@@ -103,17 +103,16 @@ export default function AppHeader() {
       message.error(error.message);
     }
 
-    if (data.length > 0) {
-      setDataSrouce(data.map(renderOption));
-    } else {
-      setDataSrouce([(
-        <AutoComplete.Option key='push-to-type-options' text={value}>
-          <Link to={`/select/${value}`}>
-            去选择快递
-          </Link>
-        </AutoComplete.Option>
-      )]);
-    }
+    // 默认添加自定义选择快递类型
+    const finalData = data.map(renderOption).concat((
+      <AutoComplete.Option key='push-to-type-options' text={value}>
+        <Link to={`/select/${value}`}>
+          去选择快递
+        </Link>
+      </AutoComplete.Option>
+    ));
+
+    setDataSrouce(finalData);
   }, 200), []);
 
   return (
