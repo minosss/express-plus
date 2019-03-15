@@ -136,5 +136,5 @@ function onBeforeSendHeaders(details) {
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
-  urls: ['https://biz.trace.ickd.cn/*', 'https://m.kuaidi100.com/*']
+  urls: ['https://biz.trace.ickd.cn/*', 'https://m.kuaidi100.com/*', 'https://sp0.baidu.com/*']
 }, ['requestHeaders', 'blocking']);

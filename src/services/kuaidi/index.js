@@ -1,4 +1,5 @@
 import kuaidi100 from './kuaidi100';
+import baidu from './baidu';
 import data from './data';
 
 export const codeMap = data.reduce((res, curr) => {
@@ -20,4 +21,4 @@ export const groupedCodeMap = data.reduce((result, curr) => {
   return result;
 }, {});
 
-export default [kuaidi100];
+export default [kuaidi100, baidu];
