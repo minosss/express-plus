@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import KuaidiService, {STATE_DELIVERED, STATE_IN_TRANSIT} from '../../services/kuaidi-service';
 import StorageService from '../../services/storage-service';
+import {getExtensionVersion} from '../../utils';
 
 async function runAutoUpdate() {
   const messages = await KuaidiService.update();
@@ -110,6 +111,10 @@ browser.runtime.onInstalled.addListener(({reason, previousVersion}) => {
     if (previousVersion === '0.1.12') {
       handleUpdate_0112();
     }
+
+    showNotification({
+      message: `新版本 ${getExtensionVersion()} 已更新`
+    });
   }
 });
 
