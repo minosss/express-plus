@@ -2,144 +2,183 @@ import browser from 'webextension-polyfill';
 import KuaidiService, {STATE_DELIVERED, STATE_IN_TRANSIT} from '../../services/kuaidi-service';
 import StorageService from '../../services/storage-service';
 import {getExtensionVersion} from '../../utils';
+import {internalMessageTypes} from '../../model/message-model';
 
-async function runAutoUpdate() {
-  const messages = await KuaidiService.update();
-
-  if (messages.length > 0) {
-    // 通知 list 格式
-    const items = messages.map(msg => {
-      return {
-        title: msg.postId,
-        message: msg.latestMessage.context
-      };
-    });
-
-    showNotification({
-      type: 'list',
-      message: `有 ${items.length} 个快递有新的信息！`,
-      items
-    });
-  }
-}
-
-async function showNotification({
-  type = 'basic',
-  title = '快递助手',
-  message = '新信息',
-  ...others
-}) {
-  const id = await browser.notifications.create({
-    iconUrl: 'icon.png',
-    type,
-    title,
-    message,
-    ...others
-  });
-  return id;
-}
-
-// TODO 改用 sendMessage 跟其它页面通信
-browser.storage.onChanged.addListener(({settings}, _) => {
-  if (!settings) {
-    return;
+class Background {
+  constructor() {
+    browser.runtime.onInstalled.addListener(UpdateHandler.handler);
+    browser.alarms.onAlarm.addListener(AlarmHandler.handler);
+    browser.runtime.onMessage.addListener(MessageHandler.handler);
+    browser.webRequest.onBeforeSendHeaders.addListener(Background.onBeforeSendHeaders, {
+      urls: ['https://biz.trace.ickd.cn/*', 'https://m.kuaidi100.com/*', 'https://sp0.baidu.com/*']
+    }, ['requestHeaders', 'blocking']);
+    // -
+    StorageService.watch('settings', Background.onSettingsChanged);
   }
 
-  const {oldValue, newValue} = settings;
-  if (newValue.enableAuto) {
-    if (
-      !oldValue ||
-      newValue.enableAuto !== oldValue.enableAuto ||
-      newValue.autoInterval !== oldValue.autoInterval
-    ) {
-      // 需要重新设置
+  static onSettingsChanged({settings}) {
+    console.log('settings changed', settings);
+    const {newValue, oldValue} = settings;
+    if (newValue.enableAuto) {
+      if (
+        !oldValue ||
+        newValue.enableAuto !== oldValue.enableAuto ||
+        newValue.autoInterval !== oldValue.autoInterval
+      ) {
+        // 需要重新设置
+        browser.alarms.clearAll();
+        // PeriodInMinutes - If set, the onAlarm event should fire every periodInMinutes minutes after the initial event specified by when or delayInMinutes. If not set, the alarm will only fire once.
+        browser.alarms.create({
+          periodInMinutes:
+            // - 最短间隔 30 分钟 - 请求速度太快会导致 ip 被封。
+            newValue.autoInterval < 30 ? 30 : newValue.autoInterval
+        });
+      }
+    } else {
       browser.alarms.clearAll();
-      // PeriodInMinutes - If set, the onAlarm event should fire every periodInMinutes minutes after the initial event specified by when or delayInMinutes. If not set, the alarm will only fire once.
-      browser.alarms.create({
-        periodInMinutes:
-          // - 最短间隔 30 分钟 - 请求速度太快会导致 ip 被封。
-          newValue.autoInterval < 30 ? 30 : newValue.autoInterval
+    }
+  }
+
+  static onBeforeSendHeaders(details) {
+    let referer;
+
+    for (let i = 0; i < details.requestHeaders.length; i++) {
+      if (details.requestHeaders[i].name === 'Referer') {
+        referer = details.requestHeaders.splice(i, 1);
+      }
+    }
+
+    if (referer && referer.length > 0) {
+      const url = new URL(referer[0].value);
+      details.requestHeaders.push({
+        name: 'Referer',
+        value: url.origin
       });
     }
-  } else {
-    browser.alarms.clearAll();
+
+    return {
+      requestHeaders: details.requestHeaders
+    };
   }
-});
 
-// 闹钟处理，目前只有自动查询
-browser.alarms.onAlarm.addListener(() => {
-  runAutoUpdate();
-});
+  static async showNotification({
+    type = 'basic',
+    title = '快递助手',
+    message = '新信息',
+    ...others
+  }) {
+    const id = await browser.notifications.create({
+      iconUrl: 'icon.png',
+      type,
+      title,
+      message,
+      ...others
+    });
+    return id;
+  }
+}
 
-// - 版本升级处理，处理一些崩溃性的数据更改 -
-// eslint-disable-next-line camelcase
-function handleUpdate_0112() {
-  try {
-    browser.alarms.clearAll();
-    const preRawData = window.localStorage.getItem('ngStorage-marks');
-    const preData = JSON.parse(preRawData);
-    if (Array.isArray(preData)) {
-      const favorites = preData.map(item => {
+class AlarmHandler {
+  static handler() {
+    AlarmHandler.runAutoUpdate();
+  }
+
+  static async runAutoUpdate() {
+    const messages = await KuaidiService.update();
+
+    if (messages.length > 0) {
+      // 通知 list 格式
+      const items = messages.map(msg => {
         return {
-          postId: item.id,
-          type: item.com,
-          tags: item.tags,
-          latestMessage: {
-            time: item.time,
-            context: item.text
-          },
-          state: item.check ? STATE_DELIVERED : STATE_IN_TRANSIT
+          title: msg.postId,
+          message: msg.latestMessage.context
         };
       });
-      StorageService.set({favorites});
-      window.localStorage.removeItem('ngStorage-marks');
-    }
 
-    showNotification({title: '版本升级', message: '全新的界面，数据迁移成功'});
-  } catch (error) {
-    showNotification({
-      title: '错误',
-      message: '数据迁移出现错误 ' + error.message
-    });
+      Background.showNotification({
+        type: 'list',
+        message: `有 ${items.length} 个快递有新的信息！`,
+        items
+      });
+    }
   }
 }
-// -
 
-// 应用安装、更新、浏览器更新都会触发
-browser.runtime.onInstalled.addListener(({reason, previousVersion}) => {
-  if (reason === 'update') {
-    if (previousVersion === '0.1.12') {
-      handleUpdate_0112();
+class MessageHandler {
+  static async handler(message, sender) {
+    if (sender.id !== browser.runtime.id) {
+      return Promise.resolve({});
     }
 
-    showNotification({
-      message: `新版本 ${getExtensionVersion()} 已更新`
-    });
-  }
-});
-
-function onBeforeSendHeaders(details) {
-  let referer;
-
-  for (let i = 0; i < details.requestHeaders.length; i++) {
-    if (details.requestHeaders[i].name === 'Referer') {
-      referer = details.requestHeaders.splice(i, 1);
+    switch (message.type) {
+      case internalMessageTypes.LOAD:
+        return MessageHandler.load();
+      case internalMessageTypes.UPDATE:
+        return MessageHandler.update(message.data);
+      // case internalMessageTypes.SIGN_IN:
+      // return this.firebase.signIn(message.data);
+      default:
+        break;
     }
+
+    return Promise.resolve({});
   }
 
-  if (referer && referer.length > 0) {
-    const url = new URL(referer[0].value);
-    details.requestHeaders.push({
-      name: 'Referer',
-      value: url.origin
-    });
+  static async load() {
+    const data = await StorageService.get();
+    return {data};
   }
 
-  return {
-    requestHeaders: details.requestHeaders
-  };
+  static async update(data) {
+    const savedData = await StorageService.set(data);
+    return {data: savedData};
+  }
 }
 
-browser.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {
-  urls: ['https://biz.trace.ickd.cn/*', 'https://m.kuaidi100.com/*', 'https://sp0.baidu.com/*']
-}, ['requestHeaders', 'blocking']);
+// - 版本升级处理，处理一些崩溃性的数据更改 -
+class UpdateHandler {
+  static handler({reason, previousVersion}) {
+    if (reason === 'update') {
+      if (previousVersion === '0.1.12') {
+        UpdateHandler.migrate0112();
+      }
+
+      Background.showNotification({
+        message: `新版本 ${getExtensionVersion()} 已更新`
+      });
+    }
+  }
+
+  static migrate0112() {
+    try {
+      browser.alarms.clearAll();
+      const preRawData = window.localStorage.getItem('ngStorage-marks');
+      const preData = JSON.parse(preRawData);
+      if (Array.isArray(preData)) {
+        const favorites = preData.map(item => {
+          return {
+            postId: item.id,
+            type: item.com,
+            tags: item.tags,
+            latestMessage: {
+              time: item.time,
+              context: item.text
+            },
+            state: item.check ? STATE_DELIVERED : STATE_IN_TRANSIT
+          };
+        });
+        StorageService.set({favorites});
+        window.localStorage.removeItem('ngStorage-marks');
+      }
+
+      Background.showNotification({message: '全新的界面，数据迁移成功'});
+    } catch (error) {
+      Background.showNotification({
+        message: '数据迁移出现错误 ' + error.message
+      });
+    }
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+const background = new Background();

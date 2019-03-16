@@ -23,7 +23,7 @@ class ChromeStorage extends Base {
 
       for (const key of keys) {
         if (changes[key]) {
-          value[key] = changes[key].newValue;
+          value[key] = changes[key];
         }
       }
 
@@ -33,7 +33,7 @@ class ChromeStorage extends Base {
 
   addWatchListener() {
     if (!this.listenerInstalled) {
-      browser.storage.onChanged.addListener(this.onChanged);
+      browser.storage.onChanged.addListener(this.onChanged.bind(this));
       this.listenerInstalled = true;
     }
   }

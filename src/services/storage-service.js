@@ -32,6 +32,10 @@ export default class StorageService {
     return savedData;
   }
 
+  static watch(keys, callback) {
+    return storage.watch(keys, callback);
+  }
+
   static async shouldFilterDelivered() {
     const {settings} = await storage.get('settings');
     return Boolean(settings.enableFilterDelivered);
