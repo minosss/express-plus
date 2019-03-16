@@ -22,20 +22,20 @@ async function runAutoUpdate() {
   }
 }
 
-function showNotification({
+async function showNotification({
   type = 'basic',
-  title = '新信息',
+  title = '快递助手',
   message = '新信息',
   ...others
 }) {
-  const id = new Date().getTime().toString();
-  browser.notifications.create(id, 'messages', {
+  const id = await browser.notifications.create({
     iconUrl: 'icon.png',
     type,
     title,
     message,
     ...others
   });
+  return id;
 }
 
 // TODO 改用 sendMessage 跟其它页面通信
