@@ -30,7 +30,7 @@ function showNotification({
 }) {
   const id = new Date().getTime().toString();
   browser.notifications.create(id, 'messages', {
-    iconUrl: 'images/icon-32.png',
+    iconUrl: 'icon.png',
     type,
     title,
     message,
