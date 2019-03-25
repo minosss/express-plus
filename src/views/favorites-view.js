@@ -12,7 +12,9 @@ const MetaTitle = React.memo(({postId, state}) => {
   return (
     <>
       {postId}{' '}
-      {state === STATE_DELIVERED && <Icon type='check' style={{color: '#23d160'}} />}
+      {state === STATE_DELIVERED && (
+        <Icon type='check' style={{color: '#23d160'}} />
+      )}
     </>
   );
 });
@@ -46,10 +48,13 @@ function sortFavorites(a, b) {
 }
 
 export default function FavoritesView() {
-  const mapState = useCallback(state => ({
-    // 可能直接弄个copy不太好
-    sortedFavorites: state.favorites.slice().sort(sortFavorites)
-  }), []);
+  const mapState = useCallback(
+    state => ({
+      // 可能直接弄个copy不太好
+      sortedFavorites: state.favorites.slice().sort(sortFavorites)
+    }),
+    []
+  );
 
   const dispatch = useDispatch();
   const {sortedFavorites} = useMappedState(mapState);
@@ -65,7 +70,9 @@ export default function FavoritesView() {
               key='action-search'
               to={{
                 pathname: '/detail',
-                search: `?postId=${item.postId}&type=${item.type}&phone=${item.phone || ''}`
+                search: `?postId=${item.postId}&type=${
+                  item.type
+                }&phone=${item.phone || ''}`
               }}
             >
               <Icon type='search' />
@@ -103,7 +110,7 @@ export default function FavoritesView() {
             title={<MetaTitle postId={item.postId} state={item.state} />}
             description={
               <div>
-                <LatestMessage {...(item.latestMessage || item.lastestData)} />
+                <LatestMessage {...item.latestMessage || item.lastestData} />
                 <Tags data={item.tags}>
                   <TypeTag type={item.type} />
                 </Tags>

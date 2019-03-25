@@ -18,7 +18,10 @@ const paths = require('../utils/paths');
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 const isInteractive = process.stdout.isTTY;
-const {measureFileSizesBeforeBuild, printFileSizesAfterBuild} = FileSizeReporter;
+const {
+  measureFileSizesBeforeBuild,
+  printFileSizesAfterBuild
+} = FileSizeReporter;
 
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {

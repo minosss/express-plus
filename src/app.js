@@ -34,36 +34,12 @@ function App() {
           </Header>
           <Content>
             <Switch>
-              <Route
-                exact
-                path='/'
-                component={FavoritesView}
-              />
-              <Route
-                exact
-                path='/settings'
-                component={SettingView}
-              />
-              <Route
-                exact
-                path='/detail'
-                component={DetailView}
-              />
-              <Route
-                exact
-                path='/select/:postId'
-                component={TypeOptionsView}
-              />
-              <Route
-                exact
-                path='/history'
-                component={HistoryView}
-              />
-              <Route
-                exact
-                path='/deliver'
-                component={DeliverView}
-              />
+              <Route exact path='/' component={FavoritesView} />
+              <Route exact path='/settings' component={SettingView} />
+              <Route exact path='/detail' component={DetailView} />
+              <Route exact path='/select/:postId' component={TypeOptionsView} />
+              <Route exact path='/history' component={HistoryView} />
+              <Route exact path='/deliver' component={DeliverView} />
               <Route
                 render={() => (
                   <Empty>

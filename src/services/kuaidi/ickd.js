@@ -18,15 +18,20 @@ class Ickd extends BaseApi {
   }
 
   async query(postId, type) {
-    const data = await this.request
-      .get(`${type}/${postId}`)
-      .json();
+    const data = await this.request.get(`${type}/${postId}`).json();
 
     return this.formatData(data);
   }
 
   formatData(rawData) {
-    const {status: state, message, errCode, data, mailNo: postId, expSpellName: type} = rawData;
+    const {
+      status: state,
+      message,
+      errCode,
+      data,
+      mailNo: postId,
+      expSpellName: type
+    } = rawData;
     if (errCode !== 0) {
       throw new Error(message);
     }

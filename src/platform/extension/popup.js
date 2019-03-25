@@ -11,7 +11,9 @@ import './style.less';
 
 async function launch() {
   // 向后台请求数据
-  const {data: preData} = await InternalMessage.create(internalMessageTypes.LOAD).send();
+  const {data: preData} = await InternalMessage.create(
+    internalMessageTypes.LOAD
+  ).send();
   store.dispatch({type: RECEIVE_DATA, ...preData});
   // 当store更新时，发送到后台保存
   store.subscribe(async () => {
@@ -25,10 +27,7 @@ async function launch() {
     </StoreContext.Provider>
   ));
 
-  render(
-    <Root />,
-    document.querySelector('#root')
-  );
+  render(<Root />, document.querySelector('#root'));
 }
 
 launch();

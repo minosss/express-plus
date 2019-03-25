@@ -1,5 +1,8 @@
 import browser from 'webextension-polyfill';
-import KuaidiService, {STATE_DELIVERED, STATE_IN_TRANSIT} from '../../services/kuaidi-service';
+import KuaidiService, {
+  STATE_DELIVERED,
+  STATE_IN_TRANSIT
+} from '../../services/kuaidi-service';
 import StorageService from '../../services/storage-service';
 import {getExtensionVersion} from '../../utils';
 import {internalMessageTypes} from '../../model/message-model';
@@ -9,9 +12,17 @@ class Background {
     browser.runtime.onInstalled.addListener(UpdateHandler.handler);
     browser.alarms.onAlarm.addListener(AlarmHandler.handler);
     browser.runtime.onMessage.addListener(MessageHandler.handler);
-    browser.webRequest.onBeforeSendHeaders.addListener(Background.onBeforeSendHeaders, {
-      urls: ['https://biz.trace.ickd.cn/*', 'https://m.kuaidi100.com/*', 'https://sp0.baidu.com/*']
-    }, ['requestHeaders', 'blocking']);
+    browser.webRequest.onBeforeSendHeaders.addListener(
+      Background.onBeforeSendHeaders,
+      {
+        urls: [
+          'https://biz.trace.ickd.cn/*',
+          'https://m.kuaidi100.com/*',
+          'https://sp0.baidu.com/*'
+        ]
+      },
+      ['requestHeaders', 'blocking']
+    );
     // -
     StorageService.watch('settings', Background.onSettingsChanged);
   }

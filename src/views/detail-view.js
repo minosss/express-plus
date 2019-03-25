@@ -1,5 +1,14 @@
 import React, {useCallback} from 'react';
-import {Spin, Timeline, Divider, Button, Tooltip, Icon, Alert, Modal} from 'antd';
+import {
+  Spin,
+  Timeline,
+  Divider,
+  Button,
+  Tooltip,
+  Icon,
+  Alert,
+  Modal
+} from 'antd';
 import {Link} from 'react-router-dom';
 import {useDispatch, useMappedState} from 'redux-react-hook';
 import queryString from 'query-string';
@@ -19,7 +28,8 @@ const TimeDot = React.memo(({time}) => {
   const ary = time.split(' ');
   return (
     <div className='timedot'>
-      {ary[1]}<br />
+      {ary[1]}
+      <br />
       <small>{ary[0]}</small>
     </div>
   );
@@ -44,7 +54,10 @@ export default function DetailView({location, history}) {
   const {postId, type, phone} = queryString.parse(location.search);
 
   // 获取收藏
-  const selectFavoriteByPostId = useCallback(state => state.favorites.find(f => f.postId === postId), [postId]);
+  const selectFavoriteByPostId = useCallback(
+    state => state.favorites.find(f => f.postId === postId),
+    [postId]
+  );
   const defaultData = useMappedState(selectFavoriteByPostId);
   const dispatch = useDispatch();
   const isFavorite = Boolean(defaultData);
@@ -88,35 +101,40 @@ export default function DetailView({location, history}) {
     return Promise.resolve(nextResult);
   }, [type, postId, phone]);
 
-  const showPhoneInputModel = useCallback(e => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    let inputVal;
-    Modal.confirm({
-      width: 340,
-      centered: true,
-      title: '请输入收/寄件人联系方式后四位',
-      content: (
-        <>
-          <p>查询顺丰快递需要提供联系方式后四位</p>
-          <VerificationCodeInput onComplete={val => {
-            inputVal = val;
-          }} />
-        </>
-      ),
-      onOk() {
-        history.push({
-          pathname: '/detail',
-          search: `?postId=${postId}&type=${type}&phone=${inputVal}`
-        });
-      },
-      onCancel() {
-        // setIsLoading(false);
+  const showPhoneInputModel = useCallback(
+    e => {
+      if (e) {
+        e.preventDefault();
       }
-    });
-  }, [postId, type, history]);
+
+      let inputVal;
+      Modal.confirm({
+        width: 340,
+        centered: true,
+        title: '请输入收/寄件人联系方式后四位',
+        content: (
+          <>
+            <p>查询顺丰快递需要提供联系方式后四位</p>
+            <VerificationCodeInput
+              onComplete={val => {
+                inputVal = val;
+              }}
+            />
+          </>
+        ),
+        onOk() {
+          history.push({
+            pathname: '/detail',
+            search: `?postId=${postId}&type=${type}&phone=${inputVal}`
+          });
+        },
+        onCancel() {
+          // setIsLoading(false);
+        }
+      });
+    },
+    [postId, type, history]
+  );
 
   const handleToggleFavorite = () => {
     const nextIsFavorite = !isFavorite;
@@ -186,7 +204,11 @@ export default function DetailView({location, history}) {
                   <td>
                     {phone}
                     <Tooltip title='输入验证码'>
-                      <a href='#' style={{marginLeft: 10}} onClick={showPhoneInputModel}>
+                      <a
+                        href='#'
+                        style={{marginLeft: 10}}
+                        onClick={showPhoneInputModel}
+                      >
                         <Icon type='edit' />
                       </a>
                     </Tooltip>
@@ -200,7 +222,11 @@ export default function DetailView({location, history}) {
               <tr>
                 <td style={{whiteSpace: 'nowrap'}}>标签：</td>
                 <td>
-                  <TagGroup editable defaultTags={result.tags} onChange={updateTags} />
+                  <TagGroup
+                    editable
+                    defaultTags={result.tags}
+                    onChange={updateTags}
+                  />
                 </td>
               </tr>
             </tbody>
@@ -208,7 +234,7 @@ export default function DetailView({location, history}) {
         </div>
         <Divider />
         {result.message && <Alert message={result.message} type='warning' />}
-        <TimelineList data={(result.data) || []} />
+        <TimelineList data={result.data || []} />
       </div>
     </Spin>
   );

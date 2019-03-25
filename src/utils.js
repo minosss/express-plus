@@ -15,8 +15,7 @@ export const reportIssue = () => {
 ${navigator.userAgent}`;
 
     url += encodeURIComponent(body);
-  } catch (_) {
-  }
+  } catch (_) {}
 
   window.open(url);
 };

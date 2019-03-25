@@ -24,30 +24,33 @@ export default function VerificationCodeInput({onComplete, length = 4}) {
     if (onComplete && val.length >= length) {
       onComplete(val);
     }
-  }, [values, length]);
+  }, [values, length, onComplete]);
 
-  const handleInputChange = useCallback(e => {
-    if (!e.target.validity.valid) {
-      return;
-    }
+  const handleInputChange = useCallback(
+    e => {
+      if (!e.target.validity.valid) {
+        return;
+      }
 
-    const index = parseInt(e.target.dataset.id, 10);
-    let {value} = e.target;
+      const index = parseInt(e.target.dataset.id, 10);
+      let {value} = e.target;
 
-    if (value.length > 1) {
-      value = value[value.length - 1];
-    }
+      if (value.length > 1) {
+        value = value[value.length - 1];
+      }
 
-    const nextValues = [...values];
-    const next = refs[index + 1];
-    nextValues[index] = value;
-    setValues(nextValues);
+      const nextValues = [...values];
+      const next = refs[index + 1];
+      nextValues[index] = value;
+      setValues(nextValues);
 
-    if (next) {
-      next.current.focus();
-      next.current.select();
-    }
-  }, [values]);
+      if (next) {
+        next.current.focus();
+        next.current.select();
+      }
+    },
+    [refs, values]
+  );
 
   return (
     <InputGroup compact>

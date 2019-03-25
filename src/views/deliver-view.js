@@ -1,6 +1,15 @@
 /* eslint react/no-array-index-key: 1 */
 import React, {memo, useCallback, useEffect, useState, useRef} from 'react';
-import {Spin, List, Tag, Icon, AutoComplete, Input, Typography, message} from 'antd';
+import {
+  Spin,
+  List,
+  Tag,
+  Icon,
+  AutoComplete,
+  Input,
+  Typography,
+  message
+} from 'antd';
 import debounce from 'lodash.debounce';
 import {useAsync, useGeolocation} from '../hooks';
 import TypeTag from '../components/type-tag';
@@ -14,7 +23,9 @@ const OptionContent = memo(({item}) => {
     <>
       <Text>{item.name}</Text>
       <br />
-      <Text type='secondary'>{item.district} ({item.address})</Text>
+      <Text type='secondary'>
+        {item.district} ({item.address})
+      </Text>
     </>
   );
 });
@@ -27,12 +38,15 @@ const AmapInput = ({onPositionChange = () => {}}) => {
     set(state => ({...state, ...value}));
   }, []);
 
-  const dispatchPositionChanged = useCallback(({latitude, longitude}) => {
-    if (latitude && longitude) {
-      latestPosition.current = {latitude, longitude};
-      onPositionChange(latestPosition.current);
-    }
-  }, [onPositionChange]);
+  const dispatchPositionChanged = useCallback(
+    ({latitude, longitude}) => {
+      if (latitude && longitude) {
+        latestPosition.current = {latitude, longitude};
+        onPositionChange(latestPosition.current);
+      }
+    },
+    [onPositionChange]
+  );
 
   const handleSearch = debounce(async keywords => {
     if (keywords.length >= 2) {
@@ -80,14 +94,25 @@ const AmapInput = ({onPositionChange = () => {}}) => {
       disabled={position.loading}
       optionLabelProp='text'
       dataSource={state.data.map((item, index) => (
-        <AutoComplete.Option key={`tips-${item.id}-${index}`} text={item.name} value={`${item.location}`}>
+        <AutoComplete.Option
+          key={`tips-${item.id}-${index}`}
+          text={item.name}
+          value={`${item.location}`}
+        >
           <OptionContent item={item} />
         </AutoComplete.Option>
       ))}
       onSearch={handleSearch}
       onSelect={handleSelect}
     >
-      <Input placeholder={position.loading ? '定位中' : '输入地址关键字'} prefix={<Icon type={(position.loading || state.loading) ? 'loading' : 'environment'} />} />
+      <Input
+        placeholder={position.loading ? '定位中' : '输入地址关键字'}
+        prefix={
+          <Icon
+            type={position.loading || state.loading ? 'loading' : 'environment'}
+          />
+        }
+      />
     </AutoComplete>
   );
 };
@@ -117,21 +142,25 @@ function DeliverView() {
   const renderItem = item => (
     <List.Item>
       <List.Item.Meta
-        title={<span>{item.name || item.mktName} <Icon type='phone' /> {item.phone}</span>}
+        title={
+          <span>
+            {item.name || item.mktName} <Icon type='phone' /> {item.phone}
+          </span>
+        }
         description={
-          (
+          <div>
+            <span>{item.address}</span>
             <div>
-              <span>
-                {item.address}
-              </span>
-              <div>
-                {item.comlist.map((tag, idx) => <TypeTag key={`comlist-${idx}`} type={tag.kuaidiCom} />)}
-              </div>
-              <div>
-                {item.taglist.map((tag, idx) => <Tag key={`taglist-${idx}`}>{tag}</Tag>)}
-              </div>
+              {item.comlist.map((tag, idx) => (
+                <TypeTag key={`comlist-${idx}`} type={tag.kuaidiCom} />
+              ))}
             </div>
-          )
+            <div>
+              {item.taglist.map((tag, idx) => (
+                <Tag key={`taglist-${idx}`}>{tag}</Tag>
+              ))}
+            </div>
+          </div>
         }
       />
     </List.Item>

@@ -1,5 +1,13 @@
 import React, {useState, useCallback} from 'react';
-import {Icon, Input, Tooltip, AutoComplete, Dropdown, Menu, message} from 'antd';
+import {
+  Icon,
+  Input,
+  Tooltip,
+  AutoComplete,
+  Dropdown,
+  Menu,
+  message
+} from 'antd';
 import {Link} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import KuaidiService from '../../services/kuaidi-service';
@@ -11,8 +19,7 @@ function getStoreUri() {
     if (/(firefox)\/v?([\w\.]+)/i.test(window.navigator.userAgent)) {
       return 'https://addons.mozilla.org/en-US/firefox/addon/express-plus/';
     }
-  } catch (_) {
-  }
+  } catch (_) {}
 
   return 'https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg';
 }
@@ -40,20 +47,12 @@ const menu = (
       </Link>
     </Menu.Item>
     <Menu.Item key='github'>
-      <a
-        target='_blank'
-        rel='noopener noreferrer'
-        onClick={reportIssue}
-      >
+      <a target='_blank' rel='noopener noreferrer' onClick={reportIssue}>
         <Icon type='github' /> 去 Github 报错 <Icon type='export' />
       </a>
     </Menu.Item>
     <Menu.Item key='store'>
-      <a
-        href={getStoreUri()}
-        target='_blank'
-        rel='noopener noreferrer'
-      >
+      <a href={getStoreUri()} target='_blank' rel='noopener noreferrer'>
         <Icon type='smile' /> 去商店评价 <Icon type='export' />
       </a>
     </Menu.Item>
@@ -87,33 +86,34 @@ function renderOption(item, index) {
 export default function AppHeader() {
   const [dataSource, setDataSrouce] = useState([]);
 
-  const handleSearch = useCallback(debounce(async value => {
-    if (String(value).length < 6) {
-      return;
-    }
+  const handleSearch = useCallback(
+    debounce(async value => {
+      if (String(value).length < 6) {
+        return;
+      }
 
-    let data = [];
-    try {
-      data = await KuaidiService.auto(value);
-      data =
-        data && data.length > 0 ?
-          data.map(item => ({...item, postId: value})).slice(0, 3) :
-          [];
-    } catch (error) {
-      message.error(error.message);
-    }
+      let data = [];
+      try {
+        data = await KuaidiService.auto(value);
+        data =
+          data && data.length > 0
+            ? data.map(item => ({...item, postId: value})).slice(0, 3)
+            : [];
+      } catch (error) {
+        message.error(error.message);
+      }
 
-    // 默认添加自定义选择快递类型
-    const finalData = data.map(renderOption).concat((
-      <AutoComplete.Option key='push-to-type-options' text={value}>
-        <Link to={`/select/${value}`}>
-          去选择快递
-        </Link>
-      </AutoComplete.Option>
-    ));
+      // 默认添加自定义选择快递类型
+      const finalData = data.map(renderOption).concat(
+        <AutoComplete.Option key='push-to-type-options' text={value}>
+          <Link to={`/select/${value}`}>去选择快递</Link>
+        </AutoComplete.Option>
+      );
 
-    setDataSrouce(finalData);
-  }, 200), []);
+      setDataSrouce(finalData);
+    }, 200),
+    []
+  );
 
   return (
     <div className='app-header'>

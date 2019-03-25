@@ -1,11 +1,15 @@
 import {produce} from 'immer';
-import {RECEIVE_DATA, CREATE_FAVORITE, UPDATE_FAVORITE, UPDATE_TAGS, DELETE_FAVORITE} from '../actions';
+import {
+  RECEIVE_DATA,
+  CREATE_FAVORITE,
+  UPDATE_FAVORITE,
+  UPDATE_TAGS,
+  DELETE_FAVORITE
+} from '../actions';
 
 export default function favorites(state = [], action) {
   return produce(state, draft => {
-    const index = draft.findIndex(
-      item => item.postId === action.postId
-    );
+    const index = draft.findIndex(item => item.postId === action.postId);
     const isExist = index !== -1;
     switch (action.type) {
       case CREATE_FAVORITE:

@@ -1,7 +1,8 @@
 import React from 'react';
 import * as Sentry from '@sentry/browser';
 
-const useSentry = process.env.NODE_ENV === 'production' && process.env.APP_SENTRY_DSN;
+const useSentry =
+  process.env.NODE_ENV === 'production' && process.env.APP_SENTRY_DSN;
 
 if (useSentry) {
   console.log('init sentry');

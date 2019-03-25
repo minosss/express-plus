@@ -14,21 +14,24 @@ const useAsync = (fn, args) => {
 
     promise
       // eslint-disable-next-line promise/prefer-await-to-then
-      .then(value => {
-        if (mounted) {
-          set({
-            loading: false,
-            value
-          });
+      .then(
+        value => {
+          if (mounted) {
+            set({
+              loading: false,
+              value
+            });
+          }
+        },
+        error => {
+          if (mounted) {
+            set({
+              loading: false,
+              error
+            });
+          }
         }
-      }, error => {
-        if (mounted) {
-          set({
-            loading: false,
-            error
-          });
-        }
-      });
+      );
 
     return () => {
       mounted = false;

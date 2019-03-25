@@ -5,18 +5,25 @@ import {UPDATE_SETTINGS} from '../store/actions';
 import StorageService from '../services/storage-service';
 
 export default function SettingsView() {
-  const mapState = useCallback(state => ({
-    settings: state.settings
-  }), []);
+  const mapState = useCallback(
+    state => ({
+      settings: state.settings
+    }),
+    []
+  );
   const {settings} = useMappedState(mapState);
 
   const dispatch = useDispatch();
-  const handleUpdateSetting = useCallback(name => value => dispatch({
-    type: UPDATE_SETTINGS,
-    settings: {
-      [name]: value
-    }
-  }), [dispatch]);
+  const handleUpdateSetting = useCallback(
+    name => value =>
+      dispatch({
+        type: UPDATE_SETTINGS,
+        settings: {
+          [name]: value
+        }
+      }),
+    [dispatch]
+  );
 
   const handleCleanHistory = useCallback(() => {
     Modal.confirm({
@@ -37,9 +44,7 @@ export default function SettingsView() {
       header='如果觉得这个插件还蛮好用的，可以到商店给个星星'
       footer='©2015-2019 快递助手 - 由快递100强力驱动'
     >
-      <List.Item>
-        自动查询
-      </List.Item>
+      <List.Item>自动查询</List.Item>
       <List.Item
         actions={[
           <Switch
@@ -87,9 +92,7 @@ export default function SettingsView() {
           description='默认开启，勾选后只有在快递状态为签收后才提示信息。'
         />
       </List.Item>
-      <List.Item>
-        查询记录
-      </List.Item>
+      <List.Item>查询记录</List.Item>
       <List.Item
         actions={[
           <Select
@@ -113,7 +116,14 @@ export default function SettingsView() {
       </List.Item>
       <List.Item
         actions={[
-          <Button key='cleanHisotry' ghost type='danger' onClick={handleCleanHistory}>清空</Button>
+          <Button
+            key='cleanHisotry'
+            ghost
+            type='danger'
+            onClick={handleCleanHistory}
+          >
+            清空
+          </Button>
         ]}
       >
         <List.Item.Meta

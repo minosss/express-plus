@@ -32,7 +32,9 @@ const useGeolocation = ({watch = false, timeout = 10000}) => {
 
     navigator.geolocation.getCurrentPosition(onSuccess, onError, {timeout});
     if (watch) {
-      watchId = navigator.geolocation.watchPosition(onSuccess, onError, {timeout});
+      watchId = navigator.geolocation.watchPosition(onSuccess, onError, {
+        timeout
+      });
     }
 
     return () => {

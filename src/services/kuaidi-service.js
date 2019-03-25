@@ -31,7 +31,9 @@ export const statusMap = {
 let updating = false;
 
 function makeRetryApis(method) {
-  const filteredApis = kuaidiApis.filter(api => api[method] && typeof api[method] === 'function');
+  const filteredApis = kuaidiApis.filter(
+    api => api[method] && typeof api[method] === 'function'
+  );
 
   let index = 0;
   const retryFn = async (...args) => {
@@ -110,7 +112,10 @@ export default class KuaidiService {
         favorites,
         async ({postId, type, phone, latestMessage, tags}) => {
           try {
-            const result = await KuaidiService.query({postId, type, phone}, false);
+            const result = await KuaidiService.query(
+              {postId, type, phone},
+              false
+            );
             if (
               Array.isArray(result.data) &&
               result.data.length > 0 &&

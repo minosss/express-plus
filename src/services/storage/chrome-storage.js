@@ -19,7 +19,12 @@ class ChromeStorage extends Base {
   onChanged(changes) {
     for (const watcher of Object.values(this.watchers)) {
       const value = {};
-      const keys = watcher.keys === '*' ? Object.keys(changes) : Array.isArray(watcher.keys) ? watcher.keys : [watcher.keys];
+      const keys =
+        watcher.keys === '*'
+          ? Object.keys(changes)
+          : Array.isArray(watcher.keys)
+          ? watcher.keys
+          : [watcher.keys];
 
       for (const key of keys) {
         if (changes[key]) {

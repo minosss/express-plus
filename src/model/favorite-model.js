@@ -19,12 +19,12 @@ export default class FavoriteModel {
       phone,
       state,
       latestMessage:
-        data && data.length > 0 ?
-          {time: data[0].time, context: data[0].context} :
-          {
-            time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-            context: '未查询到信息'
-          },
+        data && data.length > 0
+          ? {time: data[0].time, context: data[0].context}
+          : {
+              time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+              context: '未查询到信息'
+            },
       tags
     });
   }

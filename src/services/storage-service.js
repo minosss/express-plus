@@ -70,7 +70,9 @@ export default class StorageService {
   // localStorage
 
   static async saveHistory({postId, type, phone, state, data, updatedAt}) {
-    let {[HISTORY_KEY]: historyData} = await localStorage.get({[HISTORY_KEY]: []});
+    let {[HISTORY_KEY]: historyData} = await localStorage.get({
+      [HISTORY_KEY]: []
+    });
 
     if (historyData && Array.isArray(historyData)) {
       const newItem = {postId, type, phone, state, updatedAt};
@@ -91,7 +93,10 @@ export default class StorageService {
       //
       const settings = await StorageService.get('settings');
       const recentHistory = settings.recentHistory || DEFAULT_RECENT_HISTORY;
-      historyData = historyData.slice(0, Math.min(recentHistory, MAX_RECENT_HISTORY));
+      historyData = historyData.slice(
+        0,
+        Math.min(recentHistory, MAX_RECENT_HISTORY)
+      );
 
       await localStorage.set({[HISTORY_KEY]: historyData});
       // window.localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
@@ -99,7 +104,9 @@ export default class StorageService {
   }
 
   static async getAllHistory() {
-    const {[HISTORY_KEY]: historyData} = await localStorage.get({[HISTORY_KEY]: []});
+    const {[HISTORY_KEY]: historyData} = await localStorage.get({
+      [HISTORY_KEY]: []
+    });
     return historyData;
   }
 

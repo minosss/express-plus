@@ -27,7 +27,14 @@ class Baidu extends BaseApi {
   }
 
   formatData(rawData) {
-    const {error_code: errorCode, msg, postId, data: {info: {com: type, state, context}}} = rawData;
+    const {
+      error_code: errorCode,
+      msg,
+      postId,
+      data: {
+        info: {com: type, state, context}
+      }
+    } = rawData;
 
     if (errorCode !== '0') {
       throw new Error(msg);
@@ -37,7 +44,10 @@ class Baidu extends BaseApi {
       postId,
       type,
       state,
-      data: context.map(c => ({time: dayjs.unix(c.time).format('YYYY-MM-DD HH:mm:ss'), context: c.desc}))
+      data: context.map(c => ({
+        time: dayjs.unix(c.time).format('YYYY-MM-DD HH:mm:ss'),
+        context: c.desc
+      }))
     };
   }
 }

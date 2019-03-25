@@ -27,12 +27,14 @@ const publicPath = isDev ? '/' : '/';
 function getStyleLoaders(cssOptions, preProcessor) {
   const loaders = [
     // Creates style nodes from JS strings
-    isDev ?
-      {loader: 'style-loader'} :
-      {
-        loader: MiniCssExtractPlugin.loader,
-        options: {}
-      },
+    isDev
+      ? {
+          loader: 'style-loader'
+        }
+      : {
+          loader: MiniCssExtractPlugin.loader,
+          options: {}
+        },
     // Translates CSS into CommonJS
     {
       loader: 'css-loader',
@@ -117,7 +119,11 @@ const config = {
     strictExportPresence: true,
     rules: [
       // Disable require.ensure as it's not a standard language feature.
-      {parser: {requireEnsure: false}},
+      {
+        parser: {
+          requireEnsure: false
+        }
+      },
       // TODO should I need run linter?
       {
         test: /\.(js|mjs|jsx|ts|tsx)$/,
@@ -126,7 +132,9 @@ const config = {
           {
             loader: 'babel-loader',
             options: {
-              customize: require.resolve('babel-preset-react-app/webpack-overrides'),
+              customize: require.resolve(
+                'babel-preset-react-app/webpack-overrides'
+              ),
               babelrc: false,
               configFile: false,
               presets: ['babel-preset-react-app'],
@@ -201,21 +209,27 @@ const config = {
     // require html-webpack-plugin 4.x
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, env),
     // 复制资源文件
-    new CopyWebpackPlugin([{from: paths.platformAssets}]),
+    new CopyWebpackPlugin([
+      {
+        from: paths.platformAssets
+      }
+    ]),
     new ModuleNotFoundPlugin(paths.appPath),
     //
-    ...(isDev ? [
-      new webpack.HotModuleReplacementPlugin(),
-      // 避免输入错误的路径
-      new CaseSensitivePathsPlugin(),
-      new WatchMissingNodeModulesPlugin(paths.appNodeModules)
-    ] : [
-      // 生产模式取出样式到独立文件
-      new MiniCssExtractPlugin({
-        filename: 'css/[name].css',
-        chunkFilename: 'css/[name].chunk.css'
-      })
-    ]),
+    ...(isDev
+      ? [
+          new webpack.HotModuleReplacementPlugin(),
+          // 避免输入错误的路径
+          new CaseSensitivePathsPlugin(),
+          new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+        ]
+      : [
+          // 生产模式取出样式到独立文件
+          new MiniCssExtractPlugin({
+            filename: 'css/[name].css',
+            chunkFilename: 'css/[name].chunk.css'
+          })
+        ]),
     // 过滤moment资源缩小体积
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
   ],
@@ -269,14 +283,16 @@ const config = {
       new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: {
           parser: safePostCssParser,
-          map: shouldUseSourceMap ? {
-            // `inline: false` forces the sourcemap to be output into a
-            // separate file
-            inline: false,
-            // `annotation: true` appends the sourceMappingURL to the end of
-            // the css file, helping the browser find the sourcemap
-            annotation: true
-          } : false
+          map: shouldUseSourceMap
+            ? {
+                // `inline: false` forces the sourcemap to be output into a
+                // separate file
+                inline: false,
+                // `annotation: true` appends the sourceMappingURL to the end of
+                // the css file, helping the browser find the sourcemap
+                annotation: true
+              }
+            : false
         }
       })
     ],

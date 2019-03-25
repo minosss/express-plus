@@ -11,6 +11,9 @@ const logger = store => next => action => {
   return result;
 };
 
-const store = createStore(reducer, applyMiddleware(logger, thunk.withExtraArgument({api})));
+const store = createStore(
+  reducer,
+  applyMiddleware(logger, thunk.withExtraArgument({api}))
+);
 
 export default store;

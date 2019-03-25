@@ -10,11 +10,21 @@ function renderItem({postId, type, latestMessage, updatedAt}) {
   return (
     <List.Item key={`${postId}-${type}`}>
       <List.Item.Meta
-        title={<>{postId}{' '}<TypeTag type={type} /></>}
+        title={
+          <>
+            {postId} <TypeTag type={type} />
+          </>
+        }
         description={<LatestMessage {...latestMessage} />}
       />
-      <span style={{alignSelf: 'center'}}>{updatedAt && dayjs(updatedAt).fromNow()}</span>
-      <div className='ant-list-item-mask' data-post-id={postId} data-type={type} />
+      <span style={{alignSelf: 'center'}}>
+        {updatedAt && dayjs(updatedAt).fromNow()}
+      </span>
+      <div
+        className='ant-list-item-mask'
+        data-post-id={postId}
+        data-type={type}
+      />
     </List.Item>
   );
 }
@@ -24,15 +34,18 @@ export default function HistoryView({history}) {
     return StorageService.getAllHistory();
   }, []);
 
-  const handlePush = useCallback(e => {
-    const {postId, type} = e.target.dataset;
-    if (postId && type) {
-      history.push({
-        pathname: '/detail',
-        search: `?postId=${postId}&type=${type}`
-      });
-    }
-  }, [history]);
+  const handlePush = useCallback(
+    e => {
+      const {postId, type} = e.target.dataset;
+      if (postId && type) {
+        history.push({
+          pathname: '/detail',
+          search: `?postId=${postId}&type=${type}`
+        });
+      }
+    },
+    [history]
+  );
 
   return (
     <List

@@ -6,8 +6,7 @@ const LatestMessage = React.memo(({time, context}) => {
   if (time && context) {
     return (
       <div>
-        {dayjs(time).fromNow()}{' '}
-        <Icon type='clock-circle' /> {context}
+        {dayjs(time).fromNow()} <Icon type='clock-circle' /> {context}
       </div>
     );
   }
