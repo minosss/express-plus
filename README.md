@@ -39,8 +39,9 @@
 - `webextension-polyfill` 统一 Chrome 和 Firefox 的请求，并且让 API 支持 Promise，方便用 `async/await`。
 - `@ant-design/icons` 为了不全部打包图标文件，在 webpack 配置将图标路径指向到 `icons.js`，小了 500KB
 - `lodash.debounce` 避免在输入快递单的时候多次请求接口
+- `prettier` 不再使用 lint 来格式化代码风格，全部使用 prettier。lint 只用来检测可能出现的 bug
 
-## Features
+## Highlights
 
 - 自动识别单号
 - 自动查询更新信息
@@ -63,7 +64,14 @@
 
 [![](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)][cws]
 
-## Questions
+或者本地编译:
+
+1. clone 这个项目 `git clone https://github.com/minosss/express-plus.git`
+2. 安装依赖 `npm install` 或者 `yarn install`
+3. 编译 `npm build` 或者 `yarn build`
+4. Chrome 打开 `chrome://extensions/` 加载未打包应用 `Load unpacked`
+
+## FAQs
 
 ### 地图定位（寄快递）
 
