@@ -2,23 +2,31 @@ import kuaidi100 from './kuaidi100';
 import baidu from './baidu';
 import data from './data';
 
-export const codeMap = data.reduce((res, curr) => {
-  if (curr.code) {
-    res[curr.code] = curr;
-  }
+const groupBy = (arr, fn) =>
+  arr
+    .map(typeof fn === 'function' ? fn : val => val[fn])
+    .reduce((acc, val, i) => {
+      acc[val] = (acc[val] || []).concat(arr[i]);
+      return acc;
+    }, {});
 
-  return res;
-}, {});
+const mapBy = (arr, fn) =>
+  arr
+    .map(typeof fn === 'function' ? fn : val => val[fn])
+    .reduce((acc, val, i) => {
+      acc[val] = arr[i];
+      return acc;
+    }, {});
 
-export const groupedCodeMap = data.reduce((result, curr) => {
-  const char = curr.code[0];
-  if (Array.isArray(result[char])) {
-    result[char].push(curr);
-  } else {
-    result[char] = [curr];
-  }
+const stableSort = (arr, compare) =>
+  arr
+    .map((item, index) => ({item, index}))
+    .sort((a, b) => compare(a.item, b.item) || a.index - b.index)
+    .map(({item}) => item);
 
-  return result;
-}, {});
+export const codeMap = mapBy(data, 'code');
+
+const sotrtedData = stableSort(data, (a, b) => (a.code > b.code ? 1 : -1));
+export const groupedCodeMap = groupBy(sotrtedData, val => val.code[0]);
 
 export default [kuaidi100, baidu];
