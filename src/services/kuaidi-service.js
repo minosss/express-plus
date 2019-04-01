@@ -110,7 +110,7 @@ export default class KuaidiService {
       // -
       let messages = await pMap(
         favorites,
-        async ({postId, type, phone, latestMessage, tags}) => {
+        async ({postId, type, phone, latestMessage, ...others}) => {
           try {
             const result = await KuaidiService.query(
               {postId, type, phone},
@@ -121,8 +121,11 @@ export default class KuaidiService {
               result.data.length > 0 &&
               result.data[0].time !== latestMessage.time
             ) {
-              const nextFavorite = FavoriteModel.fromObject(result);
-              nextFavorite.tags = tags;
+              const nextFavorite = {
+                ...FavoriteModel.fromObject(result),
+                ...others
+              };
+              // nextFavorite.tags = tags;
               // 更新已保存的快递
               await StorageService.updateFavorite(nextFavorite);
               return nextFavorite;

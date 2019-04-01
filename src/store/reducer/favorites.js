@@ -4,7 +4,8 @@ import {
   CREATE_FAVORITE,
   UPDATE_FAVORITE,
   UPDATE_TAGS,
-  DELETE_FAVORITE
+  DELETE_FAVORITE,
+  TOGGLE_PIN
 } from '../actions';
 
 export default function favorites(state = [], action) {
@@ -32,6 +33,12 @@ export default function favorites(state = [], action) {
         return;
       case DELETE_FAVORITE:
         draft.splice(index, 1);
+        return;
+      case TOGGLE_PIN:
+        if (isExist) {
+          draft[index].pin = !draft[index].pin;
+        }
+
         return;
       case RECEIVE_DATA:
         return action.favorites;

@@ -4,7 +4,7 @@ import {useDispatch, useMappedState} from 'redux-react-hook';
 import {List, Icon, Tag, Popconfirm, message} from 'antd';
 import {Link} from 'react-router-dom';
 import {STATE_DELIVERED} from '../services/kuaidi-service';
-import {DELETE_FAVORITE} from '../store/actions';
+import {DELETE_FAVORITE, TOGGLE_PIN} from '../store/actions';
 import TypeTag from '../components/type-tag';
 import LatestMessage from '../components/latest-message';
 
@@ -30,13 +30,18 @@ const Tags = React.memo(({children, data}) => (
 // 签收的往后排
 function sortFavorites(a, b) {
   let r = 1;
-  if (a.state !== STATE_DELIVERED && b.state === STATE_DELIVERED) {
+
+  if (
+    (a.pin && !b.pin) ||
+    (a.state !== STATE_DELIVERED && b.state === STATE_DELIVERED)
+  ) {
     r = -1;
   }
 
   const aMsg = a.latestMessage || a.lastestData;
   const bMsg = b.latestMessage || b.lastestData;
-  if (aMsg && bMsg) {
+
+  if ((a.pin === b.pin || (!a.pin && !b.pin)) && (aMsg && bMsg)) {
     if (dayjs(aMsg.time).isAfter(dayjs(bMsg.time))) {
       r = -1;
     } else {
@@ -65,7 +70,18 @@ export default function FavoritesView() {
       dataSource={sortedFavorites}
       renderItem={item => (
         <List.Item
+          className={item.pin && 'is-pinned'}
           actions={[
+            <a key='action-pin' href='#' onClick={() => {}}>
+              <Icon
+                type='pushpin'
+                style={{color: 'rgba(0, 0, 0, 0.65)'}}
+                theme={item.pin ? 'filled' : 'outlined'}
+                onClick={() => {
+                  dispatch({type: TOGGLE_PIN, postId: item.postId});
+                }}
+              />
+            </a>,
             <Link
               key='action-search'
               to={{

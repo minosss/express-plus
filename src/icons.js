@@ -23,5 +23,7 @@ export {
   PhoneOutline,
   EnvironmentOutline,
   LoadingOutline,
-  TeamOutline
+  TeamOutline,
+  PushpinOutline,
+  PushpinFill
 } from '@ant-design/icons';
