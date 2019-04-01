@@ -17,7 +17,7 @@ dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
 
 message.config({
-  top: 288,
+  top: 460,
   maxCount: 1,
   duration: 2
 });
