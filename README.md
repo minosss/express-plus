@@ -120,6 +120,10 @@ if (oldData) {
 window.localStorage.removeItem('ngStorage-marks');
 ```
 
+## Related
+
+- [express-api](https://github.com/minosss/express-api) - 整合不同的快递查询服务器 _baidu 查询页面_、_快递 100_，并统一输出格式。
+
 ## License
 
 MIT, [License](LICENSE)
