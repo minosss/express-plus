@@ -1,0 +1,29 @@
+{
+  "extends": ["xo-space", "xo-react"],
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "indent": 0,
+    "no-warning-comments": 0,
+    "capitalized-comments": 0,
+    "react/prop-types": "warning",
+    "react/jsx-indent": [2, 2, {"checkAttributes": true}],
+    "react/jsx-indent-props": [2, 2],
+    "react/jsx-tag-spacing": [
+      "error",
+      {
+        "closingSlash": "never",
+        "beforeSelfClosing": "always",
+        "afterOpening": "never",
+        "beforeClosing": "never"
+      }
+    ],
+    "jsx-quotes": ["error", "prefer-single"],
+    "operator-linebreak": [
+      "error",
+      "after",
+      {"overrides": {"?": "before", ":": "before"}}
+    ]
+  }
+}
