@@ -56,6 +56,11 @@ const menu = (
         <Icon type='smile' /> 去商店评价 <Icon type='export' />
       </a>
     </Menu.Item>
+    <Menu.Item>
+      <a href='https://github.com/minosss/express-plus#faqs' target='_blank' rel='noopener noreferrer'>
+        <Icon type='question' /> 常见问题 <Icon type='export' />
+      </a>
+    </Menu.Item>
   </Menu>
 );
 

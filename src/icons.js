@@ -25,5 +25,6 @@ export {
   LoadingOutline,
   TeamOutline,
   PushpinOutline,
-  PushpinFill
+  PushpinFill,
+  QuestionOutline
 } from '@ant-design/icons';
