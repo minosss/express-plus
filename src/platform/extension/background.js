@@ -16,13 +16,24 @@ class Background {
       Background.onBeforeSendHeaders,
       {
         urls: [
-          'https://biz.trace.ickd.cn/*',
+          'https://www.kuaidi100.com/*',
           'https://m.kuaidi100.com/*',
           'https://sp0.baidu.com/*'
         ]
       },
-      ['requestHeaders', 'blocking']
+      // Starting from Chrome 72, the following request headers are not provided and cannot be modified or removed without specifying 'extraHeaders' in opt_extraInfoSpec:
+      ['requestHeaders', 'blocking', 'extraHeaders']
     );
+
+    // browser.webRequest.onSendHeaders.addListener(
+    //   function (details) {
+    //     console.log(details.requestHeaders);
+    //   },
+    //   {
+    //     urls: ['<all_urls>']
+    //   },
+    //   ['requestHeaders', 'extraHeaders']
+    // );
     // -
     StorageService.watch('settings', Background.onSettingsChanged);
   }
@@ -57,6 +68,10 @@ class Background {
       if (details.requestHeaders[i].name === 'Referer') {
         referer = details.requestHeaders.splice(i, 1);
       }
+
+      if (details.requestHeaders[i].name === 'Origin') {
+        details.requestHeaders.splice(i, 1);
+      }
     }
 
     if (referer && referer.length > 0) {
@@ -65,6 +80,21 @@ class Background {
         name: 'Referer',
         value: url.origin
       });
+    } else {
+      const {url} = details;
+      // 插件請求的時候需要補充一些請求頭信息
+      if (url.indexOf('kuaidi100.com') !== -1) {
+        details.requestHeaders.push({
+          name: 'Host',
+          value: 'www.kuaidi100.com'
+        }, {
+          name: 'Referer',
+          value: 'https://www.kuaidi100.com/'
+        }, {
+          name: 'X-Requested-With',
+          value: 'XMLHttpRequest'
+        });
+      }
     }
 
     return {

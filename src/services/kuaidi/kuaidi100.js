@@ -31,7 +31,7 @@ class Kuaidi100 extends BaseApi {
 
   async auto({postId}) {
     const data = await this.request
-      .get('autonumber/autoComNum', {
+      .post('autonumber/autoComNum', {
         searchParams: {
           resultv2: 1,
           text: postId
@@ -46,7 +46,8 @@ class Kuaidi100 extends BaseApi {
     const searchParams = {
       type,
       postid: postId,
-      temp: Math.random()
+      temp: Math.random(),
+      phone: ''
     };
 
     if (type === 'shunfeng') {
