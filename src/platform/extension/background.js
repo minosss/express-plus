@@ -182,20 +182,25 @@ class MessageHandler {
   }
 
   static async refreshCookie(frameId = 'kuaidi100') {
-    // 过期时间应该是 20 分钟
-    const last = await StorageService.getLocalStorage().get({'ep-refresh-cookie-last-time': 0});
+    const frame = window.frames[frameId];
+    if (!frame) {
+      return Promise.resolve(false);
+    }
+
+    const key = `ep-refresh-cookie-${frameId}`;
+    const last = await StorageService.getLocalStorage().get({[key]: 0});
     const diff = Date.now() - last;
 
+    // 过期时间应该是 20 分钟
     // 15 * 60 * 1000
     if (diff < 900000) {
       return Promise.resolve(true);
     }
 
     return new Promise(resolve => {
-      const frame = window.frames[frameId];
       frame.addEventListener('load', () => {
         resolve(true);
-        StorageService.getLocalStorage().set({'ep-refresh-cookie-last-time': Date.now()});
+        StorageService.getLocalStorage().set({[key]: Date.now()});
       }, {once: true});
       frame.src = String(frame.src);
     });
