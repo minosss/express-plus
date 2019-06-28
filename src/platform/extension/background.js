@@ -25,15 +25,15 @@ class Background {
       ['requestHeaders', 'blocking', 'extraHeaders']
     );
 
-    // browser.webRequest.onSendHeaders.addListener(
-    //   function (details) {
-    //     console.log(details.requestHeaders);
-    //   },
-    //   {
-    //     urls: ['<all_urls>']
-    //   },
-    //   ['requestHeaders', 'extraHeaders']
-    // );
+    browser.webRequest.onSendHeaders.addListener(
+      function (details) {
+        console.log(details.requestHeaders);
+      },
+      {
+        urls: ['https://www.kuaidi100.com/*', 'https://m.kuaidi100.com/*']
+      },
+      ['requestHeaders', 'extraHeaders']
+    );
     // -
     StorageService.watch('settings', Background.onSettingsChanged);
   }
@@ -85,6 +85,9 @@ class Background {
       // 插件請求的時候需要補充一些請求頭信息
       if (url.indexOf('kuaidi100.com') !== -1) {
         details.requestHeaders.push({
+          name: 'Accept',
+          value: 'application/json, text/javascript, */*; q=0.01'
+        }, {
           name: 'Host',
           value: 'www.kuaidi100.com'
         }, {
@@ -125,6 +128,7 @@ class AlarmHandler {
   }
 
   static async runAutoUpdate() {
+    await MessageHandler.refreshCookie();
     const messages = await KuaidiService.update();
 
     if (messages.length > 0) {
@@ -156,6 +160,8 @@ class MessageHandler {
         return MessageHandler.load();
       case internalMessageTypes.UPDATE:
         return MessageHandler.update(message.data);
+      case internalMessageTypes.REFRESH_COOKIE:
+        return MessageHandler.refreshCookie(message.frameId);
       // case internalMessageTypes.SIGN_IN:
       // return this.firebase.signIn(message.data);
       default:
@@ -173,6 +179,26 @@ class MessageHandler {
   static async update(data) {
     const savedData = await StorageService.set(data);
     return {data: savedData};
+  }
+
+  static async refreshCookie(frameId = 'kuaidi100') {
+    // 过期时间应该是 20 分钟
+    const last = await StorageService.getLocalStorage().get({'ep-refresh-cookie-last-time': 0});
+    const diff = Date.now() - last;
+
+    // 15 * 60 * 1000
+    if (diff < 900000) {
+      return Promise.resolve(true);
+    }
+
+    return new Promise(resolve => {
+      const frame = window.frames[frameId];
+      frame.addEventListener('load', () => {
+        resolve(true);
+        StorageService.getLocalStorage().set({'ep-refresh-cookie-last-time': Date.now()});
+      }, {once: true});
+      frame.src = String(frame.src);
+    });
   }
 }
 

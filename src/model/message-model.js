@@ -3,7 +3,8 @@ import browser from 'webextension-polyfill';
 export const internalMessageTypes = {
   LOAD: 'load',
   UPDATE: 'update',
-  SIGN_IN: 'signIn'
+  SIGN_IN: 'signIn',
+  REFRESH_COOKIE: 'refreshCookie'
 };
 
 export class InternalMessage {

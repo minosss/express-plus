@@ -69,6 +69,10 @@ export default class StorageService {
 
   // localStorage
 
+  static async getLocalStorage() {
+    return localStorage;
+  }
+
   static async saveHistory({postId, type, phone, state, data, updatedAt}) {
     let {[HISTORY_KEY]: historyData} = await localStorage.get({
       [HISTORY_KEY]: []
