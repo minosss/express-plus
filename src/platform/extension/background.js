@@ -26,8 +26,8 @@ class Background {
     );
 
     browser.webRequest.onSendHeaders.addListener(
-      function (details) {
-        console.log(details.requestHeaders);
+      function () {
+        // console.log(details.requestHeaders);
       },
       {
         urls: ['https://www.kuaidi100.com/*', 'https://m.kuaidi100.com/*']
@@ -187,9 +187,8 @@ class MessageHandler {
     }
 
     const key = `ep-refresh-cookie-${frameId}`;
-    const last = await StorageService.getLocalStorage().get({[key]: 0});
+    const {[key]: last} = await StorageService.getLocalStorage().get({[key]: 0});
     const diff = Date.now() - last;
-
     // 过期时间应该是 20 分钟
     // 15 * 60 * 1000
     if (diff < 900000) {
