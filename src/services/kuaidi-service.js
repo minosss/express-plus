@@ -3,6 +3,7 @@ import pRetry from 'p-retry';
 import FavoriteModel from '../model/favorite-model';
 import StorageService from './storage-service';
 import kuaidiApis, {codeMap} from './kuaidi';
+import {InternalMessage, internalMessageTypes} from '../model/message-model';
 
 // 状态码
 export const STATE_IN_TRANSIT = '0';
@@ -85,6 +86,7 @@ export default class KuaidiService {
    */
   static async query({postId, type, phone}, saveHistory = true) {
     try {
+      await InternalMessage.create(internalMessageTypes.REFRESH_COOKIE).send();
       const data = await retryQuery({postId, type, phone});
       data.updatedAt = Date.now();
 

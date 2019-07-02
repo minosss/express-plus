@@ -69,7 +69,7 @@ export default class StorageService {
 
   // localStorage
 
-  static async getLocalStorage() {
+  static getLocalStorage() {
     return localStorage;
   }
 

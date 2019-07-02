@@ -128,7 +128,6 @@ class AlarmHandler {
   }
 
   static async runAutoUpdate() {
-    await MessageHandler.refreshCookie();
     const messages = await KuaidiService.update();
 
     if (messages.length > 0) {
@@ -197,6 +196,7 @@ class MessageHandler {
       return Promise.resolve(true);
     }
 
+    console.log('refresh kuaidi100');
     return new Promise(resolve => {
       frame.addEventListener('load', () => {
         resolve(true);
