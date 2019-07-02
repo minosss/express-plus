@@ -68,8 +68,9 @@
 
 1. clone 这个项目 `git clone https://github.com/minosss/express-plus.git`
 2. 安装依赖 `npm install` 或者 `yarn install`
-3. 编译 `npm build` 或者 `yarn build`
-4. Chrome 打开 `chrome://extensions/` 加载未打包应用 `Load unpacked`
+3. 复制一份 `.env.example` 命名为 `.env` 并填入申请的密钥
+4. 编译 `npm build` 或者 `yarn build`
+5. Chrome 打开 `chrome://extensions/` 加载未打包应用 `Load unpacked`
 
 ## FAQs
 

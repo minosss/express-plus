@@ -2,8 +2,8 @@
   "name": "express-plus",
   "private": true,
   "scripts": {
-    "start": "node scripts/start",
-    "build": "node scripts/build",
+    "start": "node -r dotenv/config scripts/start",
+    "build": "node -r dotenv/config scripts/build",
     "release": "run-s build update-version",
     "update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; dot-json build/manifest.json content_security_policy --delete; zip -r $VERSION.zip build;",
     "lint": "eslint src/**/*.js"
@@ -37,6 +37,7 @@
     "copy-webpack-plugin": "^5.0.0",
     "css-loader": "^2.1.0",
     "dot-json": "^1.1.0",
+    "dotenv": "^8.0.0",
     "eslint": "^5.13.0",
     "eslint-config-xo-react": "^0.19.0",
     "eslint-config-xo-space": "^0.21.0",
