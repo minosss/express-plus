@@ -10,7 +10,7 @@ import {
 
 export default function favorites(state = [], action) {
   return produce(state, draft => {
-    const index = draft.findIndex(item => item.postId === action.postId);
+    const index = draft.findIndex(item => item.postId === action.favorite.postId);
     const isExist = index !== -1;
     switch (action.type) {
       case CREATE_FAVORITE:
