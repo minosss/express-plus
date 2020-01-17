@@ -93,6 +93,7 @@ export default function DetailView({location, history}) {
         // 全覆盖更新
         dispatch({
           type: UPDATE_FAVORITE,
+          postId,
           favorite: FavoriteModel.fromObject(nextResult).update()
         });
       }
@@ -141,6 +142,7 @@ export default function DetailView({location, history}) {
     if (nextIsFavorite) {
       dispatch({
         type: CREATE_FAVORITE,
+        postId,
         favorite: FavoriteModel.fromObject(result)
       });
     } else {
