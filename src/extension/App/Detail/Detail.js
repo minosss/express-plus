@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import {TypeLabel, StateLabel, IconButton, InnerIconButton} from '../components';
 import {fetcher, toFavorite} from '../../utils';
 import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
+import {API_URLS} from '@/shared/constants';
 
 const TimelineItem = styled(Timeline.Item)`
 	&:not(:first-child) {
@@ -52,7 +53,7 @@ const Title = styled.div`
 	}
 `;
 
-export default function Detail({location}) {
+export default function Detail({location, history}) {
 	const {type, postId, phone = ''} = qs.parse(location.search);
 	const [isSaved, setSaved] = useState(false);
 	const {data, isValidating} = useSWR(() => [
@@ -64,17 +65,31 @@ export default function Detail({location}) {
 		setSaved(data && data.updatedAt && data.message);
 	}, [data]);
 
+	// 收藏
 	const handleToggleChecked = () => {
 		if (isSaved) {
-			fetcher('/favorites/remove', postId).then(() => {
+			fetcher(API_URLS.FAVORITES_REMOVE, postId).then(() => {
 				setSaved(false);
 			});
 		} else {
-			fetcher('/favorites/add', toFavorite(data)).then((res) => {
+			fetcher(API_URLS.FAVORITES_ADD, toFavorite(data)).then((res) => {
 				setSaved(true);
 			});
 		}
 	};
+
+	// 换其他快递
+	const handleSelect = () => {
+		history.push(`/app/select?postId=${postId}&type=${type}&phone=${phone}`);
+	};
+
+	// 收货
+	// const handleMakeDelivered = () => {
+	// 	fetcher(API_URLS.FAVORITES_PATCH, {
+	// 		...toFavorite(data),
+	// 		state: STATE_DELIVERED,
+	// 	}).then(() => {});
+	// };
 
 	const {data: messages, state, error} = data || {};
 
@@ -86,7 +101,7 @@ export default function Detail({location}) {
 						<span>{postId}</span>
 						<IconButton tooltip='刷新' icon={<ReloadOutlined />} />
 						<IconButton
-							tooltip='收藏'
+							tooltip={`${isSaved ? '取消' : '点击'}收藏`}
 							icon={<StarOutlined />}
 							checkedIcon={<StarFilled />}
 							checked={isSaved}
@@ -96,13 +111,21 @@ export default function Detail({location}) {
 					<Descriptions size='small' column={2}>
 						<Descriptions.Item label='快递'>
 							<TypeLabel value={type} />
-							<InnerIconButton tooltip='选择快递' icon={<EditOutlined />} />
+							<InnerIconButton
+								onClick={handleSelect}
+								tooltip='选择快递'
+								icon={<EditOutlined />}
+							/>
 						</Descriptions.Item>
 						<Descriptions.Item label='状态'>
 							<StateLabel value={state} />
-							{!isDelivered(state) && (
-								<InnerIconButton tooltip='确认收货' icon={<CheckOutlined />} />
-							)}
+							{/* {!isDelivered(state) && isSaved && (
+								<InnerIconButton
+									onClick={handleMakeDelivered}
+									tooltip='确认收货'
+									icon={<CheckOutlined />}
+								/>
+							)} */}
 						</Descriptions.Item>
 						<Descriptions.Item label='标签'>
 							<Tag>
