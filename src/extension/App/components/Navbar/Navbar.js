@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import {useState, useMemo} from 'react';
+import {useState} from 'react';
 import useSWR from 'swr';
 import {useDebounce} from 'react-use';
-import {Link, useHistory, useLocation} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {jsx} from '@emotion/core';
 import styled from '@emotion/styled';
 import {AutoComplete, Input, Menu, Dropdown} from 'antd';
@@ -14,10 +14,9 @@ import {
 	GithubOutlined,
 	SmileOutlined,
 	LoadingOutlined,
-	HomeOutlined,
 } from '@ant-design/icons';
-import {TypeLabel, IconButton} from '../index';
-import {reportIssue, getStoreUri} from '../../../utils';
+import {TypeLabel} from '../index';
+import {reportIssue, getStoreUrl} from '../../../utils';
 
 const useDebounceAuto = (value) => {
 	const [state, setState] = useState(value);
@@ -56,7 +55,7 @@ const menu = (
 			</Link>
 		</Menu.Item>
 		<Menu.Item key='store'>
-			<a href={getStoreUri()} target='_blank' rel='noopener noreferrer'>
+			<a href={getStoreUrl()} target='_blank' rel='noopener noreferrer'>
 				<SmileOutlined /> 去商店评价
 			</a>
 		</Menu.Item>
@@ -97,7 +96,7 @@ const NavbarSection = styled.section`
 	}
 `;
 
-const NavbarTitle = styled.span`
+const NavbarTitle = styled(Link)`
 	font-size: 1rem;
 `;
 
@@ -128,24 +127,9 @@ const OptionItemLabel = ({value}) => {
 };
 
 export default function Navbar() {
-	const location = useLocation();
 	const history = useHistory();
 	const [inputValue, setInputValue] = useState('');
 	const {data, isValidating} = useDebounceAuto(inputValue);
-	const isHomePage = location.pathname === HOME_PAGE;
-	const title = useMemo(() => {
-		console.log('run memo');
-		switch (location.pathname) {
-			case '/app/favorites':
-				return '收藏列表';
-			case '/app/settings':
-				return '设置';
-			case '/app/detail':
-				return '详情';
-			default:
-				return '快递助手';
-		}
-	}, [location]);
 
 	const finalOptions = (data || []).map((item) => ({
 		label: <OptionItemLabel value={item} />,
@@ -157,15 +141,7 @@ export default function Navbar() {
 	return (
 		<NavbarWrapper>
 			<NavbarSection>
-				{!isHomePage && (
-					<IconButton
-						onClick={() => {
-							history.replace(HOME_PAGE);
-						}}
-						icon={<HomeOutlined />}
-					/>
-				)}
-				<NavbarTitle>{title}</NavbarTitle>
+				<NavbarTitle to={HOME_PAGE}>快递助手</NavbarTitle>
 			</NavbarSection>
 			<NavbarSection>
 				<AutoComplete
