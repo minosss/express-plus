@@ -20,7 +20,8 @@ export const STATES_MAP = {
 	[STATE_ERROR]: '异常',
 };
 
-export const TYPES_MAP = _.keyBy(all.data, 'type');
+export const TYPES = _.sortBy(all.data, ['type']);
+export const TYPES_MAP = _.keyBy(TYPES, 'type');
 
 const toURLSearchParams = (params) => {
 	const r = new URLSearchParams();
