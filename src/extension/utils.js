@@ -49,7 +49,7 @@ export const toFavorite = (data) => {
 
 export const getVersion = () => browser.runtime.getManifest().version;
 export const getHomePageUrl = () => browser.runtime.getManifest().homepage_url;
-export const getStoreUri = () =>
+export const getStoreUrl = () =>
 	`https://chrome.google.com/webstore/detail/${browser.runtime.id}`;
 export const reportIssue = () => {
 	let url = 'https://github.com/minosss/express-plus/issues/new?title=&body=';

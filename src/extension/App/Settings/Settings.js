@@ -1,12 +1,21 @@
-import React from 'react';
-import {Switch, Select, List, Spin} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Switch, Select, List, Spin, Button} from 'antd';
+import {
+	InfoCircleOutlined,
+	ClockCircleOutlined,
+	GithubOutlined,
+	ShopOutlined,
+} from '@ant-design/icons';
 import useSWR from 'swr';
-import {fetcher, getVersion, getHomePageUrl} from '../../utils';
+import dayjs from 'dayjs';
+import {fetcher, getVersion, getHomePageUrl, getStoreUrl} from '../../utils';
 import {API_URLS} from '@/shared/constants';
 
 export default function Settings() {
 	const {data = {}, isValidating, mutate} = useSWR(API_URLS.SETTINGS);
+	const [lastRefresh, setLastRefresh] = useState('waiting...');
 
+	// 更新设置
 	const updateSetings = async (key, value) => {
 		const patch = await fetcher(API_URLS.SETTINGS_PATCH, {key, value});
 		if (patch) {
@@ -14,11 +23,32 @@ export default function Settings() {
 		}
 	};
 
+	// 强刷 Cookies
+	const handleRefreshCookies = async () => {
+		const time = await fetcher(API_URLS.REFRESH_COOKIES);
+		if (time) {
+			mutate({...data, cookieKuaidi100: time}, false);
+		}
+	};
+
+	useEffect(() => {
+		const inter = setInterval(() => {
+			setLastRefresh(
+				data.cookieKuaidi100 ? dayjs(data.cookieKuaidi100).fromNow() : 'waiting...'
+			);
+		}, 5000);
+		return () => {
+			clearInterval(inter);
+		};
+	}, [data]);
+
 	return (
 		<Spin spinning={isValidating}>
 			<div className=''>
 				<List>
-					<List.Item>自动查询</List.Item>
+					<List.Item>
+						<ClockCircleOutlined /> 自动查询
+					</List.Item>
 					<List.Item
 						actions={[
 							<Switch
@@ -65,23 +95,39 @@ export default function Settings() {
 					>
 						<List.Item.Meta title='查询间隔（分钟）' description='默认60分钟' />
 					</List.Item>
-					<List.Item>关于</List.Item>
-					<List.Item>
-						<List.Item.Meta title='版本' description={`v${getVersion()}`} />
+					<List.Item
+						actions={[
+							<Button danger onClick={handleRefreshCookies}>
+								强制刷新
+							</Button>,
+						]}
+					>
+						<List.Item.Meta title='最后刷新 Cookie' description={lastRefresh} />
 					</List.Item>
 					<List.Item>
-						<List.Item.Meta
-							title='Github 项目'
-							description={
-								<a
-									href={getHomePageUrl()}
-									target='_blank'
-									rel='noopener noreferrer'
-								>
-									{getHomePageUrl()}
-								</a>
-							}
-						/>
+						<InfoCircleOutlined /> 关于
+					</List.Item>
+					<List.Item
+						actions={[
+							<Button
+								target='_blank'
+								rel='noopener noreferrer'
+								href={getHomePageUrl()}
+								icon={<GithubOutlined />}
+							>
+								Github
+							</Button>,
+							<Button
+								target='_blank'
+								rel='noopener noreferrer'
+								href={getStoreUrl()}
+								icon={<ShopOutlined />}
+							>
+								Web Store
+							</Button>,
+						]}
+					>
+						<List.Item.Meta title='版本' description={`v${getVersion()}`} />
 					</List.Item>
 				</List>
 			</div>

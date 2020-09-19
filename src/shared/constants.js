@@ -11,6 +11,8 @@ export const API_URLS = {
 	FAVORITES_REMOVE: '/favorites/remove',
 	SETTINGS: '/settings',
 	SETTINGS_PATCH: '/settings/patch',
+	// cookies
+	REFRESH_COOKIES: '/refresh/cookies',
 };
 
 export const SETTINGS = {

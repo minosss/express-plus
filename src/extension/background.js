@@ -121,7 +121,7 @@ class Background {
 	}
 
 	// 检查嵌入页面是否过期
-	async checkCookie() {
+	async checkCookie(force = false) {
 		const frame = window.frames['kuaidi100'];
 		if (!frame) {
 			log(`iframe not found`);
@@ -133,17 +133,18 @@ class Background {
 		const diff = Date.now() - last;
 		// 过期时间应该是 20 分钟
 		// 15 * 60 * 1000
-		if (diff < 900000) {
+		if (!force && diff < 900000) {
 			return true;
 		}
 
-		log('reload frame kuaidi100');
 		return new Promise((resolve) => {
 			frame.addEventListener(
 				'load',
 				async () => {
-					resolve(true);
-					await db.table('settings').put({key, value: Date.now()});
+					const now = Date.now();
+					log('reload frame kuaidi100', now);
+					resolve(now);
+					await db.table('settings').put({key, value: now});
 				},
 				{once: true}
 			);
@@ -223,6 +224,9 @@ class Background {
 				const {url} = message;
 
 				switch (url) {
+					case API_URLS.REFRESH_COOKIES:
+						const now = await this.checkCookie(true);
+						return now;
 					case API_URLS.KUAIDI_AUTO:
 						await this.checkCookie();
 						return await kuaidi.auto(message.data);
