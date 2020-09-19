@@ -1,0 +1,46 @@
+//
+@spaces: 0, 0.25, 0.5, 0.75, 1, 1.5, 2;
+
+each(@spaces, {
+	@lvl: @value * 4;
+	@space: @value * 1rem;
+	.m-@{lvl} {
+		margin: @space;
+	}
+
+	.ml-@{lvl} {
+		margin-left: @space;
+	}
+
+	.mr-@{lvl} {
+		margin-right: @space;
+	}
+
+	.mt-@{lvl} {
+		margin-top: @space;
+	}
+
+	.mx-@{lvl} {
+		margin-left: @space;
+		margin-right: @space;
+	}
+
+	.my-@{lvl} {
+		margin-top: @space;
+		margin-bottom: @space;
+	}
+
+	.p-@{lvl} {
+		padding: @space;
+	}
+
+	.px-@{lvl} {
+		padding-left: @space;
+		padding-right: @space;
+	}
+
+	.py-@{lvl} {
+		padding-top: @space;
+		padding-bottom: @space;
+	}
+});
