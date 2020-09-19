@@ -51,7 +51,7 @@ export default function App() {
 							<Route path='/app/favorites' component={Favorites} />
 							<Route path='/app/settings' component={Settings} />
 							<Route path='/app/detail' component={Detail} />
-							<Route path='/app/select/:postId' component={TypeOptions} />
+							<Route path='/app/select' component={TypeOptions} />
 						</Switch>
 					</Layout.Content>
 				</Layout>
