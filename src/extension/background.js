@@ -37,6 +37,8 @@ const hasPatch = (favorite, result) => {
 
 class Background {
 	constructor() {
+		this.db = db;
+
 		// 和界面通信处理操作请求
 		browser.runtime.onMessage.addListener(this.onMessage.bind(this));
 		// 定时器
@@ -74,11 +76,11 @@ class Background {
 		const settings = await db.table('settings').toArray().then(toObject);
 
 		if (settings.enableAuto) {
-			log('start query alarm');
+			log('resetQueryAlarm', '开始自动查询');
 			const min = Math.max(60, parseInt(settings.autoInterval || '0'));
 			await browser.alarms.create(QUERY_ALARM, {periodInMinutes: min});
 		} else {
-			log('stop query alarm');
+			log('resetQueryAlarm', '关闭自动查询');
 		}
 	}
 
@@ -145,7 +147,7 @@ class Background {
 	async checkCookie(force = false) {
 		const frame = window.frames['kuaidi100'];
 		if (!frame) {
-			log(`iframe not found`);
+			log('checkCookie', `iframe not found`);
 			return false;
 		}
 
@@ -163,7 +165,7 @@ class Background {
 				'load',
 				async () => {
 					const now = Date.now();
-					log('reload frame kuaidi100', now);
+					log('checkCookie', '刷新 iframe', now);
 					resolve(now);
 					await db.table('settings').put({key, value: now});
 				},
@@ -235,7 +237,7 @@ class Background {
 
 	// 任务：自动查询
 	async runQueryTask() {
-		log('run:QueryTask');
+		log('runQueryTask', Date.now());
 		// 未收货的快递单，判断 state 不等于收货(3)
 		const favorites = await db
 			.table('favorites')
@@ -259,12 +261,14 @@ class Background {
 
 		// 有单更新
 		if (patch.length > 0) {
+			log('有快递更新咯', patch);
 			// 批量更新
 			await db.table('favorites').bulkPut(patch);
 			const settings = await db.table('settings').toArray().then(toObject);
 			// 是否只提示已签收的
 			if (settings.enableFilterDelivered) {
 				patch = patch.filter((item) => item.state === STATE_DELIVERED);
+				log('只要收货的', patch);
 			}
 
 			// 转到通知
@@ -284,7 +288,7 @@ class Background {
 
 	// -
 	async onMessage(message, sender) {
-		log(message);
+		log('onMessage', message);
 
 		if (sender.id !== browser.runtime.id) {
 			return Promise.resolve();
@@ -387,4 +391,4 @@ class Background {
 }
 
 // -
-new Background();
+window.bg = new Background();
