@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import createKuaidiService from '@/shared/utils/kuaidi';
+import createKuaidiService, {STATE_DELIVERED} from '@/shared/utils/kuaidi';
 import db from '@/shared/utils/db';
 import log from '@/shared/utils/log';
 import {API_URLS, SETTING_KEYS} from '@/shared/constants';
@@ -53,21 +53,18 @@ class Background {
 		});
 	}
 
-	resetQueryAlarm() {
+	async resetQueryAlarm() {
 		browser.alarms.clear(QUERY_ALARM);
 
-		db.table('settings')
-			.toArray()
-			.then(toObject)
-			.then((settings) => {
-				if (settings.enableAuto) {
-					log('start query alarm');
-					const min = Math.max(60, parseInt(settings.autoInterval || '0'));
-					browser.alarms.create(QUERY_ALARM, {periodInMinutes: min});
-				} else {
-					log('stop query alarm');
-				}
-			});
+		const settings = await db.table('settings').toArray().then(toObject);
+
+		if (settings.enableAuto) {
+			log('start query alarm');
+			const min = Math.max(60, parseInt(settings.autoInterval || '0'));
+			await browser.alarms.create(QUERY_ALARM, {periodInMinutes: min});
+		} else {
+			log('stop query alarm');
+		}
 	}
 
 	async showNotification({type = 'basic', title = '快递助手', message = '新信息', ...rest}) {
@@ -212,11 +209,70 @@ class Background {
 	async onAlarm(alarm) {
 		// name, scheduledTime, periodInMinutes
 		if (alarm.name === QUERY_ALARM) {
+			this.runQueryTask();
 			// 下次定时时间
 			db.table('settings').put({
 				key: QUERY_ALARM_SCHEDULED_TIME,
 				value: alarm.scheduledTime,
 			});
+		}
+	}
+
+	// 任务：自动查询
+	async runQueryTask() {
+		// 未收货的快递单，判断 state 不等于收货(3)
+		const favorites = await db
+			.table('favorites')
+			.where('state')
+			.notEqual(STATE_DELIVERED)
+			.toArray();
+		let patch = [];
+
+		for (const fa of favorites) {
+			const {postId, type, phone} = fa;
+			const result = await kuaidi.query({postId, type, phone});
+			// {data}
+			if (
+				result &&
+				!result.error &&
+				Array.isArray(result.data) &&
+				result.data.length > 0
+			) {
+				const last = result.data[0];
+				if (new Date(fa.updatedAt).getTime() < new Date(last.time).getTime()) {
+					patch.push({
+						...fa,
+						// 只更新状态，和最新信息
+						state: result.state,
+						updatedAt: last.time,
+						message: last.context,
+					});
+				}
+			}
+		}
+
+		// 有单更新
+		if (patch.length > 0) {
+			// 批量更新
+			await db.table('favorites').bulkPut(patch);
+			const settings = await db.table('settings').toArray().then(toObject);
+			// 是否只提示已签收的
+			if (settings.enableFilterDelivered) {
+				patch = patch.filter((item) => item.state === STATE_DELIVERED);
+			}
+
+			// 转到通知
+			const items = patch.map((item) => ({
+				title: item.postId,
+				message: item.message,
+			}));
+			if (items.length > 0) {
+				this.showNotification({
+					type: 'list',
+					message: `有 ${items.length} 个快递有新的信息！`,
+					items,
+				});
+			}
 		}
 	}
 
@@ -290,6 +346,7 @@ class Background {
 							.table('histories')
 							.orderBy('updatedAt')
 							.reverse()
+							.limit(message.data || 100)
 							.toArray();
 					case API_URLS.HISTORIES_CLEAR:
 						return await db.table('histories').clear();
