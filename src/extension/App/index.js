@@ -13,6 +13,7 @@ import Favorites from './Favorites';
 import Settings from './Settings';
 import Detail from './Detail';
 import TypeOptions from './TypeOptions';
+import Histories from './Histories';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -52,6 +53,7 @@ export default function App() {
 							<Route path='/app/settings' component={Settings} />
 							<Route path='/app/detail' component={Detail} />
 							<Route path='/app/select' component={TypeOptions} />
+							<Route path='/app/histories' component={Histories} />
 						</Switch>
 					</Layout.Content>
 				</Layout>

@@ -42,6 +42,7 @@ export const toFavorite = (data) => {
 		pin,
 		phone,
 		tags,
+		createdAt: Date.now(),
 		updatedAt: message.time,
 		message: message.context,
 	};

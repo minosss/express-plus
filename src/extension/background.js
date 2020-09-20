@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill';
 import createKuaidiService from '@/shared/utils/kuaidi';
 import db from '@/shared/utils/db';
 import log from '@/shared/utils/log';
-import {API_URLS} from '@/shared/constants';
+import {API_URLS, SETTING_KEYS} from '@/shared/constants';
 
 const kuaidi = createKuaidiService();
 
@@ -46,7 +46,7 @@ class Background {
 		const bg = this;
 		db.table('settings').hook('updating', function (mods, primKey, obj, trans) {
 			this.onsuccess = function ({key, value}) {
-				if (key === 'enableAuto' || key === 'autoInterval') {
+				if (key === SETTING_KEYS.ENABLE_AUTO || key === SETTING_KEYS.AUTO_INTERVAL) {
 					bg.resetQueryAlarm();
 				}
 			};
@@ -93,19 +93,28 @@ class Background {
 						// settings: autoInterval, enableAuto, enableFilterDelivered, recentHistory
 						const indexedSettings = [
 							{
-								key: 'autoInterval',
+								key: SETTING_KEYS.AUTO_INTERVAL,
 								value: settings.autoInterval || AUTO_INTERVAL_DEFAULT,
 							},
-							{key: 'enableAuto', value: !!settings.enableAuto},
+							{key: SETTING_KEYS.ENABLE_AUTO, value: !!settings.enableAuto},
 							{
-								key: 'enableFilterDelivered',
+								key: SETTING_KEYS.ENABLE_FILTER_DELIVERED,
 								value: !!settings.enableFilterDelivered,
 							},
 						];
 						db.table('settings').bulkPut(indexedSettings);
 						// NOTE: 直接更新收藏的快递，已 postId 为主键
 						// favorites: []{postId, ...}
-						db.table('favorites').bulkPut(favorites);
+						db.table('favorites').bulkPut(
+							favorites.map((item) => {
+								const {latestMessage, ...rest} = item;
+								return {
+									...rest,
+									updatedAt: latestMessage.time,
+									message: latestMessage.context,
+								};
+							})
+						);
 					});
 					break;
 				default:
@@ -113,9 +122,9 @@ class Background {
 			}
 		} else if (reason === 'install') {
 			db.table('settings').bulkPut([
-				{key: 'autoInterval', value: AUTO_INTERVAL_DEFAULT},
-				{key: 'enableAuto', value: false},
-				{key: 'enableFilterDelivered', value: false},
+				{key: SETTING_KEYS.AUTO_INTERVAL, value: AUTO_INTERVAL_DEFAULT},
+				{key: SETTING_KEYS.ENABLE_AUTO, value: false},
+				{key: SETTING_KEYS.ENABLE_FILTER_DELIVERED, value: false},
 			]);
 		}
 	}
@@ -128,7 +137,7 @@ class Background {
 			return false;
 		}
 
-		const key = `cookieKuaidi100`;
+		const key = SETTING_KEYS.COOKIES;
 		const last = ((await db.table('settings').get(key)) || {value: 0}).value;
 		const diff = Date.now() - last;
 		// 过期时间应该是 20 分钟
@@ -230,6 +239,8 @@ class Background {
 					case API_URLS.KUAIDI_AUTO:
 						await this.checkCookie();
 						return await kuaidi.auto(message.data);
+
+					// 快递查询
 					case API_URLS.KUAIDI_QUERY:
 						await this.checkCookie();
 						let nextData =
@@ -243,12 +254,28 @@ class Background {
 						} catch (error) {
 							nextData.error = error.message;
 						}
+						// 历史记录
+						try {
+							// 同单号的记录只保存最新的，已单号为键，直接更新来保留一个最新的
+							const {postId, type, phone} = message.data;
+							await db
+								.table('histories')
+								.put({postId, type, phone, updatedAt: Date.now()});
+						} catch (_error) {
+							// ignore error
+						}
+
 						return {
 							...nextData,
 							phone: message.data.phone || '',
 						};
+
 					case API_URLS.FAVORITES:
-						return await db.table('favorites').toArray();
+						return await db
+							.table('favorites')
+							.orderBy('updatedAt')
+							.reverse()
+							.sortBy('pin');
 					case API_URLS.FAVORITES_GET:
 						return await db.table('favorites').get(message.data);
 					case API_URLS.FAVORITES_ADD:
@@ -256,6 +283,17 @@ class Background {
 						return await db.table('favorites').put(message.data);
 					case API_URLS.FAVORITES_REMOVE:
 						return await db.table('favorites').delete(message.data);
+
+					// 历史记录
+					case API_URLS.HISTORIES:
+						return await db
+							.table('histories')
+							.orderBy('updatedAt')
+							.reverse()
+							.toArray();
+					case API_URLS.HISTORIES_CLEAR:
+						return await db.table('histories').clear();
+
 					case API_URLS.SETTINGS:
 						return await db.table('settings').toArray().then(toObject);
 					case API_URLS.SETTINGS_PATCH:

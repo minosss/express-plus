@@ -9,7 +9,7 @@ import {
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import {fetcher, getVersion, getHomePageUrl, getStoreUrl} from '../../utils';
-import {API_URLS} from '@/shared/constants';
+import {API_URLS, SETTING_KEYS} from '@/shared/constants';
 
 export default function Settings() {
 	const {data = {}, isValidating, mutate} = useSWR(API_URLS.SETTINGS);
@@ -52,9 +52,9 @@ export default function Settings() {
 					<List.Item
 						actions={[
 							<Switch
-								checked={data.enableAuto}
+								checked={data[SETTING_KEYS.ENABLE_AUTO]}
 								onChange={(value) => {
-									updateSetings('enableAuto', value);
+									updateSetings(SETTING_KEYS.ENABLE_AUTO, value);
 								}}
 							/>,
 						]}
@@ -67,9 +67,9 @@ export default function Settings() {
 					<List.Item
 						actions={[
 							<Switch
-								checked={data.enableFilterDelivered}
+								checked={data[SETTING_KEYS.ENABLE_FILTER_DELIVERED]}
 								onChange={(value) => {
-									updateSetings('enableFilterDelivered', value);
+									updateSetings(SETTING_KEYS.ENABLE_FILTER_DELIVERED, value);
 								}}
 							/>,
 						]}
@@ -82,9 +82,9 @@ export default function Settings() {
 					<List.Item
 						actions={[
 							<Select
-								value={data.autoInterval}
+								value={data[SETTING_KEYS.AUTO_INTERVAL]}
 								onChange={(value) => {
-									updateSetings('autoInterval', parseInt(value));
+									updateSetings(SETTING_KEYS.AUTO_INTERVAL, parseInt(value));
 								}}
 							>
 								<Select.Option value='60'>60</Select.Option>

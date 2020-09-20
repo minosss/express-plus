@@ -138,7 +138,7 @@ export default function Detail({location, history}) {
 				{Array.isArray(messages) && messages.length > 0 && (
 					<TimelineList value={messages} state={state} />
 				)}
-				{error && <Result status='error' title='请求错误' subTitle={error} />}
+				{error && <Result status='error' title='请求错误' subTitle={error.toSring()} />}
 			</div>
 		</Spin>
 	);

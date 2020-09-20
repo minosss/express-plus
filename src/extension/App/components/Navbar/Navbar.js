@@ -14,6 +14,7 @@ import {
 	GithubOutlined,
 	SmileOutlined,
 	LoadingOutlined,
+	HistoryOutlined,
 } from '@ant-design/icons';
 import {TypeLabel} from '../index';
 import {reportIssue, getStoreUrl} from '../../../utils';
@@ -47,6 +48,11 @@ const menu = (
 		<Menu.Item key='favorites'>
 			<Link to='/app/favorites'>
 				<InboxOutlined /> 收藏列表
+			</Link>
+		</Menu.Item>
+		<Menu.Item>
+			<Link to='/app/histories'>
+				<HistoryOutlined /> 历史记录
 			</Link>
 		</Menu.Item>
 		<Menu.Item key='settings'>
