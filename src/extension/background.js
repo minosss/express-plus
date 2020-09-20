@@ -20,6 +20,21 @@ const toObject = (arg = []) => {
 	});
 };
 
+const hasPatch = (favorite, result) => {
+	if (result && !result.error && Array.isArray(result.data) && result.data.length > 0) {
+		const last = result.data[0];
+		if (new Date(favorite.updatedAt).getTime() < new Date(last.time).getTime()) {
+			return {
+				// 只更新状态，和最新信息
+				state: result.state,
+				updatedAt: last.time,
+				message: last.context,
+			};
+		}
+	}
+	return null;
+};
+
 class Background {
 	constructor() {
 		// 和界面通信处理操作请求
@@ -220,6 +235,7 @@ class Background {
 
 	// 任务：自动查询
 	async runQueryTask() {
+		log('run:QueryTask');
 		// 未收货的快递单，判断 state 不等于收货(3)
 		const favorites = await db
 			.table('favorites')
@@ -232,22 +248,12 @@ class Background {
 			const {postId, type, phone} = fa;
 			const result = await kuaidi.query({postId, type, phone});
 			// {data}
-			if (
-				result &&
-				!result.error &&
-				Array.isArray(result.data) &&
-				result.data.length > 0
-			) {
-				const last = result.data[0];
-				if (new Date(fa.updatedAt).getTime() < new Date(last.time).getTime()) {
-					patch.push({
-						...fa,
-						// 只更新状态，和最新信息
-						state: result.state,
-						updatedAt: last.time,
-						message: last.context,
-					});
-				}
+			const p = hasPatch(fa, result);
+			if (p) {
+				patch.push({
+					...fa,
+					...p,
+				});
 			}
 		}
 
@@ -299,18 +305,27 @@ class Background {
 					// 快递查询
 					case API_URLS.KUAIDI_QUERY:
 						await this.checkCookie();
-						let nextData =
-							(await db.table('favorites').get(message.data.postId)) || {};
+						let fa = (await db.table('favorites').get(message.data.postId)) || {};
+						const isSaved = !!fa.postId;
+						let result = {};
+
 						try {
-							const data = await kuaidi.query(message.data);
-							nextData = {
-								...nextData,
-								...data,
-							};
+							result = await kuaidi.query(message.data);
+							// 如果已经有记录就更新记录
+							if (isSaved) {
+								const p = hasPatch(fa, result);
+								if (p) {
+									db.table('favorites').put({
+										...fa,
+										...p,
+									});
+								}
+							}
 						} catch (error) {
-							nextData.error = error.message;
+							result.error = error.message;
 						}
-						// 历史记录
+
+						// 保存历史记录
 						try {
 							// 同单号的记录只保存最新的，已单号为键，直接更新来保留一个最新的
 							const {postId, type, phone} = message.data;
@@ -322,7 +337,11 @@ class Background {
 						}
 
 						return {
-							...nextData,
+							// 原型的记录
+							...fa,
+							// 查询的记录
+							...result,
+							// 当前的手机
 							phone: message.data.phone || '',
 						};
 
