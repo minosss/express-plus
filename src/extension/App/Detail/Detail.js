@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Spin, Divider, Timeline, Tag, Descriptions, Result} from 'antd';
+import {Spin, Divider, Timeline, Tag, Descriptions, Result, Modal, Input} from 'antd';
 import {
 	ReloadOutlined,
 	StarOutlined,
@@ -53,13 +53,63 @@ const Title = styled.div`
 	}
 `;
 
+const delay = (time) => {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+		}, time);
+	});
+};
+
+// const getPhoneCode = async () => {
+// 	return new Promise((resolve, reject) => {
+// 		const modal = Modal.info({
+// 			title: '顺丰快递需要输入手机后 4 位',
+// 			content: <Input ref={}></Input>,
+// 			onOk: () => {
+// 				resolve(1234);
+// 			},
+// 			onCancel: () => {},
+// 			okCancel: true,
+// 		});
+// 	});
+// };
+
+const NumberInput = (props) => (
+	<Input
+		{...props}
+		maxLength={4}
+		onChange={(e) => {
+			const {value} = e.target;
+			const reg = /^-?\d*(\.\d*)?$/;
+			if ((!isNaN(value) && reg.test(value)) || value === '' || value === '-') {
+				props.onChange(value);
+			}
+		}}
+	></Input>
+);
+
+const TYPE_SF = 'shunfeng';
 export default function Detail({location, history}) {
 	const {type, postId, phone = ''} = qs.parse(location.search);
+	const [inputPhone, setInputPhone] = useState(phone);
 	const [isSaved, setSaved] = useState(false);
-	const {data, isValidating} = useSWR(() => [
-		'/kuaidi/query',
-		JSON.stringify({type, postId, phone}),
-	]);
+	const [showCodeInput, setShowCodeInput] = useState(false);
+	const needPhone = type === TYPE_SF && (phone === '' || phone.length < 4);
+
+	const {data, isValidating} = useSWR(() => {
+		if (needPhone) {
+			return false;
+		} else {
+			return ['/kuaidi/query', JSON.stringify({type, postId, phone})];
+		}
+	});
+
+	useEffect(() => {
+		if (needPhone) {
+			setShowCodeInput(true);
+		}
+	}, [needPhone]);
 
 	useEffect(() => {
 		setSaved(data && data.updatedAt && data.message);
@@ -94,52 +144,93 @@ export default function Detail({location, history}) {
 	const {data: messages, state, error} = data || {};
 
 	return (
-		<Spin spinning={isValidating}>
-			<div className='view-detail'>
-				<div className='m-4'>
-					<Title>
-						<span>{postId}</span>
-						<IconButton tooltip='刷新' icon={<ReloadOutlined />} />
-						<IconButton
-							tooltip={`${isSaved ? '取消' : '点击'}收藏`}
-							icon={<StarOutlined />}
-							checkedIcon={<StarFilled />}
-							checked={isSaved}
-							onClick={handleToggleChecked}
-						/>
-					</Title>
-					<Descriptions size='small' column={2}>
-						<Descriptions.Item label='快递'>
-							<TypeLabel value={type} />
-							<InnerIconButton
-								onClick={handleSelect}
-								tooltip='选择快递'
-								icon={<EditOutlined />}
+		<>
+			<Spin spinning={isValidating}>
+				<div className='view-detail'>
+					<div className='m-4'>
+						<Title>
+							<span>{postId}</span>
+							<IconButton tooltip='刷新' icon={<ReloadOutlined />} />
+							<IconButton
+								tooltip={`${isSaved ? '取消' : '点击'}收藏`}
+								icon={<StarOutlined />}
+								checkedIcon={<StarFilled />}
+								checked={isSaved}
+								onClick={handleToggleChecked}
 							/>
-						</Descriptions.Item>
-						<Descriptions.Item label='状态'>
-							<StateLabel value={state} />
-							{/* {!isDelivered(state) && isSaved && (
+						</Title>
+						<Descriptions size='small' column={3}>
+							<Descriptions.Item label='快递'>
+								<TypeLabel value={type} />
+								<InnerIconButton
+									onClick={handleSelect}
+									tooltip='选择快递'
+									icon={<EditOutlined />}
+								/>
+							</Descriptions.Item>
+							<Descriptions.Item label='状态'>
+								<StateLabel value={state} />
+								{/* {!isDelivered(state) && isSaved && (
 								<InnerIconButton
 									onClick={handleMakeDelivered}
 									tooltip='确认收货'
 									icon={<CheckOutlined />}
 								/>
 							)} */}
-						</Descriptions.Item>
-						<Descriptions.Item label='标签'>
-							<Tag>
-								<TypeLabel value={type} />
-							</Tag>
-						</Descriptions.Item>
-					</Descriptions>
+							</Descriptions.Item>
+							{type === TYPE_SF ? (
+								<Descriptions.Item label='手机'>
+									{inputPhone}{' '}
+									<InnerIconButton
+										onClick={() => {
+											setShowCodeInput(true);
+										}}
+										tooltip='修改手机'
+										icon={<EditOutlined />}
+									/>
+								</Descriptions.Item>
+							) : (
+								<Descriptions.Item />
+							)}
+							<Descriptions.Item label='标签'>
+								<Tag>
+									<TypeLabel value={type} />
+								</Tag>
+							</Descriptions.Item>
+						</Descriptions>
+					</div>
+					<Divider className='m-0' />
+					{Array.isArray(messages) && messages.length > 0 && (
+						<TimelineList value={messages} state={state} />
+					)}
+					{error && (
+						<Result status='error' title='请求错误' subTitle={error.toSring()} />
+					)}
 				</div>
-				<Divider className='m-0' />
-				{Array.isArray(messages) && messages.length > 0 && (
-					<TimelineList value={messages} state={state} />
-				)}
-				{error && <Result status='error' title='请求错误' subTitle={error.toSring()} />}
-			</div>
-		</Spin>
+			</Spin>
+			<Modal
+				title='输入后4位号码'
+				visible={showCodeInput}
+				onOk={() => {
+					if (inputPhone.length === 4) {
+						history.replace(
+							`/app/detail?postId=${postId}&type=${type}&phone=${inputPhone}`
+						);
+						setShowCodeInput(false);
+					}
+				}}
+				onCancel={() => {
+					setShowCodeInput(false);
+				}}
+				width={200}
+			>
+				<NumberInput
+					value={inputPhone}
+					onChange={(value) => {
+						setInputPhone(value);
+					}}
+				/>
+			</Modal>
+		</>
 	);
 }
