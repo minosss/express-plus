@@ -1,6 +1,6 @@
 /* @jsx jsx */
 // import React from 'react';
-import {Tag, List, Popconfirm, Spin} from 'antd';
+import {Tag, List, Popconfirm} from 'antd';
 import {
 	DeleteOutlined,
 	SearchOutlined,
@@ -8,6 +8,7 @@ import {
 	PushpinOutlined,
 	PushpinFilled,
 	ClockCircleOutlined,
+	CheckCircleFilled,
 } from '@ant-design/icons';
 import {css, jsx} from '@emotion/core';
 import useSWR from 'swr';
@@ -15,6 +16,7 @@ import dayjs from 'dayjs';
 import {fetcher} from '../../utils';
 import {IconButton, TypeLabel} from '../components';
 import {API_URLS} from '@/shared/constants';
+import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
 
 const LatestMessage = ({time, message}) => {
 	if (!time || !message) {
@@ -81,7 +83,7 @@ export default function Favorites({history}) {
 									...item,
 									pin: !item.pin,
 								}).then(() => {
-									mutate();
+									return mutate();
 								});
 							}}
 						/>,
@@ -119,7 +121,14 @@ export default function Favorites({history}) {
 					]}
 				>
 					<List.Item.Meta
-						title={item.postId}
+						title={
+							<div>
+								{item.postId}{' '}
+								{item.state === STATE_DELIVERED && (
+									<CheckCircleFilled style={{fontSize: '0.8em'}} />
+								)}
+							</div>
+						}
 						description={
 							<div>
 								<LatestMessage time={item.updatedAt} message={item.message} />
