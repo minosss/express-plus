@@ -1,9 +1,9 @@
 import Dexie from 'dexie';
 
 const db = new Dexie('ExpressPlus');
-db.version(2)
+db.version(3)
 	.stores({
-		favorites: 'postId,type,phone,pin,*tags,createdAt,updatedAt,message',
+		favorites: 'postId,type,phone,state,pin,*tags,createdAt,updatedAt,message',
 		histories: 'postId,type,updatedAt',
 		settings: 'key,value',
 	})
