@@ -19,27 +19,25 @@ import {
 import {TypeLabel} from '../index';
 import {reportIssue, getStoreUrl} from '../../../utils';
 
-const useDebounceAuto = (value) => {
+const useDebounceAuto = (value, refresh = false) => {
 	const [state, setState] = useState(value);
-	const [sholdFetch, setSholdFetch] = useState(false);
+	const [showHistory, setShowHistory] = useState(refresh);
 
 	useDebounce(
 		() => {
 			console.log('typing stop');
 			setState(value);
-			if (value !== '') {
-				setSholdFetch(true);
-			}
+			setShowHistory(value === '');
 		},
-		2000,
+		500,
 		[value]
 	);
 
-	const {data, error, isValidating} = useSWR(() => {
-		return sholdFetch ? ['/kuaidi/auto', state] : null;
+	const {data, error, isValidating, mutate} = useSWR(() => {
+		return showHistory ? ['/histories', 7] : ['/kuaidi/auto', state];
 	});
 
-	return {data, error, isValidating};
+	return {data, error, isValidating, mutate};
 };
 
 const HOME_PAGE = '/app/favorites';
@@ -135,7 +133,7 @@ const OptionItemLabel = ({value}) => {
 export default function Navbar() {
 	const history = useHistory();
 	const [inputValue, setInputValue] = useState('');
-	const {data, isValidating} = useDebounceAuto(inputValue);
+	const {data, isValidating, mutate} = useDebounceAuto(inputValue);
 
 	const finalOptions = (data || []).map((item) => ({
 		label: <OptionItemLabel value={item} />,
@@ -160,6 +158,10 @@ export default function Navbar() {
 						// 避免修改输入框的查询数据
 						if (option.value) return;
 						setInputValue(value);
+					}}
+					onFocus={() => {
+						// 没值就获取历史记录
+						if (inputValue === '') mutate();
 					}}
 				>
 					<Input
