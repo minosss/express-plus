@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Switch, Select, List, Spin, Button} from 'antd';
+import {Switch, Select, List, Spin, Button, message} from 'antd';
 import {
 	InfoCircleOutlined,
 	ClockCircleOutlined,
 	GithubOutlined,
 	ShopOutlined,
+	HistoryOutlined,
 } from '@ant-design/icons';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
@@ -29,6 +30,12 @@ export default function Settings() {
 		if (time) {
 			mutate({...data, cookieKuaidi100: time}, false);
 		}
+	};
+
+	//
+	const handleHistoriesClear = async () => {
+		const done = await fetcher(API_URLS.HISTORIES_CLEAR);
+		if (done) message.info('历史记录已清空');
 	};
 
 	useEffect(() => {
@@ -103,6 +110,14 @@ export default function Settings() {
 						]}
 					>
 						<List.Item.Meta title='最后刷新 Cookie' description={lastRefresh} />
+					</List.Item>
+					<List.Item>
+						<HistoryOutlined /> 历史记录
+					</List.Item>
+					<List.Item
+						actions={[<Button onClick={handleHistoriesClear}>清空记录</Button>]}
+					>
+						<List.Item.Meta title='历史记录' description='显示最近的100条记录' />
 					</List.Item>
 					<List.Item>
 						<InfoCircleOutlined /> 关于
