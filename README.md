@@ -15,11 +15,14 @@
 
 ## What is this?
 
-- `babel-preset-react-app` - Babel 配置，而不自己导入 `@babel/env` 等
+- 换用 `@yme/webpack-config` 来打包
 - `dayjs` 没有使用有关时间日期的组件，所以不用加载 `moment`
-- `ky` 反正也不用支持低版本浏览器，直接使用 `ky` 比 `axios` 什么的小多了
+- `ky` 反正也不用支持低版本浏览器，比 `axios` 什么的小多了
 - `webextension-polyfill` 统一 Chrome 和 Firefox 的请求，并且让 API 支持 Promise，方便用 `async/await`。
-- `@ant-design/icons` antd 4+ 已经将图标移到这个项目
+- `antd` 4+，已经整理出 icons 资源
+- `emotion` 处理样式, css in js
+- `dexie` 处理数据 IndexedDB
+- `swr` 处理全部请求，转到 background 进程处理
 
 ## Highlights
 
@@ -80,37 +83,6 @@ kuaidi100 接口添加了 phone 参数来针对顺丰的查询，需要在查询
 ### 京东物流单号格式
 
 有两种格式一种是已订单号为货运单号，虽然可以识别成功。然而并不能查询到数据，在[官网](http://www.jdwl.com)查询也需要登录帐号才可以。另外一种已 `VB/VE` 之类的开头的则还可以直接查询到数据。
-
-### 旧数据迁移或丢失问题 (0.1.12)
-
-升级的判断出现了问题，所以可能有人的数据并没有转换到新的储存方式，旧的数据储存在 `localStorage`<br>
-如果查询结果界面出现状态和数据空白，且没有错误提示，需重新订阅一次
-
-1. 点击图标打开
-2. 右键点击 `检查(inspect)`
-3. 复制下面的代码到 Console 回车执行
-4. 重新打开
-
-```js
-const oldData = window.localStorage.getItem('ngStorage-marks');
-if (oldData) {
-  const list = JSON.parse(oldData);
-  const favorites = list.map(item => {
-    return {
-      postId: item.id,
-      type: item.com,
-      tags: item.tags,
-      latestMessage: {
-        time: item.time,
-        context: item.text
-      },
-      state: item.check ? '3' : '0'
-    };
-  });
-  chrome.storage.local.set({favorites});
-}
-window.localStorage.removeItem('ngStorage-marks');
-```
 
 ## License
 
