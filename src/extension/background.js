@@ -246,6 +246,12 @@ class Background {
 			.toArray();
 		let patch = [];
 
+		if (favorites.length > 0) {
+			await this.checkCookie();
+		} else {
+			return;
+		}
+
 		for (const fa of favorites) {
 			const {postId, type, phone} = fa;
 			const result = await kuaidi.query({postId, type, phone});
