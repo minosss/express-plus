@@ -97,6 +97,7 @@ class Background {
 	onInstalled({reason, previousVersion}) {
 		// reason: "install", "update", "chrome_update", or "shared_module_update"
 		if (reason === 'update') {
+			log('updateing..., pre: ', previousVersion);
 			switch (previousVersion) {
 				case '0.0.0':
 					break;
@@ -135,11 +136,16 @@ class Background {
 					break;
 			}
 		} else if (reason === 'install') {
-			db.table('settings').bulkPut([
-				{key: SETTING_KEYS.AUTO_INTERVAL, value: AUTO_INTERVAL_DEFAULT},
-				{key: SETTING_KEYS.ENABLE_AUTO, value: false},
-				{key: SETTING_KEYS.ENABLE_FILTER_DELIVERED, value: false},
-			]);
+			log('install...');
+			db.table('settings')
+				.bulkPut([
+					{key: SETTING_KEYS.AUTO_INTERVAL, value: AUTO_INTERVAL_DEFAULT},
+					{key: SETTING_KEYS.ENABLE_AUTO, value: false},
+					{key: SETTING_KEYS.ENABLE_FILTER_DELIVERED, value: false},
+				])
+				.then(() => {
+					log('install success');
+				});
 		}
 	}
 

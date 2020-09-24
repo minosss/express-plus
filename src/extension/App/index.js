@@ -25,7 +25,7 @@ export default function App() {
 				<Layout
 					css={{
 						width: 460,
-						height: 640,
+						height: 600,
 						position: 'relative',
 						background: '#fff',
 					}}
@@ -46,6 +46,15 @@ export default function App() {
 						css={{
 							marginTop: 64,
 							overflow: 'hidden auto',
+							'&::-webkit-scrollbar': {
+								width: 4,
+							},
+							'&::-webkit-scrollbar-track': {
+								background: 'rgba(0,0,0,0.1)',
+							},
+							'&::-webkit-scrollbar-thumb': {
+								background: 'rgba(0,0,0,0.2)',
+							},
 						}}
 					>
 						<Switch>
