@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Switch, Select, List, Spin, Button, message} from 'antd';
-import {
-	InfoCircleOutlined,
-	ClockCircleOutlined,
-	GithubOutlined,
-	ShopOutlined,
-	HistoryOutlined,
-} from '@ant-design/icons';
+import {GithubOutlined, ShopOutlined} from '@ant-design/icons';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import {fetcher, getVersion, getHomePageUrl, getStoreUrl} from '../../utils';
@@ -53,9 +47,6 @@ export default function Settings() {
 		<Spin spinning={isValidating}>
 			<div className=''>
 				<List>
-					<List.Item>
-						<ClockCircleOutlined /> 自动查询
-					</List.Item>
 					<List.Item
 						actions={[
 							<Switch
@@ -111,16 +102,10 @@ export default function Settings() {
 					>
 						<List.Item.Meta title='最后刷新 Cookie' description={lastRefresh} />
 					</List.Item>
-					<List.Item>
-						<HistoryOutlined /> 历史记录
-					</List.Item>
 					<List.Item
 						actions={[<Button onClick={handleHistoriesClear}>清空记录</Button>]}
 					>
 						<List.Item.Meta title='历史记录' description='显示最近的100条记录' />
-					</List.Item>
-					<List.Item>
-						<InfoCircleOutlined /> 关于
 					</List.Item>
 					<List.Item
 						actions={[
@@ -129,17 +114,15 @@ export default function Settings() {
 								rel='noopener noreferrer'
 								href={getHomePageUrl()}
 								icon={<GithubOutlined />}
-							>
-								Github
-							</Button>,
+								shape='circle'
+							></Button>,
 							<Button
 								target='_blank'
 								rel='noopener noreferrer'
 								href={getStoreUrl()}
 								icon={<ShopOutlined />}
-							>
-								Web Store
-							</Button>,
+								shape='circle'
+							></Button>,
 						]}
 					>
 						<List.Item.Meta title='版本' description={`v${getVersion()}`} />
