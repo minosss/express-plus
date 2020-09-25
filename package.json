@@ -4,7 +4,6 @@
 	"scripts": {
 		"start": "NODE_ENV=development webpack-dev-server",
 		"build": "NODE_ENV=production webpack",
-		"release": "run-s build update-version",
 		"update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; dot-json build/manifest.json content_security_policy --delete; zip -r $VERSION.zip build;"
 	},
 	"dependencies": {
