@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Spin, Divider, Timeline, Tag, Descriptions, Result, Modal, Input} from 'antd';
+import {Spin, Divider, Timeline, Descriptions, Result, Modal, Input} from 'antd';
 import {
 	ReloadOutlined,
 	StarOutlined,
@@ -12,7 +12,7 @@ import qs from 'query-string';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
-import {TypeLabel, StateLabel, IconButton, InnerIconButton} from '../components';
+import {TypeLabel, StateLabel, IconButton, InnerIconButton, TagList} from '../components';
 import {fetcher, toFavorite} from '../../utils';
 import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
 import {API_URLS} from '@/shared/constants';
@@ -97,7 +97,7 @@ export default function Detail({location, history}) {
 	const [showCodeInput, setShowCodeInput] = useState(false);
 	const needPhone = type === TYPE_SF && (phone === '' || phone.length < 4);
 
-	const {data, isValidating} = useSWR(() => {
+	const {data, isValidating, mutate} = useSWR(() => {
 		if (needPhone) {
 			return false;
 		} else {
@@ -133,15 +133,30 @@ export default function Detail({location, history}) {
 		history.push(`/app/select?postId=${postId}&type=${type}&phone=${phone}`);
 	};
 
+	// 标签处理
+	const handleTagChange = (tags) => {
+		if (isSaved) {
+			// 已订阅先保存
+			fetcher(API_URLS.FAVORITES_PATCH, {postId, tags}).then(() => {
+				mutate({...data, tags}, false);
+			});
+		} else {
+			// 刷新本地数据
+			mutate({...data, tags}, false);
+		}
+	};
+
 	// 收货
 	// const handleMakeDelivered = () => {
-	// 	fetcher(API_URLS.FAVORITES_PATCH, {
-	// 		...toFavorite(data),
-	// 		state: STATE_DELIVERED,
-	// 	}).then(() => {});
+	// 	if (isSaved) {
+	// 		fetcher(API_URLS.FAVORITES_PATCH, {
+	// 			postId,
+	// 			state: STATE_DELIVERED,
+	// 		});
+	// 	}
 	// };
 
-	const {data: messages, state, error} = data || {};
+	const {data: messages, state, error, tags} = data || {};
 
 	return (
 		<>
@@ -193,9 +208,11 @@ export default function Detail({location, history}) {
 								<Descriptions.Item />
 							)}
 							<Descriptions.Item label='标签'>
-								<Tag>
-									<TypeLabel value={type} />
-								</Tag>
+								<TagList
+									editable
+									value={tags}
+									onChange={handleTagChange}
+								></TagList>
 							</Descriptions.Item>
 						</Descriptions>
 					</div>

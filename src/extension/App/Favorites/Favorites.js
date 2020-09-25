@@ -18,6 +18,17 @@ import {IconButton, TypeLabel} from '../components';
 import {API_URLS} from '@/shared/constants';
 import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
 
+const TagList = ({type, value = []}) => (
+	<div>
+		<Tag>
+			<TypeLabel value={type} />
+		</Tag>
+		{value.map((item) => (
+			<Tag key={`tag-${item}`}>{item}</Tag>
+		))}
+	</div>
+);
+
 const LatestMessage = ({time, message}) => {
 	if (!time || !message) {
 		return <div>未知</div>;
@@ -80,7 +91,7 @@ export default function Favorites({history}) {
 							checked={item.pin}
 							onClick={() => {
 								fetcher(API_URLS.FAVORITES_PATCH, {
-									...item,
+									postId: item.postId,
 									pin: !item.pin,
 								}).then(() => {
 									return mutate();
@@ -132,11 +143,7 @@ export default function Favorites({history}) {
 						description={
 							<div>
 								<LatestMessage time={item.updatedAt} message={item.message} />
-								<div>
-									<Tag>
-										<TypeLabel value={item.type} />
-									</Tag>
-								</div>
+								<TagList type={item.type} value={item.tags} />
 							</div>
 						}
 					/>

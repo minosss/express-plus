@@ -370,8 +370,10 @@ class Background {
 					case API_URLS.FAVORITES_GET:
 						return await db.table('favorites').get(message.data);
 					case API_URLS.FAVORITES_ADD:
-					case API_URLS.FAVORITES_PATCH:
 						return await db.table('favorites').put(message.data);
+					case API_URLS.FAVORITES_PATCH:
+						const {postId, ...changes} = message.data;
+						return await db.table('favorites').update(postId, changes);
 					case API_URLS.FAVORITES_REMOVE:
 						return await db.table('favorites').delete(message.data);
 
