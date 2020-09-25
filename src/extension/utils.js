@@ -15,6 +15,7 @@ export const fetcher = async (url, data = null) => {
 		console.log('res > ', res);
 		return res;
 	} catch (error) {
+		console.error(error);
 		return Promise.reject(error);
 	}
 };

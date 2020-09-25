@@ -35,7 +35,7 @@ const TimelineList = ({value = [], state}) => (
 				key={`message-${item.time}-${index}`}
 				dot={index === 0 && isDelivered(state) ? <StateCheckedIcon /> : null}
 			>
-				<div>
+				<div title={item.time}>
 					{dayjs(item.time).fromNow()} {dayjs(item.time).format('HH:mm')}
 				</div>
 				<div>{item.context}</div>
@@ -52,14 +52,6 @@ const Title = styled.div`
 		vertical-align: middle;
 	}
 `;
-
-const delay = (time) => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, time);
-	});
-};
 
 // const getPhoneCode = async () => {
 // 	return new Promise((resolve, reject) => {
