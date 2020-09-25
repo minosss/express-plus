@@ -34,7 +34,7 @@ const useDebounceAuto = (value, refresh = false) => {
 	);
 
 	const {data, error, isValidating, mutate} = useSWR(() => {
-		return showHistory ? ['/histories', 7] : ['/kuaidi/auto', state];
+		return showHistory ? ['/histories', 7] : state ?? ['/kuaidi/auto', state];
 	});
 
 	return {data, error, isValidating, mutate};
