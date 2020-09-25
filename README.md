@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./public/logo.png">
+  <h1>Express Plus - 快递助手</h1>
 </div>
 
 <div align="center">
@@ -15,9 +15,7 @@
 
 ## What is this?
 
-- 换用 `@yme/webpack-config` 来打包
-- `dayjs` 没有使用有关时间日期的组件，所以不用加载 `moment`
-- `ky` 反正也不用支持低版本浏览器，比 `axios` 什么的小多了
+- 用 `@yme/webpack-config` 来打包
 - `webextension-polyfill` 统一 Chrome 和 Firefox 的请求，并且让 API 支持 Promise，方便用 `async/await`。
 - `antd` 4+，已经整理出 icons 资源
 - `emotion` 处理样式, css in js
@@ -30,7 +28,6 @@
 - 自动查询更新信息
 - 桌面提醒
 - 查询记录
-- 寄快递，查询附近投递方式
 
 ## Screenshots
 
@@ -51,9 +48,9 @@
 
 1. clone 这个项目 `git clone https://github.com/minosss/express-plus.git`
 2. 安装依赖 `npm install` 或者 `yarn install`
-3. 复制一份 `.env.example` 命名为 `.env` 并填入申请的密钥
+3. 复制一份 `.env.example` 命名为 `.env.development.local` 并填入申请的密钥
 4. 编译 `npm build` 或者 `yarn build`
-5. Chrome 打开 `chrome://extensions/` 加载未打包应用 `Load unpacked`
+5. Chrome 打开 `chrome://extensions/`，开启开发者模式，加载未打包应用点击 `Load unpacked`
 
 ## FAQs
 
@@ -66,14 +63,6 @@
 1. ~~请求前最好先访问首页获取 cookie 先，https://www.kuaidi100.com~~ 会过期
 2. 不保证短时间内请求多个快递又被封掉（比如回返回随机数据就是出问题了）
 3. baidu 也相同（不过 100 始终返回 200 也导致了没有使用 baidu 的接口）
-
-### 地图定位（寄快递）
-
-定位是使用 H5 的定位获取经纬度数据，然后用接口来获取附近的投递方式。如果定位失败可以输入关键字来搜索地址（高德的输入提示）进行经纬度的获取。目前只是申请了个人开发者并没有认证也没有购买请求配额，所以每天的关键字搜索是只有 2000 的。
-
-### 快递选择页面只有 20 多个，快递类型支持哪些？
-
-快递选择页面只是目前收集有中文的展示，并不是只支持那些。插件使用的快递 100 的接口 ，那边支持的就支持，不可避免会出现识别错误的情况（或者单号过期），这个时候可以自行选择快递。不过在日常使用中我并不需要太多快递类型，如果遇到需要增加的提交 Issue 或者欢迎 PR。
 
 ### 为什么顺丰快递查询时好时坏？
 
