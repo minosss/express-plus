@@ -1,0 +1,27 @@
+@import '~antd/lib/style/themes/default.less';
+@import '~antd/dist/antd.less';
+
+@primary-color: #1890ff;
+@link-color: #1890ff;
+@success-color: #008335;
+@warning-color: #F7DF1E;
+@error-color: #F53900;
+
+@list-item-padding: 0.5rem 1rem;
+
+:root {
+	--primary-color: @primary-color;
+	--link-color: @link-color;
+	--success-color: @success-color;
+	--warning-color: @warning-color;
+	--error-color: @error-color;
+	--secondary-color: @text-color-secondary;
+
+	// list
+	--list-item-hover-color: @item-hover-bg;
+}
+
+.ant-list-header,
+.ant-list-footer {
+	padding: @list-item-padding;
+}
