@@ -195,7 +195,7 @@ export default function Detail({location, history}) {
 							</Descriptions.Item>
 							{type === TYPE_SF ? (
 								<Descriptions.Item label='手机'>
-									{inputPhone}{' '}
+									{phone}{' '}
 									<InnerIconButton
 										onClick={() => {
 											setShowCodeInput(true);
@@ -238,6 +238,7 @@ export default function Detail({location, history}) {
 				}}
 				onCancel={() => {
 					setShowCodeInput(false);
+					setInputPhone(phone);
 				}}
 				width={200}
 			>
