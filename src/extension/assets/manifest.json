@@ -16,11 +16,9 @@
 		"page": "background.html"
 	},
 	"permissions": [
-		"geolocation",
 		"alarms",
 		"storage",
 		"notifications",
-		"unlimitedStorage",
 		"webRequestBlocking",
 		"webRequest",
 		"https://www.kuaidi100.com/*",
