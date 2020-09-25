@@ -1,10 +1,8 @@
 /* @jsx jsx */
-// import React from 'react';
 import {Tag, List, Popconfirm} from 'antd';
 import {
 	DeleteOutlined,
 	SearchOutlined,
-	ReloadOutlined,
 	PushpinOutlined,
 	PushpinFilled,
 	ClockCircleOutlined,
@@ -95,15 +93,6 @@ export default function Favorites({history}) {
 									pin: !item.pin,
 								}).then(() => {
 									return mutate();
-								});
-							}}
-						/>,
-						<IconButton
-							tooltip='刷新'
-							icon={<ReloadOutlined />}
-							onClick={() => {
-								fetcher('/favorites/refresh', {
-									postId: item.postId,
 								});
 							}}
 						/>,
