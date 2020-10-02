@@ -1,6 +1,5 @@
 /** @jsx jsx */
-// import React from 'react';
-import {HashRouter as Router, Switch, Route} from 'react-router-dom';
+import {HashRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
 import {jsx} from '@emotion/core';
 import {ConfigProvider, Layout} from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
@@ -44,16 +43,20 @@ export default function App() {
 					</Layout.Header>
 					<Layout.Content
 						css={{
+							position: 'relative',
 							marginTop: 64,
 							overflow: 'hidden auto',
+
 							'&::-webkit-scrollbar': {
 								width: 4,
 							},
+
 							'&::-webkit-scrollbar-track': {
-								background: 'rgba(0,0,0,0.1)',
+								background: 'rgba(0, 0, 0, 0.1)',
 							},
+
 							'&::-webkit-scrollbar-thumb': {
-								background: 'rgba(0,0,0,0.2)',
+								background: 'rgba(0, 0, 0, 0.2)',
 							},
 						}}
 					>
@@ -63,6 +66,7 @@ export default function App() {
 							<Route path='/app/detail' component={Detail} />
 							<Route path='/app/select' component={TypeOptions} />
 							<Route path='/app/histories' component={Histories} />
+							<Redirect to='/app/favorites' />
 						</Switch>
 					</Layout.Content>
 				</Layout>

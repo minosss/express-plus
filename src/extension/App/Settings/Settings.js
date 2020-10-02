@@ -47,6 +47,12 @@ export default function Settings() {
 		<Spin spinning={isValidating}>
 			<div className=''>
 				<List>
+					<List.Item>
+						<List.Item.Meta
+							className='text-center'
+							description='如果觉得这个插件还蛮好用的，可以到商店给个星星'
+						/>
+					</List.Item>
 					<List.Item
 						actions={[
 							<Switch
@@ -126,6 +132,12 @@ export default function Settings() {
 						]}
 					>
 						<List.Item.Meta title='版本' description={`v${getVersion()}`} />
+					</List.Item>
+					<List.Item>
+						<List.Item.Meta
+							className='text-center'
+							description='© 2015-2020 快递助手 - 由快递100强力驱动'
+						/>
 					</List.Item>
 				</List>
 			</div>
