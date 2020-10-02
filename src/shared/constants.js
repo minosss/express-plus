@@ -37,3 +37,11 @@ export const SETTING_KEYS = {
 	// cookies
 	COOKIES: 'cookieKuaidi100',
 };
+
+export const PATHNAMES = {
+	FAVORITES: '/app/favorites',
+	SETTINGS: '/app/settings',
+	FAVORITE_DETAIL: '/app/detail',
+	FAVORITE_EDIT_SELECT: '/app/select',
+	HISTORIES: '/app/histories',
+};

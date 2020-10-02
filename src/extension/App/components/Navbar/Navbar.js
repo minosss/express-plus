@@ -2,7 +2,7 @@
 import {useState} from 'react';
 import useSWR from 'swr';
 import {useDebounce} from 'react-use';
-import {Link, useHistory} from 'react-router-dom';
+import {Link, useHistory, useLocation} from 'react-router-dom';
 import {jsx} from '@emotion/core';
 import styled from '@emotion/styled';
 import {AutoComplete, Input, Menu, Dropdown} from 'antd';
@@ -15,26 +15,27 @@ import {
 	SmileOutlined,
 	LoadingOutlined,
 	HistoryOutlined,
+	ArrowLeftOutlined,
 } from '@ant-design/icons';
 import {TypeLabel} from '../index';
 import {reportIssue, getStoreUrl} from '../../../utils';
+import log from '@/shared/utils/log';
+import {PATHNAMES} from '@/shared/constants';
 
-const useDebounceAuto = (value, refresh = false) => {
+const useDebounceAuto = (value) => {
 	const [state, setState] = useState(value);
-	const [showHistory, setShowHistory] = useState(refresh);
 
 	useDebounce(
 		() => {
-			console.log('typing stop');
+			log('searching', value);
 			setState(value);
-			setShowHistory(value === '');
 		},
 		500,
 		[value]
 	);
 
 	const {data, error, isValidating, mutate} = useSWR(() => {
-		return showHistory ? ['/histories', 7] : state ?? ['/kuaidi/auto', state];
+		return state ? ['/kuaidi/auto', state] : null;
 	});
 
 	return {data, error, isValidating, mutate};
@@ -84,6 +85,7 @@ const NavbarWrapper = styled.div`
 
 	a {
 		color: inherit;
+
 		&:hover {
 			color: inherit;
 		}
@@ -100,7 +102,7 @@ const NavbarSection = styled.section`
 	}
 `;
 
-const NavbarTitle = styled(Link)`
+const NavbarTitle = styled.span`
 	font-size: 1rem;
 `;
 
@@ -130,8 +132,36 @@ const OptionItemLabel = ({value}) => {
 	);
 };
 
+const useTitle = () => {
+	const location = useLocation();
+	const isHome = location.pathname === HOME_PAGE;
+	let title = '快递助手';
+	switch (location.pathname) {
+		case PATHNAMES.FAVORITES:
+			title = '收藏列表';
+			break;
+		case PATHNAMES.FAVORITE_DETAIL:
+			title = '详情';
+			break;
+		case PATHNAMES.HISTORIES:
+			title = '查询历史';
+			break;
+		case PATHNAMES.SETTINGS:
+			title = '设置';
+			break;
+		case PATHNAMES.FAVORITE_EDIT_SELECT:
+			title = '选择快递';
+			break;
+		default:
+	}
+
+	return [title, isHome];
+};
+
 export default function Navbar() {
 	const history = useHistory();
+	const [title, isHome] = useTitle();
+
 	const [inputValue, setInputValue] = useState('');
 	const {data, isValidating, mutate} = useDebounceAuto(inputValue);
 
@@ -145,24 +175,36 @@ export default function Navbar() {
 	return (
 		<NavbarWrapper>
 			<NavbarSection>
-				<NavbarTitle to={HOME_PAGE}>快递助手</NavbarTitle>
+				{!isHome && (
+					<MenuAction
+						onClick={() => {
+							history.goBack();
+						}}
+					>
+						<ArrowLeftOutlined />
+					</MenuAction>
+				)}
+				<NavbarTitle>{title}</NavbarTitle>
 			</NavbarSection>
 			<NavbarSection>
 				<AutoComplete
 					options={finalOptions}
 					value={inputValue}
 					onSelect={(value, {item}) => {
-						history.push(`/app/detail?postId=${item.postId}&type=${item.type}`);
+						history.push(
+							// eslint-disable-next-line
+							`/app/detail?postId=${item.postId}&type=${item.type}&phone=${item.phone ?? ''}`
+						);
 					}}
 					onChange={(value, option) => {
 						// 避免修改输入框的查询数据
 						if (option.value) return;
 						setInputValue(value);
 					}}
-					onFocus={() => {
-						// 没值就获取历史记录
-						if (inputValue === '') mutate();
-					}}
+					// onFocus={() => {
+					// 	// 没值就获取历史记录
+					// 	if (inputValue === '') mutate();
+					// }}
 				>
 					<Input
 						style={{width: 200}}
