@@ -37,7 +37,7 @@ const toURLSearchParams = (params) => {
 // https://m.kuaidi100.com
 export class Service {
 	constructor() {
-		this.request = ky.extend({prefixUrl: 'https://m.kuaidi100.com', headers: {}});
+		this.request = ky.extend({prefixUrl: 'https://www.kuaidi100.com', headers: {}});
 	}
 
 	async companyInfo() {}
@@ -46,14 +46,12 @@ export class Service {
 	async query({postId, type, phone}) {
 		const result = await this.request
 			.post('query', {
-				body: toURLSearchParams({
+				searchParams: {
 					type,
 					phone,
 					postid: postId,
 					temp: Math.random(),
-					valicode: '',
-					id: 1,
-				}),
+				},
 			})
 			.json();
 
@@ -74,10 +72,10 @@ export class Service {
 	// 识别
 	async auto(postId) {
 		const data = await this.request
-			.post('apicenter/kdquerytools.do', {
-				body: toURLSearchParams({}),
+			.post('autonumber/autoComNum', {
+				// body: toURLSearchParams({}),
 				searchParams: {
-					method: 'autoComNum',
+					resultv2: 1,
 					text: postId,
 				},
 			})

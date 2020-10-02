@@ -47,7 +47,7 @@ class Background {
 		browser.webRequest.onBeforeSendHeaders.addListener(
 			this.onBeforeSendHeaders,
 			{
-				urls: ['https://m.kuaidi100.com/*'],
+				urls: ['https://www.kuaidi100.com/*'],
 			},
 			// Starting from Chrome 72, the following request headers are not provided and cannot be modified or removed without specifying 'extraHeaders' in opt_extraInfoSpec:
 			['requestHeaders', 'blocking', 'extraHeaders']
@@ -202,7 +202,7 @@ class Background {
 			});
 		} else {
 			const {url} = details;
-			if (url.indexOf('m.kuaidi100.com') !== -1) {
+			if (url.indexOf('www.kuaidi100.com') !== -1) {
 				details.requestHeaders.push(
 					{
 						name: 'Accept',
@@ -210,11 +210,11 @@ class Background {
 					},
 					{
 						name: 'Host',
-						value: 'm.kuaidi100.com',
+						value: 'www.kuaidi100.com',
 					},
 					{
 						name: 'Referer',
-						value: 'https://m.kuaidi100.com/',
+						value: 'https://www.kuaidi100.com/',
 					},
 					{
 						name: 'X-Requested-With',
