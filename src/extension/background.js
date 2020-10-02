@@ -97,7 +97,7 @@ class Background {
 	onInstalled({reason, previousVersion}) {
 		// reason: "install", "update", "chrome_update", or "shared_module_update"
 		if (reason === 'update') {
-			log('updateing..., pre: ', previousVersion);
+			log('updating..., pre: ', previousVersion);
 			switch (previousVersion) {
 				case '0.0.0':
 					break;
@@ -122,10 +122,10 @@ class Background {
 						// favorites: []{postId, ...}
 						db.table('favorites').bulkPut(
 							favorites.map((item) => {
-								const {latestMessage, ...rest} = item;
+								const {latestMessage = {}, ...rest} = item;
 								return {
 									...rest,
-									updatedAt: latestMessage.time,
+									updatedAt: latestMessage.time || Date.now(),
 									message: latestMessage.context,
 								};
 							})
