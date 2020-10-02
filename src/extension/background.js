@@ -314,9 +314,20 @@ class Background {
 					case API_URLS.REFRESH_COOKIES:
 						const now = await this.checkCookie(true);
 						return now;
-					case API_URLS.KUAIDI_AUTO:
+					case API_URLS.KUAIDI_AUTO: {
 						await this.checkCookie();
+						// 先查询已这单号开头的
+						let fa = await db
+							.table('favorites')
+							.where('postId')
+							.startsWith(message.data)
+							.toArray();
+						if (fa && fa.length > 0) {
+							return fa;
+						}
+						// 没有就请求接口
 						return await kuaidi.auto(message.data);
+					}
 
 					// 快递查询
 					case API_URLS.KUAIDI_QUERY:
