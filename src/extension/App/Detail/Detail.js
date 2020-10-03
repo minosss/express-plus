@@ -138,6 +138,10 @@ export default function Detail({location, history}) {
 		}
 	};
 
+	const handleRefresh = () => {
+		mutate();
+	};
+
 	// 收货
 	// const handleMakeDelivered = () => {
 	// 	if (isSaved) {
@@ -157,7 +161,11 @@ export default function Detail({location, history}) {
 					<div className='m-4'>
 						<Title>
 							<span>{postId}</span>
-							<IconButton tooltip='刷新' icon={<ReloadOutlined />} />
+							<IconButton
+								onClick={handleRefresh}
+								tooltip='刷新'
+								icon={<ReloadOutlined />}
+							/>
 							<IconButton
 								tooltip={`${isSaved ? '取消' : '点击'}收藏`}
 								icon={<StarOutlined />}
