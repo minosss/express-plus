@@ -4,7 +4,8 @@
 	"scripts": {
 		"start": "NODE_ENV=development webpack-dev-server",
 		"build": "NODE_ENV=production webpack",
-		"update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; dot-json build/manifest.json content_security_policy --delete; zip -r $VERSION.zip build;"
+		"update-version": "VERSION=$(utc-version); echo $VERSION; dot-json build/manifest.json version $VERSION; zip -r $VERSION.zip build;",
+		"remove-csp": "dot-json build/manifest.json content_security_policy --delete"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
@@ -20,6 +21,7 @@
 		"react-dom": "^16.13.1",
 		"react-highlight-words": "^0.16.0",
 		"react-router-dom": "^5.2.0",
+		"react-transition-group": "^4.4.1",
 		"react-use": "^15.3.3",
 		"swr": "^0.3.0",
 		"webextension-polyfill": "^0.6.0"

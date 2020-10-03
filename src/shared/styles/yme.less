@@ -15,3 +15,37 @@ body {
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
+
+.page-wapper {
+	position: relative;
+}
+
+.page-enter {
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	transform: translate3d(20px, 0, 0);
+}
+
+.page-enter-active {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+	opacity: 1;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform: translate3d(0, 0, 0);
+}
+
+.page-exit-active {
+	opacity: 0;
+	transform: translate3d(-20px, 0, 0);
+	transition: opacity 300ms, transform 300ms;
+}

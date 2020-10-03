@@ -1,5 +1,6 @@
 /** @jsx jsx */
-import {HashRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
+import {HashRouter as Router, Switch, Route, Redirect, useLocation} from 'react-router-dom';
+import {CSSTransition, TransitionGroup} from 'react-transition-group';
 import {jsx} from '@emotion/core';
 import {ConfigProvider, Layout} from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
@@ -16,6 +17,25 @@ import Histories from './Histories';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
+
+const TransitionRoutes = () => {
+	const location = useLocation();
+
+	return (
+		<TransitionGroup class='page-wapper'>
+			<CSSTransition key={location.pathname} timeout={300} classNames='page'>
+				<Switch location={location}>
+					<Route path='/app/favorites' component={Favorites} />
+					<Route path='/app/settings' component={Settings} />
+					<Route path='/app/detail' component={Detail} />
+					<Route path='/app/select' component={TypeOptions} />
+					<Route path='/app/histories' component={Histories} />
+					<Redirect to='/app/favorites' />
+				</Switch>
+			</CSSTransition>
+		</TransitionGroup>
+	);
+};
 
 export default function App() {
 	return (
@@ -60,14 +80,7 @@ export default function App() {
 							},
 						}}
 					>
-						<Switch>
-							<Route path='/app/favorites' component={Favorites} />
-							<Route path='/app/settings' component={Settings} />
-							<Route path='/app/detail' component={Detail} />
-							<Route path='/app/select' component={TypeOptions} />
-							<Route path='/app/histories' component={Histories} />
-							<Redirect to='/app/favorites' />
-						</Switch>
+						<TransitionRoutes />
 					</Layout.Content>
 				</Layout>
 			</Router>
