@@ -199,7 +199,8 @@ export default function Navbar() {
 					onChange={(value, option) => {
 						// 避免修改输入框的查询数据
 						if (option.value) return;
-						setInputValue(value);
+						// 只能输入数字和字母
+						/^[\da-zA-Z]*$/.test(value) && setInputValue(value);
 					}}
 					// onFocus={() => {
 					// 	// 没值就获取历史记录
