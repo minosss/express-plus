@@ -41,17 +41,11 @@ const LatestMessage = ({time, message}) => {
 
 const listItemHover = css`
 	transition: background 0.3s;
+	position: relative;
+
 	&:hover {
 		background: var(--list-item-hover-color);
 
-		.ant-list-item-action {
-			opacity: 1;
-		}
-	}
-
-	/* action hover */
-	position: relative;
-	&:hover {
 		.ant-list-item-action {
 			opacity: 1;
 		}

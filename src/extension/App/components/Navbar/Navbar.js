@@ -97,7 +97,7 @@ const NavbarSection = styled.section`
 	display: flex;
 	flex: 1 0 0;
 
-	&:not(:first-child):last-child {
+	&:not(:first-of-type):last-child {
 		justify-content: flex-end;
 	}
 `;

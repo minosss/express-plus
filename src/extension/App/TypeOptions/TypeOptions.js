@@ -100,6 +100,7 @@ export default function TypeOptions({location, history}) {
 				css={css`
 					.ant-table-row {
 						cursor: pointer;
+
 						&:hover {
 							color: var(--primary-color);
 						}

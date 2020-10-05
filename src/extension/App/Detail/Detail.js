@@ -18,7 +18,7 @@ import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
 import {API_URLS} from '@/shared/constants';
 
 const TimelineItem = styled(Timeline.Item)`
-	&:not(:first-child) {
+	&:not(:first-of-type) {
 		color: var(--secondary-color);
 	}
 `;
