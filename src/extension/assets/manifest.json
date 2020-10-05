@@ -2,6 +2,7 @@
 	"version": "0.0.0",
 	"name": "快递助手",
 	"manifest_version": 2,
+	"minimum_chrome_version": "72",
 	"homepage_url": "https://github.com/minosss/express-plus",
 	"description": "轻松快捷的管理你的快递，支持大部分快递公司、后台查询、桌面提示等功能。",
 	"browser_action": {
@@ -22,7 +23,7 @@
 		"webRequestBlocking",
 		"webRequest",
 		"https://www.kuaidi100.com/*",
-		"https://m.kuaidi100.com/*"
+		"https://*.jd.com/*"
 	],
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; script-src-elem http://localhost:8080;"
+	"content_security_policy": "script-src 'self' 'unsafe-eval' https://localhost:8080; object-src 'self';"
 }

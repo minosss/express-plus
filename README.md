@@ -6,6 +6,7 @@
 
 快递助手，轻松快捷的管理你的快递
 
+![](https://badgen.net/badge/FUCK/扫码登录/black)
 ![License MIT](https://flat.badgen.net/badge/license/MIT/blue)
 [![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
 [![](https://flat.badgen.net/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg)][cws]
@@ -15,9 +16,9 @@
 
 ## What is this?
 
-- 用 `@yme/webpack-config` 来打包
+- `react` 16+
 - `webextension-polyfill` 统一 Chrome 和 Firefox 的请求，并且让 API 支持 Promise，方便用 `async/await`。
-- `antd` 4+，已经整理出 icons 资源
+- `antd` 4+
 - `emotion` 处理样式, css in js
 - `dexie` 处理数据 IndexedDB
 - `swr` 处理全部请求，转到 background 进程处理
@@ -42,7 +43,8 @@
 
 ## Install
 
-[![](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)][cws]
+- Chrome: [Web Store][cws]
+- Firefox: [Add-ons][amo]
 
 或者本地编译:
 

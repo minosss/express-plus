@@ -22,7 +22,7 @@ const TransitionRoutes = () => {
 	const location = useLocation();
 
 	return (
-		<TransitionGroup class='page-wapper'>
+		<TransitionGroup className='page-wapper'>
 			<CSSTransition key={location.pathname} timeout={300} classNames='page'>
 				<Switch location={location}>
 					<Route path='/app/favorites' component={Favorites} />

@@ -1,5 +1,6 @@
 import ky from 'ky';
-import _ from 'lodash';
+import sortBy from 'lodash.sortby';
+import keyBy from 'lodash.keyby';
 import all from './kuaidi_all.json';
 
 // 状态码
@@ -20,18 +21,18 @@ export const STATES_MAP = {
 	[STATE_ERROR]: '异常',
 };
 
-export const TYPES = _.sortBy(all.data, ['type']);
-export const TYPES_MAP = _.keyBy(TYPES, 'type');
+export const TYPES = sortBy(all.data, ['type']);
+export const TYPES_MAP = keyBy(TYPES, 'type');
 
-const toURLSearchParams = (params) => {
-	const r = new URLSearchParams();
-	r.set('token', '');
-	r.set('platform', 'MWWW');
-	Object.keys(params).map((key) => {
-		r.set(key, params[key]);
-	});
-	return r;
-};
+// const toURLSearchParams = (params) => {
+// 	const r = new URLSearchParams();
+// 	r.set('token', '');
+// 	r.set('platform', 'MWWW');
+// 	Object.keys(params).map((key) => {
+// 		r.set(key, params[key]);
+// 	});
+// 	return r;
+// };
 
 // 移动端接口
 // https://m.kuaidi100.com
@@ -45,7 +46,7 @@ export class Service {
 	// 查询
 	async query({postId, type, phone}) {
 		const result = await this.request
-			.post('query', {
+			.get('query', {
 				searchParams: {
 					type,
 					phone,
@@ -72,7 +73,7 @@ export class Service {
 	// 识别
 	async auto(postId) {
 		const data = await this.request
-			.post('autonumber/autoComNum', {
+			.get('autonumber/autoComNum', {
 				// body: toURLSearchParams({}),
 				searchParams: {
 					resultv2: 1,

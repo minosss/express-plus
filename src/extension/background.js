@@ -50,6 +50,7 @@ class Background {
 				urls: ['https://www.kuaidi100.com/*'],
 			},
 			// Starting from Chrome 72, the following request headers are not provided and cannot be modified or removed without specifying 'extraHeaders' in opt_extraInfoSpec:
+			// NOTE: firefox not support extraHeaders
 			['requestHeaders', 'blocking', 'extraHeaders']
 		);
 		// 新版本
@@ -95,9 +96,9 @@ class Background {
 	}
 
 	onInstalled({reason, previousVersion}) {
+		log(reason, previousVersion);
 		// reason: "install", "update", "chrome_update", or "shared_module_update"
 		if (reason === 'update') {
-			log('updating..., pre: ', previousVersion);
 			switch (previousVersion) {
 				case '0.0.0':
 					break;
@@ -136,7 +137,6 @@ class Background {
 					break;
 			}
 		} else if (reason === 'install') {
-			log('install...');
 			db.table('settings')
 				.bulkPut([
 					{key: SETTING_KEYS.AUTO_INTERVAL, value: AUTO_INTERVAL_DEFAULT},
@@ -315,7 +315,6 @@ class Background {
 						const now = await this.checkCookie(true);
 						return now;
 					case API_URLS.KUAIDI_AUTO: {
-						await this.checkCookie();
 						// 先查询已这单号开头的
 						let fa = await db
 							.table('favorites')
@@ -326,6 +325,7 @@ class Background {
 							return fa;
 						}
 						// 没有就请求接口
+						await this.checkCookie();
 						return await kuaidi.auto(message.data);
 					}
 
