@@ -14,23 +14,20 @@
 
 </div>
 
-## What is this?
-
-- `react` 16+
+- `react` 16+ + `antd` 4+
 - `webextension-polyfill` 统一 Chrome 和 Firefox 的请求，并且让 API 支持 Promise，方便用 `async/await`。
-- `antd` 4+
 - `emotion` 处理样式, css in js
 - `dexie` 处理数据 IndexedDB
 - `swr` 处理全部请求，转到 background 进程处理
 
-## Highlights
+## 功能
 
 - 自动识别单号
 - 自动查询更新信息
 - 桌面提醒
 - 查询记录
 
-## Screenshots
+## 界面
 
 <div>
   <img src='./screenshots/1.png' width=280>
@@ -41,7 +38,7 @@
   <img src='./screenshots/6.png' width=280>
 </div>
 
-## Install
+## 安装
 
 - Chrome: [Web Store][cws]
 - Firefox: [Add-ons][amo]
@@ -75,8 +72,8 @@ kuaidi100 接口添加了 phone 参数来针对顺丰的查询，需要在查询
 
 有两种格式一种是已订单号为货运单号，虽然可以识别成功。然而并不能查询到数据，在[官网](http://www.jdwl.com)查询也需要登录帐号才可以。另外一种已 `VB/VE` 之类的开头的则还可以直接查询到数据。
 
-## License
 
+---
 MIT, [License](LICENSE)
 
 [cws]: https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg 'Chrome Web Store'
