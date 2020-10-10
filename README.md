@@ -6,11 +6,10 @@
 
 快递助手，轻松快捷的管理你的快递
 
-![](https://badgen.net/badge/FUCK/扫码登录/black)
-![License MIT](https://flat.badgen.net/badge/license/MIT/blue)
-[![](https://flat.badgen.net/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
-[![](https://flat.badgen.net/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg)][cws]
-[![](https://flat.badgen.net/chrome-web-store/rating/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+![](https://img.shields.io/badge/FUCK-%E6%89%AB%E7%A0%81%E7%99%BB%E5%BD%95-blue)
+![License MIT](https://img.shields.io/github/license/minosss/express-plus)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg)][cws]
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg)][cws]
 
 </div>
 
