@@ -41,6 +41,7 @@ class Background {
 
 		// 和界面通信处理操作请求
 		browser.runtime.onMessage.addListener(this.onMessage.bind(this));
+		browser.runtime.onMessageExternal.addListener(this.onMessageExternal.bind(this));
 		// 定时器
 		browser.alarms.onAlarm.addListener(this.onAlarm.bind(this));
 		// 自定义头信息
@@ -298,12 +299,34 @@ class Background {
 		}
 	}
 
+	async onMessageExternal(messageExt, sender) {
+		log('onMessageExternal', messageExt);
+
+		const {data} = messageExt;
+		const {origin} = sender;
+		if (data.postId && !(await db.table('favorites').get(data.postId))) {
+			if (origin === 'https://details.jd.com') {
+				const {postId, tags = [], message, updatedAt} = data;
+
+				db.table('favorites').add({
+					postId,
+					type: 'jd',
+					state: '0',
+					createdAt: Date.now(),
+					updatedAt,
+					message,
+					tags,
+				});
+			}
+		}
+	}
+
 	// -
 	async onMessage(message, sender) {
 		log('onMessage', message);
 
 		if (sender.id !== browser.runtime.id) {
-			return Promise.resolve();
+			return true;
 		}
 
 		try {
@@ -411,7 +434,7 @@ class Background {
 			return Promise.reject(error);
 		}
 
-		return Promise.resolve();
+		return true;
 	}
 }
 

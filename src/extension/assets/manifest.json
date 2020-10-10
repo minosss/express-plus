@@ -25,5 +25,9 @@
 		"https://www.kuaidi100.com/*",
 		"https://*.jd.com/*"
 	],
+	"externally_connectable": {
+		"ids": ["dhdgffkkebhmkfjojejmpbldmpobfkfo"],
+		"matches": ["*://details.jd.com/*"]
+	},
 	"content_security_policy": "script-src 'self' 'unsafe-eval' https://localhost:8080; object-src 'self';"
 }
