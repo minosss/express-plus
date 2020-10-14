@@ -52,4 +52,10 @@ if (env.isEnvDevelopment) {
 	// config.node.set('global', false);
 }
 
+config.optimization.minimizer('js').tap(([options]) => {
+	// remove comments
+	return [{...options, extractComments: false}];
+});
+
+console.log(config.toConfig().optimization.minimizer);
 module.exports = config.toConfig();
