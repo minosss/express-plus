@@ -22,7 +22,7 @@
 		"notifications",
 		"webRequestBlocking",
 		"webRequest",
-		"https://www.kuaidi100.com/*",
+		"https://*.kuaidi100.com/*",
 		"https://*.jd.com/*"
 	],
 	"externally_connectable": {

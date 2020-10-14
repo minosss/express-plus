@@ -48,7 +48,7 @@ class Background {
 		browser.webRequest.onBeforeSendHeaders.addListener(
 			this.onBeforeSendHeaders,
 			{
-				urls: ['https://www.kuaidi100.com/*'],
+				urls: ['https://m.kuaidi100.com/*'],
 			},
 			// Starting from Chrome 72, the following request headers are not provided and cannot be modified or removed without specifying 'extraHeaders' in opt_extraInfoSpec:
 			// NOTE: firefox not support extraHeaders
@@ -152,7 +152,7 @@ class Background {
 
 	// 检查嵌入页面是否过期
 	async checkCookie(force = false) {
-		const frame = window.frames['kuaidi100'];
+		const frame = window.frames['kuaidi'];
 		if (!frame) {
 			log('checkCookie', `iframe not found`);
 			return false;
@@ -171,6 +171,10 @@ class Background {
 			frame.addEventListener(
 				'load',
 				async () => {
+					const kd = document.createElement('iframe');
+					kd.src = 'https://m.kuaidi100.com/result.jsp';
+					frame.contentDocument.body.append(kd);
+
 					const now = Date.now();
 					log('checkCookie', '刷新 iframe', now);
 					resolve(now);
@@ -178,7 +182,7 @@ class Background {
 				},
 				{once: true}
 			);
-			frame.src = 'https://www.kuaidi100.com/?r=' + Math.random();
+			frame.contentDocument.location.reload(true);
 		});
 	}
 
@@ -203,7 +207,7 @@ class Background {
 			});
 		} else {
 			const {url} = details;
-			if (url.indexOf('www.kuaidi100.com') !== -1) {
+			if (url.indexOf('m.kuaidi100.com') !== -1) {
 				details.requestHeaders.push(
 					{
 						name: 'Accept',
@@ -211,15 +215,20 @@ class Background {
 					},
 					{
 						name: 'Host',
-						value: 'www.kuaidi100.com',
+						value: 'm.kuaidi100.com',
 					},
 					{
 						name: 'Referer',
-						value: 'https://www.kuaidi100.com/',
+						value: 'https://m.kuaidi100.com',
 					},
 					{
 						name: 'X-Requested-With',
 						value: 'XMLHttpRequest',
+					},
+					{
+						name: 'User-Agent',
+						// eslint-disable-next-line prettier/prettier
+						value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
 					}
 				);
 			}
@@ -440,3 +449,4 @@ class Background {
 
 // -
 window.bg = new Background();
+window.bg.checkCookie(true);

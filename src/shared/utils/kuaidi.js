@@ -24,21 +24,21 @@ export const STATES_MAP = {
 export const TYPES = sortBy(all.data, ['type']);
 export const TYPES_MAP = keyBy(TYPES, 'type');
 
-// const toURLSearchParams = (params) => {
-// 	const r = new URLSearchParams();
-// 	r.set('token', '');
-// 	r.set('platform', 'MWWW');
-// 	Object.keys(params).map((key) => {
-// 		r.set(key, params[key]);
-// 	});
-// 	return r;
-// };
+const toURLSearchParams = (params) => {
+	const r = new URLSearchParams();
+	Object.keys(params).forEach((key) => {
+		r.set(key, params[key]);
+	});
+	r.set('token', '');
+	r.set('platform', 'MWWW');
+	return r;
+};
 
 // 移动端接口
 // https://m.kuaidi100.com
 export class Service {
 	constructor() {
-		this.request = ky.extend({prefixUrl: 'https://www.kuaidi100.com', headers: {}});
+		this.request = ky.extend({prefixUrl: 'https://m.kuaidi100.com', headers: {}});
 	}
 
 	async companyInfo() {}
@@ -46,13 +46,15 @@ export class Service {
 	// 查询
 	async query({postId, type, phone}) {
 		const result = await this.request
-			.get('query', {
-				searchParams: {
+			.post('query', {
+				body: toURLSearchParams({
+					postid: postId,
+					id: 1,
+					valicode: '',
+					temp: Math.random(),
 					type,
 					phone,
-					postid: postId,
-					temp: Math.random(),
-				},
+				}),
 			})
 			.json();
 
@@ -73,10 +75,10 @@ export class Service {
 	// 识别
 	async auto(postId) {
 		const data = await this.request
-			.get('autonumber/autoComNum', {
-				// body: toURLSearchParams({}),
+			.post('apicenter/kdquerytools.do', {
+				body: toURLSearchParams({}),
 				searchParams: {
-					resultv2: 1,
+					method: 'autoComNum',
 					text: postId,
 				},
 			})
