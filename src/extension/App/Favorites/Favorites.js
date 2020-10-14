@@ -95,7 +95,9 @@ export default function Favorites({history}) {
 							icon={<SearchOutlined />}
 							onClick={(e) => {
 								history.push(
-									`/app/detail?postId=${item.postId}&type=${item.type}&phone=${item.phone}`
+									`/app/detail?postId=${item.postId}&type=${item.type}&phone=${
+										item.phone || ''
+									}`
 								);
 							}}
 						/>,
