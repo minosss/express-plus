@@ -178,7 +178,7 @@ class Background {
 				},
 				{once: true}
 			);
-			frame.src = String(frame.src);
+			frame.src = 'https://www.kuaidi100.com/?r=' + Math.random();
 		});
 	}
 
@@ -260,7 +260,7 @@ class Background {
 		}
 
 		for (const fa of favorites) {
-			const {postId, type, phone} = fa;
+			const {postId, type, phone = ''} = fa;
 			const result = await kuaidi.query({postId, type, phone});
 			// {data}
 			const p = hasPatch(fa, result);
