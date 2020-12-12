@@ -2,17 +2,27 @@ import React, {useState, useRef} from 'react';
 import {Tag, Input} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
 
-export default function TagList({value = [], editable = false, onChange = () => {}}) {
-	const [addNew, setAddNew] = useState(false);
-	const inputRef = useRef(null);
+interface TagListProps {
+	value: any[];
+	editable: boolean;
+	onChange: (tags: any[]) => void;
+}
 
-	const handleClose = (removedTag) => {
+export default function TagList({
+	value = [],
+	editable = false,
+	onChange = () => {},
+}: TagListProps) {
+	const [addNew, setAddNew] = useState(false);
+	const inputRef = useRef<Input>(null);
+
+	const handleClose = (removedTag: any) => {
 		const nextTags = value.filter((t) => t !== removedTag);
 		onChange(nextTags);
 	};
 
 	const handleInputConfirm = () => {
-		const inputValue = inputRef.current.input.value;
+		const inputValue = inputRef.current!.input.value;
 		if (inputValue && value.indexOf(inputValue) === -1) {
 			const nextTags = [...value, inputValue];
 			onChange(nextTags);

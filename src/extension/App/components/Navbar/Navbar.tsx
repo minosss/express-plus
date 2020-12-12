@@ -3,7 +3,7 @@ import {useState} from 'react';
 import useSWR from 'swr';
 import {useDebounce} from 'react-use';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import {jsx} from '@emotion/core';
+import {jsx} from '@emotion/react';
 import styled from '@emotion/styled';
 import {AutoComplete, Input, Menu, Dropdown} from 'antd';
 import {
@@ -19,10 +19,10 @@ import {
 } from '@ant-design/icons';
 import {TypeLabel} from '../index';
 import {reportIssue, getStoreUrl} from '../../../utils';
-import log from '@/shared/utils/log';
-import {PATHNAMES} from '@/shared/constants';
+import log from 'shared/utils/log';
+import {PATHNAMES} from 'shared/constants';
 
-const useDebounceAuto = (value) => {
+const useDebounceAuto = (value: any) => {
 	const [state, setState] = useState(value);
 
 	useDebounce(
@@ -106,7 +106,7 @@ const NavbarTitle = styled.span`
 	font-size: 1rem;
 `;
 
-const OptionItemLabel = ({value}) => {
+const OptionItemLabel = ({value}: any) => {
 	return (
 		<div
 			css={{
@@ -165,7 +165,7 @@ export default function Navbar() {
 	const [inputValue, setInputValue] = useState('');
 	const {data, isValidating, mutate} = useDebounceAuto(inputValue);
 
-	const finalOptions = (data || []).map((item) => ({
+	const finalOptions = (data || []).map((item: any) => ({
 		label: <OptionItemLabel value={item} />,
 		value: `${item.postId}@${item.type}`,
 		key: item.type,
@@ -198,7 +198,7 @@ export default function Navbar() {
 					}}
 					onChange={(value, option) => {
 						// 避免修改输入框的查询数据
-						if (option.value) return;
+						if ((option as any).value) return;
 						// 只能输入数字和字母
 						/^[\da-zA-Z]*$/.test(value) && setInputValue(value);
 					}}

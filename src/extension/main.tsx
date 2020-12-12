@@ -1,15 +1,15 @@
 import React from 'react';
-import {render} from 'react-dom';
+import ReactDOM from 'react-dom';
 import {SWRConfig} from 'swr';
 
 import App from './App';
 import {fetcher} from './utils';
 
 // 分开避免每次都编译 antd 的样式
-import '@/shared/styles/ui.less';
-import '@/shared/styles/yme.less';
+import 'shared/styles/ui.less';
+import 'shared/styles/yme.less';
 
-render(
+ReactDOM.render(
 	<SWRConfig
 		value={{
 			shouldRetryOnError: false,

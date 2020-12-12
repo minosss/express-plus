@@ -4,14 +4,14 @@ import {GithubOutlined, ShopOutlined} from '@ant-design/icons';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import {fetcher, getVersion, getHomePageUrl, getStoreUrl} from '../../utils';
-import {API_URLS, SETTING_KEYS} from '@/shared/constants';
+import {API_URLS, SETTING_KEYS} from 'shared/constants';
 
 export default function Settings() {
 	const {data = {}, isValidating, mutate} = useSWR(API_URLS.SETTINGS);
 	const [lastRefresh, setLastRefresh] = useState('waiting...');
 
 	// 更新设置
-	const updateSetings = async (key, value) => {
+	const updateSetings = async (key: string, value: any) => {
 		const patch = await fetcher(API_URLS.SETTINGS_PATCH, {key, value});
 		if (patch) {
 			mutate({...data, ...{[key]: value}}, false);

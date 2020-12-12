@@ -29,5 +29,5 @@
 		"ids": ["dhdgffkkebhmkfjojejmpbldmpobfkfo"],
 		"matches": ["*://details.jd.com/*"]
 	},
-	"content_security_policy": "script-src 'self' 'unsafe-eval' https://localhost:8080; object-src 'self';"
+	"content_security_policy": "script-src 'self' 'sha256-QAj9SgqS0tkqFXsMg6gbHzN3KfNnrPW0N0FCdMzN3MI=' http://localhost:8080; object-src 'self';"
 }

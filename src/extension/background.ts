@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
-import createKuaidiService, {STATE_DELIVERED} from '@/shared/utils/kuaidi';
-import db from '@/shared/utils/db';
-import log from '@/shared/utils/log';
-import {API_URLS, SETTING_KEYS} from '@/shared/constants';
+import createKuaidiService, {STATE_DELIVERED} from 'shared/utils/kuaidi';
+import db, {Dexie} from 'shared/utils/db';
+import log from 'shared/utils/log';
+import {API_URLS, SETTING_KEYS} from 'shared/constants';
 
 const kuaidi = createKuaidiService();
 
@@ -10,9 +10,9 @@ const AUTO_INTERVAL_DEFAULT = 60;
 const QUERY_ALARM = 'queryAlarm';
 const QUERY_ALARM_SCHEDULED_TIME = 'queryAlarmScheduledTime';
 
-const toObject = (arg = []) => {
+const toObject = (arg: any[] = []) => {
 	return new Promise((resolve) => {
-		const obj = arg.reduce((prev, curr) => {
+		const obj = arg.reduce<Record<string, any>>((prev, curr) => {
 			prev[curr.key] = curr.value;
 			return prev;
 		}, {});
@@ -20,7 +20,7 @@ const toObject = (arg = []) => {
 	});
 };
 
-const hasPatch = (favorite, result) => {
+const hasPatch = (favorite: Favorite, result: any) => {
 	if (result && !result.error && Array.isArray(result.data) && result.data.length > 0) {
 		const last = result.data[0];
 		if (new Date(favorite.updatedAt).getTime() < new Date(last.time).getTime()) {
@@ -36,6 +36,8 @@ const hasPatch = (favorite, result) => {
 };
 
 class Background {
+	db: Dexie;
+
 	constructor() {
 		this.db = db;
 
@@ -55,8 +57,8 @@ class Background {
 			['requestHeaders', 'blocking', 'extraHeaders']
 		);
 		// 新版本
-		browser.runtime.onUpdateAvailable.addListener(({version}) => {
-			log('new version available', version);
+		browser.runtime.onUpdateAvailable.addListener((details: {version: string}) => {
+			log('new version available', details.version);
 		});
 		// 安装或更新
 		browser.runtime.onInstalled.addListener(this.onInstalled.bind(this));
@@ -75,7 +77,7 @@ class Background {
 	async resetQueryAlarm() {
 		browser.alarms.clear(QUERY_ALARM);
 
-		const settings = await db.table('settings').toArray().then(toObject);
+		const settings = await db.table('settings').toArray().then<Settings>(toObject);
 
 		if (settings.enableAuto) {
 			log('resetQueryAlarm', '开始自动查询');
@@ -96,7 +98,7 @@ class Background {
 		});
 	}
 
-	onInstalled({reason, previousVersion}) {
+	onInstalled({reason, previousVersion}: InstalledDetails) {
 		log(reason, previousVersion);
 		// reason: "install", "update", "chrome_update", or "shared_module_update"
 		if (reason === 'update') {
@@ -105,7 +107,7 @@ class Background {
 					break;
 				case '20.1.17.639':
 					// 数据从 storage.local 迁移到 IndexedDB
-					browser.storage.local.get(({favorites = [], settings = {}}) => {
+					browser.storage.local.get(({favorites = [], settings = {}}: any) => {
 						// NOTE: 默认保存历史记录，并且限定数量
 						// settings: autoInterval, enableAuto, enableFilterDelivered, recentHistory
 						const indexedSettings = [
@@ -123,7 +125,7 @@ class Background {
 						// NOTE: 直接更新收藏的快递，已 postId 为主键
 						// favorites: []{postId, ...}
 						db.table('favorites').bulkPut(
-							favorites.map((item) => {
+							favorites.map((item: any) => {
 								const {latestMessage = {}, ...rest} = item;
 								return {
 									...rest,
@@ -152,7 +154,7 @@ class Background {
 
 	// 检查嵌入页面是否过期
 	async checkCookie(force = false) {
-		const frame = window.frames['kuaidi'];
+		const frame = (window.frames as any)['kuaidi'];
 		if (!frame) {
 			log('checkCookie', `iframe not found`);
 			return false;
@@ -186,7 +188,7 @@ class Background {
 		});
 	}
 
-	onBeforeSendHeaders(details) {
+	onBeforeSendHeaders(details: HeaderDetails) {
 		let referer;
 
 		for (let i = 0; i < details.requestHeaders.length; i++) {
@@ -239,7 +241,7 @@ class Background {
 	}
 
 	// 触发定时
-	async onAlarm(alarm) {
+	async onAlarm(alarm: Alarm) {
 		// name, scheduledTime, periodInMinutes
 		if (alarm.name === QUERY_ALARM) {
 			this.runQueryTask();
@@ -286,7 +288,7 @@ class Background {
 			log('有快递更新咯', patch);
 			// 批量更新
 			await db.table('favorites').bulkPut(patch);
-			const settings = await db.table('settings').toArray().then(toObject);
+			const settings = await db.table('settings').toArray().then<Settings>(toObject);
 			// 是否只提示已签收的
 			if (settings.enableFilterDelivered) {
 				patch = patch.filter((item) => item.state === STATE_DELIVERED);
@@ -308,7 +310,7 @@ class Background {
 		}
 	}
 
-	async onMessageExternal(messageExt, sender) {
+	async onMessageExternal(messageExt: any, sender: MessageSender) {
 		log('onMessageExternal', messageExt);
 
 		const {data} = messageExt;
@@ -331,7 +333,7 @@ class Background {
 	}
 
 	// -
-	async onMessage(message, sender) {
+	async onMessage(message: any, sender: MessageSender) {
 		log('onMessage', message);
 
 		if (sender.id !== browser.runtime.id) {
@@ -366,7 +368,7 @@ class Background {
 						await this.checkCookie();
 						let fa = (await db.table('favorites').get(message.data.postId)) || {};
 						const isSaved = !!fa.postId;
-						let result = {};
+						let result: any = {};
 
 						try {
 							result = await kuaidi.query(message.data);
@@ -448,5 +450,5 @@ class Background {
 }
 
 // -
-window.bg = new Background();
-window.bg.checkCookie(true);
+(window as any).bg = new Background();
+(window as any).bg.checkCookie(true);

@@ -1,10 +1,11 @@
-const {createConfig} = require('@yme/webpack-core');
+const {createConfig, resolveApp} = require('@yme/webpack-core');
 const less = require('@yme/webpack-less');
 const react = require('@yme/webpack-react');
 const extension = require('@yme/webpack-extension');
 const file = require('@yme/webpack-file');
+const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 
-const {config, env} = createConfig(
+const {config} = createConfig(
 	less({
 		less: {
 			lessOptions: {
@@ -16,21 +17,22 @@ const {config, env} = createConfig(
 		babel: {
 			plugins: [
 				// emotion
-				require.resolve('babel-plugin-emotion'),
+				require.resolve('@emotion/babel-plugin'),
 			],
 		},
+		useTs: true,
 	}),
 	file(),
 	extension({
 		entries: [
 			{
 				name: 'main',
-				src: './src/extension/main.js',
+				src: './src/extension/main.tsx',
 				template: './src/extension/main.html',
 			},
 			{
 				name: 'background',
-				src: './src/extension/background.js',
+				src: './src/extension/background.ts',
 				template: './src/extension/background.html',
 			},
 		],
@@ -38,24 +40,10 @@ const {config, env} = createConfig(
 	})
 );
 
-if (env.isEnvDevelopment) {
-	config.plugin('react-refresh').tap(() => [
-		{
-			overlay: {
-				entry: require.resolve('react-dev-utils/webpackHotDevClient'),
-				module: require.resolve('./refreshOverlayInterop'),
-				sockIntegration: false,
-			},
-		},
-	]);
+config.resolve.alias.set('shared', resolveApp('src/shared'));
 
-	// config.node.set('global', false);
-}
+// config.plugin('ts').tap(() => [{async: true, silent: true, formatter: undefined}]);
+config.plugins.delete('ts');
+config.plugin('ts').use(ForkTsCheckerWebpackPlugin, [{async: true, silent: true}]);
 
-config.optimization.minimizer('js').tap(([options]) => {
-	// remove comments
-	return [{...options, extractComments: false}];
-});
-
-console.log(config.toConfig().optimization.minimizer);
 module.exports = config.toConfig();

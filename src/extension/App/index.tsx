@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import {HashRouter as Router, Switch, Route, Redirect, useLocation} from 'react-router-dom';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
-import {jsx} from '@emotion/core';
+import {jsx} from '@emotion/react';
 import {ConfigProvider, Layout} from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
 import dayjs from 'dayjs';

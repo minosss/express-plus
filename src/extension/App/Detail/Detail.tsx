@@ -14,8 +14,9 @@ import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 import {TypeLabel, StateLabel, IconButton, InnerIconButton, TagList} from '../components';
 import {fetcher, toFavorite} from '../../utils';
-import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
-import {API_URLS} from '@/shared/constants';
+import {STATE_DELIVERED} from 'shared/utils/kuaidi';
+import {API_URLS} from 'shared/constants';
+import {InputProps} from 'antd/lib/input';
 
 const TimelineItem = styled(Timeline.Item)`
 	&:not(:first-of-type) {
@@ -23,12 +24,12 @@ const TimelineItem = styled(Timeline.Item)`
 	}
 `;
 
-const isDelivered = (state) => state === STATE_DELIVERED;
+const isDelivered = (state: string) => state === STATE_DELIVERED;
 
 const StateCheckedIcon = () => <CheckCircleFilled style={{color: 'var(--success-color)'}} />;
 
 // -
-const TimelineList = ({value = [], state}) => (
+const TimelineList = ({value = [], state}: {value: any[]; state: string}) => (
 	<Timeline className='m-4'>
 		{value.map((item, index) => (
 			<TimelineItem
@@ -67,31 +68,42 @@ const Title = styled.div`
 // 	});
 // };
 
-const NumberInput = (props) => (
+const NumberInput: React.FC<InputProps & {onChange: (value: string) => void}> = ({
+	onChange,
+	...props
+}) => (
 	<Input
 		{...props}
 		maxLength={4}
 		onChange={(e) => {
 			const {value} = e.target;
 			const reg = /^-?\d*(\.\d*)?$/;
-			if ((!isNaN(value) && reg.test(value)) || value === '' || value === '-') {
-				props.onChange(value);
+			if ((!isNaN(value as any) && reg.test(value)) || value === '' || value === '-') {
+				onChange(value);
 			}
 		}}
 	></Input>
 );
 
 const TYPE_SF = 'shunfeng';
-export default function Detail({location, history}) {
-	const {type, postId, phone = ''} = qs.parse(location.search);
-	const [inputPhone, setInputPhone] = useState(phone);
+
+interface QueryParams {
+	type: string;
+	postId: string;
+	phone?: string;
+}
+
+export default function Detail({location, history}: any) {
+	const query = qs.parse(location.search);
+	const {type, postId, phone = ''} = query;
+	const [inputPhone, setInputPhone] = useState<string>(phone!.toString());
 	const [isSaved, setSaved] = useState(false);
 	const [showCodeInput, setShowCodeInput] = useState(false);
-	const needPhone = type === TYPE_SF && (phone === '' || phone.length < 4);
+	const needPhone = type === TYPE_SF && (phone === '' || phone!.length < 4);
 
 	const {data, isValidating, mutate} = useSWR(() => {
 		if (needPhone) {
-			return false;
+			return null;
 		} else {
 			return ['/kuaidi/query', JSON.stringify({type, postId, phone})];
 		}
@@ -126,7 +138,7 @@ export default function Detail({location, history}) {
 	};
 
 	// 标签处理
-	const handleTagChange = (tags) => {
+	const handleTagChange = (tags: any[]) => {
 		if (isSaved) {
 			// 已订阅先保存
 			fetcher(API_URLS.FAVORITES_PATCH, {postId, tags}).then(() => {
@@ -176,7 +188,7 @@ export default function Detail({location, history}) {
 						</Title>
 						<Descriptions size='small' column={3}>
 							<Descriptions.Item label='快递'>
-								<TypeLabel value={type} />
+								<TypeLabel value={type!.toString()} />
 								<InnerIconButton
 									onClick={handleSelect}
 									tooltip='选择快递'
@@ -205,7 +217,9 @@ export default function Detail({location, history}) {
 									/>
 								</Descriptions.Item>
 							) : (
-								<Descriptions.Item />
+								<Descriptions.Item>
+									<span />
+								</Descriptions.Item>
 							)}
 							<Descriptions.Item label='标签'>
 								<TagList
@@ -236,13 +250,13 @@ export default function Detail({location, history}) {
 				}}
 				onCancel={() => {
 					setShowCodeInput(false);
-					setInputPhone(phone);
+					setInputPhone(phone!.toString());
 				}}
 				width={200}
 			>
 				<NumberInput
 					value={inputPhone}
-					onChange={(value) => {
+					onChange={(value: any) => {
 						setInputPhone(value);
 					}}
 				/>
