@@ -10,15 +10,15 @@ const AUTO_INTERVAL_DEFAULT = 60;
 const QUERY_ALARM = 'queryAlarm';
 const QUERY_ALARM_SCHEDULED_TIME = 'queryAlarmScheduledTime';
 
-const toObject = (arg: any[] = []) => {
+function toObject<T extends Record<string, any>>(arg: any[] = []): Promise<T> {
 	return new Promise((resolve) => {
-		const obj = arg.reduce<Record<string, any>>((prev, curr) => {
+		const obj = arg.reduce((prev, curr) => {
 			prev[curr.key] = curr.value;
 			return prev;
 		}, {});
 		resolve(obj);
 	});
-};
+}
 
 const hasPatch = (favorite: Favorite, result: any) => {
 	if (result && !result.error && Array.isArray(result.data) && result.data.length > 0) {
@@ -120,6 +120,10 @@ class Background {
 								key: SETTING_KEYS.ENABLE_FILTER_DELIVERED,
 								value: !!settings.enableFilterDelivered,
 							},
+							{
+								key: SETTING_KEYS.ENABLE_IMPORT,
+								value: true,
+							},
 						];
 						db.table('settings').bulkPut(indexedSettings);
 						// NOTE: 直接更新收藏的快递，已 postId 为主键
@@ -145,6 +149,7 @@ class Background {
 					{key: SETTING_KEYS.AUTO_INTERVAL, value: AUTO_INTERVAL_DEFAULT},
 					{key: SETTING_KEYS.ENABLE_AUTO, value: false},
 					{key: SETTING_KEYS.ENABLE_FILTER_DELIVERED, value: false},
+					{key: SETTING_KEYS.ENABLE_IMPORT, value: true},
 				])
 				.then(() => {
 					log('install success');
@@ -270,6 +275,7 @@ class Background {
 			return;
 		}
 
+		// log(`待查询快递 ${favorites.map((fa) => fa.postId).join(',')}`);
 		for (const fa of favorites) {
 			const {postId, type, phone = ''} = fa;
 			const result = await kuaidi.query({postId, type, phone});
@@ -313,21 +319,29 @@ class Background {
 	async onMessageExternal(messageExt: any, sender: MessageSender) {
 		log('onMessageExternal', messageExt);
 
-		const {data} = messageExt;
-		const {origin} = sender;
-		if (data.postId && !(await db.table('favorites').get(data.postId))) {
-			if (origin === 'https://details.jd.com') {
-				const {postId, tags = [], message, updatedAt} = data;
+		const {data, type} = messageExt;
+		const settings = await db.table('settings').toArray().then<Settings>(toObject);
 
-				db.table('favorites').add({
-					postId,
-					type: 'jd',
-					state: '0',
-					createdAt: Date.now(),
-					updatedAt,
-					message,
-					tags,
-				});
+		if (type === 'import' && settings.enableImport) {
+			if (data.postId && !(await db.table('favorites').get(data.postId))) {
+				if (sender.origin === 'https://details.jd.com') {
+					const {postId, tags = [], message, updatedAt} = data;
+
+					db.table('favorites')
+						.add({
+							postId,
+							type: 'jd',
+							state: '0',
+							createdAt: Date.now(),
+							updatedAt,
+							message,
+							tags,
+						})
+						.then(() => {
+							this.showNotification({message: `[京东] 添加了新的快递 ${postId}`});
+						})
+						.catch(() => {});
+				}
 			}
 		}
 	}

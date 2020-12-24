@@ -101,6 +101,18 @@ export default function Settings() {
 					</List.Item>
 					<List.Item
 						actions={[
+							<Switch
+								checked={data[SETTING_KEYS.ENABLE_IMPORT]}
+								onChange={(value) => {
+									updateSetings(SETTING_KEYS.ENABLE_IMPORT, value);
+								}}
+							/>
+						]}
+					>
+						<List.Item.Meta title='开启外部导入' description='插件目前只信任油猴插件，可通过脚本自动导入电商的快递信息' />
+					</List.Item>
+					<List.Item
+						actions={[
 							<Button danger onClick={handleRefreshCookies}>
 								强制刷新
 							</Button>,

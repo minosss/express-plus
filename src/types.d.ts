@@ -38,7 +38,12 @@ interface Favorite {
 	updatedAt: any;
 }
 
-interface Settings extends Record<string, any> {}
+interface Settings extends Record<string, any> {
+	enableAuto: boolean;
+	autoInterval: string;
+	enableFilterDelivered: boolean;
+	enableImport: boolean;
+}
 
 interface QueryParams {
 	postId: string;
