@@ -6,7 +6,7 @@ interface IconButtonProps {
 	icon?: React.ReactNode;
 	checkedIcon?: React.ReactNode;
 	checked?: boolean;
-	tooltip: string;
+	tooltip?: string;
 	onClick?: () => void;
 }
 
