@@ -169,8 +169,8 @@ class Background {
 		const last = ((await db.table('settings').get(key)) || {value: 0}).value;
 		const diff = Date.now() - last;
 		// 过期时间应该是 20 分钟
-		// 15 * 60 * 1000
-		if (!force && diff < 900000) {
+		// 12 * 60 * 1000
+		if (!force && diff < 720000) {
 			return true;
 		}
 
