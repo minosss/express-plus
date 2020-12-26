@@ -8,26 +8,27 @@ import {
 	ClockCircleOutlined,
 	CheckCircleFilled,
 } from '@ant-design/icons';
-import {css, jsx} from '@emotion/core';
+import {css, jsx} from '@emotion/react';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import {fetcher} from '../../utils';
 import {IconButton, TypeLabel} from '../components';
-import {API_URLS} from '@/shared/constants';
-import {STATE_DELIVERED} from '@/shared/utils/kuaidi';
+import {API_URLS} from 'shared/constants';
+import {STATE_DELIVERED} from 'shared/utils/kuaidi';
+import {RouteComponentProps} from 'react-router-dom';
 
-const TagList = ({type, value = []}) => (
+const TagList = ({type, value = []}: any) => (
 	<div>
 		<Tag>
 			<TypeLabel value={type} />
 		</Tag>
-		{value.map((item) => (
+		{value.map((item: any) => (
 			<Tag key={`tag-${item}`}>{item}</Tag>
 		))}
 	</div>
 );
 
-const LatestMessage = ({time, message}) => {
+const LatestMessage = ({time, message}: any) => {
 	if (!time || !message) {
 		return <div>未知</div>;
 	}
@@ -64,7 +65,7 @@ const listItemHover = css`
 	}
 `;
 
-export default function Favorites({history}) {
+const Favorites: React.FC<RouteComponentProps> = ({history}) => {
 	const {data, isValidating, mutate} = useSWR(API_URLS.FAVORITES);
 
 	return (
@@ -72,7 +73,7 @@ export default function Favorites({history}) {
 			loading={isValidating}
 			className='favorites-list'
 			dataSource={data}
-			renderItem={(item) => (
+			renderItem={(item: any) => (
 				<List.Item
 					css={listItemHover}
 					actions={[
@@ -93,7 +94,7 @@ export default function Favorites({history}) {
 						<IconButton
 							tooltip='查询'
 							icon={<SearchOutlined />}
-							onClick={(e) => {
+							onClick={() => {
 								history.push(
 									`/app/detail?postId=${item.postId}&type=${item.type}&phone=${
 										item.phone || ''
@@ -137,3 +138,5 @@ export default function Favorites({history}) {
 		></List>
 	);
 }
+
+export default Favorites;

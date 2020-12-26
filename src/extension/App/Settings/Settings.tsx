@@ -4,14 +4,14 @@ import {GithubOutlined, ShopOutlined} from '@ant-design/icons';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import {fetcher, getVersion, getHomePageUrl, getStoreUrl} from '../../utils';
-import {API_URLS, SETTING_KEYS} from '@/shared/constants';
+import {API_URLS, SETTING_KEYS} from 'shared/constants';
 
 export default function Settings() {
 	const {data = {}, isValidating, mutate} = useSWR(API_URLS.SETTINGS);
 	const [lastRefresh, setLastRefresh] = useState('waiting...');
 
 	// 更新设置
-	const updateSetings = async (key, value) => {
+	const updateSetings = async (key: string, value: any) => {
 		const patch = await fetcher(API_URLS.SETTINGS_PATCH, {key, value});
 		if (patch) {
 			mutate({...data, ...{[key]: value}}, false);
@@ -98,6 +98,18 @@ export default function Settings() {
 						]}
 					>
 						<List.Item.Meta title='查询间隔（分钟）' description='默认60分钟' />
+					</List.Item>
+					<List.Item
+						actions={[
+							<Switch
+								checked={data[SETTING_KEYS.ENABLE_IMPORT]}
+								onChange={(value) => {
+									updateSetings(SETTING_KEYS.ENABLE_IMPORT, value);
+								}}
+							/>
+						]}
+					>
+						<List.Item.Meta title='开启外部导入' description='插件目前只信任油猴插件，可通过脚本自动导入电商的快递信息' />
 					</List.Item>
 					<List.Item
 						actions={[

@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
-import createKuaidiService, {STATE_DELIVERED} from '@/shared/utils/kuaidi';
-import db from '@/shared/utils/db';
-import log from '@/shared/utils/log';
-import {API_URLS, SETTING_KEYS} from '@/shared/constants';
+import createKuaidiService, {STATE_DELIVERED} from 'shared/utils/kuaidi';
+import db, {Dexie} from 'shared/utils/db';
+import log from 'shared/utils/log';
+import {API_URLS, SETTING_KEYS} from 'shared/constants';
 
 const kuaidi = createKuaidiService();
 
@@ -10,7 +10,7 @@ const AUTO_INTERVAL_DEFAULT = 60;
 const QUERY_ALARM = 'queryAlarm';
 const QUERY_ALARM_SCHEDULED_TIME = 'queryAlarmScheduledTime';
 
-const toObject = (arg = []) => {
+function toObject<T extends Record<string, any>>(arg: any[] = []): Promise<T> {
 	return new Promise((resolve) => {
 		const obj = arg.reduce((prev, curr) => {
 			prev[curr.key] = curr.value;
@@ -18,9 +18,9 @@ const toObject = (arg = []) => {
 		}, {});
 		resolve(obj);
 	});
-};
+}
 
-const hasPatch = (favorite, result) => {
+const hasPatch = (favorite: Favorite, result: any) => {
 	if (result && !result.error && Array.isArray(result.data) && result.data.length > 0) {
 		const last = result.data[0];
 		if (new Date(favorite.updatedAt).getTime() < new Date(last.time).getTime()) {
@@ -36,6 +36,8 @@ const hasPatch = (favorite, result) => {
 };
 
 class Background {
+	db: Dexie;
+
 	constructor() {
 		this.db = db;
 
@@ -55,8 +57,8 @@ class Background {
 			['requestHeaders', 'blocking', 'extraHeaders']
 		);
 		// 新版本
-		browser.runtime.onUpdateAvailable.addListener(({version}) => {
-			log('new version available', version);
+		browser.runtime.onUpdateAvailable.addListener((details: {version: string}) => {
+			log('new version available', details.version);
 		});
 		// 安装或更新
 		browser.runtime.onInstalled.addListener(this.onInstalled.bind(this));
@@ -75,7 +77,7 @@ class Background {
 	async resetQueryAlarm() {
 		browser.alarms.clear(QUERY_ALARM);
 
-		const settings = await db.table('settings').toArray().then(toObject);
+		const settings = await db.table('settings').toArray().then<Settings>(toObject);
 
 		if (settings.enableAuto) {
 			log('resetQueryAlarm', '开始自动查询');
@@ -96,7 +98,7 @@ class Background {
 		});
 	}
 
-	onInstalled({reason, previousVersion}) {
+	onInstalled({reason, previousVersion}: InstalledDetails) {
 		log(reason, previousVersion);
 		// reason: "install", "update", "chrome_update", or "shared_module_update"
 		if (reason === 'update') {
@@ -105,7 +107,7 @@ class Background {
 					break;
 				case '20.1.17.639':
 					// 数据从 storage.local 迁移到 IndexedDB
-					browser.storage.local.get(({favorites = [], settings = {}}) => {
+					browser.storage.local.get(({favorites = [], settings = {}}: any) => {
 						// NOTE: 默认保存历史记录，并且限定数量
 						// settings: autoInterval, enableAuto, enableFilterDelivered, recentHistory
 						const indexedSettings = [
@@ -118,12 +120,16 @@ class Background {
 								key: SETTING_KEYS.ENABLE_FILTER_DELIVERED,
 								value: !!settings.enableFilterDelivered,
 							},
+							{
+								key: SETTING_KEYS.ENABLE_IMPORT,
+								value: true,
+							},
 						];
 						db.table('settings').bulkPut(indexedSettings);
 						// NOTE: 直接更新收藏的快递，已 postId 为主键
 						// favorites: []{postId, ...}
 						db.table('favorites').bulkPut(
-							favorites.map((item) => {
+							favorites.map((item: any) => {
 								const {latestMessage = {}, ...rest} = item;
 								return {
 									...rest,
@@ -143,6 +149,7 @@ class Background {
 					{key: SETTING_KEYS.AUTO_INTERVAL, value: AUTO_INTERVAL_DEFAULT},
 					{key: SETTING_KEYS.ENABLE_AUTO, value: false},
 					{key: SETTING_KEYS.ENABLE_FILTER_DELIVERED, value: false},
+					{key: SETTING_KEYS.ENABLE_IMPORT, value: true},
 				])
 				.then(() => {
 					log('install success');
@@ -152,7 +159,7 @@ class Background {
 
 	// 检查嵌入页面是否过期
 	async checkCookie(force = false) {
-		const frame = window.frames['kuaidi'];
+		const frame = (window.frames as any)['kuaidi'];
 		if (!frame) {
 			log('checkCookie', `iframe not found`);
 			return false;
@@ -162,23 +169,30 @@ class Background {
 		const last = ((await db.table('settings').get(key)) || {value: 0}).value;
 		const diff = Date.now() - last;
 		// 过期时间应该是 20 分钟
-		// 15 * 60 * 1000
-		if (!force && diff < 900000) {
+		// 12 * 60 * 1000
+		if (!force && diff < 720000) {
 			return true;
 		}
 
 		return new Promise((resolve) => {
+			log('开始刷新 iframe');
 			frame.addEventListener(
 				'load',
 				async () => {
 					const kd = document.createElement('iframe');
 					kd.src = 'https://m.kuaidi100.com/result.jsp';
 					frame.contentDocument.body.append(kd);
-
-					const now = Date.now();
-					log('checkCookie', '刷新 iframe', now);
-					resolve(now);
-					await db.table('settings').put({key, value: now});
+					// 等里面的 iframe 加载完毕
+					kd.addEventListener(
+						'load',
+						async () => {
+							const now = Date.now();
+							log('完成刷新 iframe', now);
+							resolve(now);
+							await db.table('settings').put({key, value: now});
+						},
+						{once: true}
+					);
 				},
 				{once: true}
 			);
@@ -186,7 +200,7 @@ class Background {
 		});
 	}
 
-	onBeforeSendHeaders(details) {
+	onBeforeSendHeaders(details: HeaderDetails) {
 		let referer;
 
 		for (let i = 0; i < details.requestHeaders.length; i++) {
@@ -239,7 +253,7 @@ class Background {
 	}
 
 	// 触发定时
-	async onAlarm(alarm) {
+	async onAlarm(alarm: Alarm) {
 		// name, scheduledTime, periodInMinutes
 		if (alarm.name === QUERY_ALARM) {
 			this.runQueryTask();
@@ -268,6 +282,7 @@ class Background {
 			return;
 		}
 
+		// log(`待查询快递 ${favorites.map((fa) => fa.postId).join(',')}`);
 		for (const fa of favorites) {
 			const {postId, type, phone = ''} = fa;
 			const result = await kuaidi.query({postId, type, phone});
@@ -286,7 +301,7 @@ class Background {
 			log('有快递更新咯', patch);
 			// 批量更新
 			await db.table('favorites').bulkPut(patch);
-			const settings = await db.table('settings').toArray().then(toObject);
+			const settings = await db.table('settings').toArray().then<Settings>(toObject);
 			// 是否只提示已签收的
 			if (settings.enableFilterDelivered) {
 				patch = patch.filter((item) => item.state === STATE_DELIVERED);
@@ -308,30 +323,38 @@ class Background {
 		}
 	}
 
-	async onMessageExternal(messageExt, sender) {
+	async onMessageExternal(messageExt: any, sender: MessageSender) {
 		log('onMessageExternal', messageExt);
 
-		const {data} = messageExt;
-		const {origin} = sender;
-		if (data.postId && !(await db.table('favorites').get(data.postId))) {
-			if (origin === 'https://details.jd.com') {
-				const {postId, tags = [], message, updatedAt} = data;
+		const {data, type} = messageExt;
+		const settings = await db.table('settings').toArray().then<Settings>(toObject);
 
-				db.table('favorites').add({
-					postId,
-					type: 'jd',
-					state: '0',
-					createdAt: Date.now(),
-					updatedAt,
-					message,
-					tags,
-				});
+		if (type === 'import' && settings.enableImport) {
+			if (data.postId && !(await db.table('favorites').get(data.postId))) {
+				if (sender.origin === 'https://details.jd.com') {
+					const {postId, tags = [], message, updatedAt} = data;
+
+					db.table('favorites')
+						.add({
+							postId,
+							type: 'jd',
+							state: '0',
+							createdAt: Date.now(),
+							updatedAt,
+							message,
+							tags,
+						})
+						.then(() => {
+							this.showNotification({message: `[京东] 添加了新的快递 ${postId}`});
+						})
+						.catch(() => {});
+				}
 			}
 		}
 	}
 
 	// -
-	async onMessage(message, sender) {
+	async onMessage(message: any, sender: MessageSender) {
 		log('onMessage', message);
 
 		if (sender.id !== browser.runtime.id) {
@@ -366,7 +389,7 @@ class Background {
 						await this.checkCookie();
 						let fa = (await db.table('favorites').get(message.data.postId)) || {};
 						const isSaved = !!fa.postId;
-						let result = {};
+						let result: any = {};
 
 						try {
 							result = await kuaidi.query(message.data);
@@ -448,5 +471,5 @@ class Background {
 }
 
 // -
-window.bg = new Background();
-window.bg.checkCookie(true);
+(window as any).bg = new Background();
+(window as any).bg.checkCookie(true);

@@ -34,6 +34,8 @@ export const SETTING_KEYS = {
 	ENABLE_FILTER_DELIVERED: 'enableFilterDelivered',
 	// 自动查询间隔
 	AUTO_INTERVAL: 'autoInterval',
+	// 外部导入
+	ENABLE_IMPORT: 'enableImport',
 	// cookies
 	COOKIES: 'cookieKuaidi100',
 };

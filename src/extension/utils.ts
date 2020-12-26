@@ -1,9 +1,9 @@
 import browser from 'webextension-polyfill';
 import dayjs from 'dayjs';
 
-const isJsonLike = (str) => /^\{.*?\}$/.test(str);
+const isJsonLike = (str: string) => /^\{.*?\}$/.test(str);
 
-export const fetcher = async (url, data = null) => {
+export const fetcher = async (url: string, data?: any) => {
 	console.log('req > ', url, data);
 
 	try {
@@ -20,10 +20,10 @@ export const fetcher = async (url, data = null) => {
 	}
 };
 
-export const toFavorite = (data) => {
+export const toFavorite = (data: any) => {
 	const {postId, type, state, phone, tags = [], data: messages = [], pin = false} = data;
 
-	let message = {};
+	let message: any = {};
 	if (messages && messages.length) {
 		message = {
 			time: messages[0].time,

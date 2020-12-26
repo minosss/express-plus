@@ -2,29 +2,37 @@
 import {useState} from 'react';
 import {Input, Table, Space, Button} from 'antd';
 import {SearchOutlined} from '@ant-design/icons';
-import {TYPES} from '@/shared/utils/kuaidi';
+import {TYPES} from 'shared/utils/kuaidi';
 import Highlighter from 'react-highlight-words';
 import qs from 'query-string';
-import {jsx, css} from '@emotion/core';
+import {jsx, css} from '@emotion/react';
+import {RouteComponentProps} from 'react-router-dom';
+import {FilterDropdownProps} from 'antd/lib/table/interface';
+
+interface TypeItem {
+	type: string;
+	name: string;
+	key: string;
+}
 
 // make data source with key
-const dataSource = TYPES.map((item) => ({key: item.type, ...item}));
+const dataSource: TypeItem[] = TYPES.map((item) => ({key: item.type, ...item}));
 
-export default function TypeOptions({location, history}) {
+const TypeOptions: React.FC<RouteComponentProps> = ({location, history}) => {
 	const {type, postId, phone = ''} = qs.parse(location.search);
 	const [searchText, setSearchText] = useState('');
 
-	const handleResetSearch = (clearFilters) => {
-		clearFilters();
+	const handleResetSearch = (clearFilters?: Fn) => {
+		clearFilters && clearFilters();
 		setSearchText('');
 	};
 
-	const handleSearch = (selectedKeys, confirm) => {
+	const handleSearch = (selectedKeys: any[], confirm: Fn, dataIndex?: any) => {
 		confirm();
 		setSearchText(selectedKeys[0]);
 	};
 
-	const handleSelect = (record) => {
+	const handleSelect = (record: TypeItem) => {
 		history.push(`/app/detail?postId=${postId}&type=${record.type}&phone=${phone}`);
 	};
 
@@ -36,7 +44,12 @@ export default function TypeOptions({location, history}) {
 					title: '名称',
 					dataIndex: 'name',
 					key: 'name',
-					filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+					filterDropdown: ({
+						setSelectedKeys,
+						selectedKeys,
+						confirm,
+						clearFilters,
+					}: FilterDropdownProps) => (
 						<div style={{padding: 12}}>
 							<Input
 								style={{width: 188, marginBottom: 8, display: 'block'}}
@@ -68,12 +81,12 @@ export default function TypeOptions({location, history}) {
 						</div>
 					),
 					filterIcon: () => <SearchOutlined />,
-					onFilter: (value, record) =>
+					onFilter: (value: any, record: any) =>
 						record.name
 							? record.name.toString().toLowerCase().includes(value.toLowerCase())
 							: '',
-					onFilterDropdownVisibleChange: (visible) => {},
-					render: (text) => (
+					onFilterDropdownVisibleChange: () => {},
+					render: (text: any) => (
 						<Highlighter
 							highlightStyle={{
 								backgroundColor: 'var(--warning-color)',
@@ -119,4 +132,6 @@ export default function TypeOptions({location, history}) {
 			/>
 		</div>
 	);
-}
+};
+
+export default TypeOptions;
