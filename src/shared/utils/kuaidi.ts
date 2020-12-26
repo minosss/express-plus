@@ -1,6 +1,7 @@
 import ky from 'ky';
 import sortBy from 'lodash.sortby';
 import keyBy from 'lodash.keyby';
+import log from './log';
 import all from './kuaidi_all.json';
 
 // 状态码
@@ -44,6 +45,7 @@ export class Service {
 
 	// 查询
 	async query({postId, type, phone}: QueryParams): Promise<any> {
+		log(`查询 ${postId}@${type}#${phone}`);
 		const result = await this.request
 			.post('query', {
 				body: toURLSearchParams({
