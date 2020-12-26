@@ -175,17 +175,24 @@ class Background {
 		}
 
 		return new Promise((resolve) => {
+			log('开始刷新 iframe');
 			frame.addEventListener(
 				'load',
 				async () => {
 					const kd = document.createElement('iframe');
 					kd.src = 'https://m.kuaidi100.com/result.jsp';
 					frame.contentDocument.body.append(kd);
-
-					const now = Date.now();
-					log('checkCookie', '刷新 iframe', now);
-					resolve(now);
-					await db.table('settings').put({key, value: now});
+					// 等里面的 iframe 加载完毕
+					kd.addEventListener(
+						'load',
+						async () => {
+							const now = Date.now();
+							log('完成刷新 iframe', now);
+							resolve(now);
+							await db.table('settings').put({key, value: now});
+						},
+						{once: true}
+					);
 				},
 				{once: true}
 			);
