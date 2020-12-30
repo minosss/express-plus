@@ -3,13 +3,18 @@ declare module 'webextension-polyfill' {
 		addListener: (fn: any, ...args) => void;
 	}
 
-	const runtime: {
+	interface Runtime {
 		id: string;
 		onInstalled: EventListener;
 		onMessage: EventListener;
 		onMessageExternal: EventListener;
 		onUpdateAvailable: EventListener;
-	};
+		getManifest(): Record<string, any>;
+		sendMessage<T = any>(extensionId: string, message: any): Promise<T>;
+		sendMessage<T = any>(message: any): Promise<T>;
+	}
+
+	const runtime: Runtime;
 
 	const alarms: {
 		create: (name: string, options: any) => Promise<void>;
