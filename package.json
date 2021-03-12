@@ -65,7 +65,7 @@
 		"lint-staged": "^10.2.11",
 		"postcss-preset-env": "^6.7.0",
 		"prettier": "*",
-		"react-dev-utils": "^11.0.1",
+		"react-dev-utils": "^11.0.4",
 		"stylelint": "^13.6.1",
 		"stylelint-config-prettier": "^8.0.2",
 		"stylelint-config-standard": "^20.0.0",
