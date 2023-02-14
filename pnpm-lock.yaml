@@ -8,6 +8,8 @@ specifiers:
   '@mantine/notifications': ^5.10.3
   '@parcel/config-webextension': ^2.8.3
   '@parcel/core': ^2.8.3
+  '@parcel/reporter-bundle-analyzer': ^2.8.3
+  '@parcel/reporter-bundle-buddy': ^2.8.3
   '@tanstack/react-query': ^4.24.6
   '@types/node': ^18.13.0
   '@types/react': ^18.0.27
@@ -18,6 +20,7 @@ specifiers:
   '@yme/tsconfig': ^1.0.0
   buffer: ^6.0.3
   dayjs: ^1.11.7
+  dot-json: ^1.2.2
   eslint: ^8.33.0
   jotai: ^2.0.0
   lucide-react: ^0.112.0
@@ -29,6 +32,7 @@ specifiers:
   rxdb: ^14.0.1
   rxjs: ^7.8.0
   typescript: ^4.9.5
+  utc-version: ^2.0.2
   webextension-polyfill: ^0.10.0
 
 dependencies:
@@ -50,6 +54,8 @@ devDependencies:
   '@babel/core': 7.20.12
   '@parcel/config-webextension': 2.8.3_@parcel+core@2.8.3
   '@parcel/core': 2.8.3
+  '@parcel/reporter-bundle-analyzer': 2.8.3_@parcel+core@2.8.3
+  '@parcel/reporter-bundle-buddy': 2.8.3_@parcel+core@2.8.3
   '@types/node': 18.13.0
   '@types/react': 18.0.27
   '@types/react-dom': 18.0.10
@@ -58,11 +64,13 @@ devDependencies:
   '@yme/prettier-config': 0.1.3_prettier@2.8.3
   '@yme/tsconfig': 1.0.0
   buffer: 6.0.3
+  dot-json: 1.2.2
   eslint: 8.33.0
   parcel: 2.8.3
   prettier: 2.8.3
   process: 0.11.10
   typescript: 4.9.5
+  utc-version: 2.0.2
 
 packages:
 
@@ -1578,6 +1586,26 @@ packages:
       - '@parcel/core'
     dev: true
 
+  /@parcel/reporter-bundle-analyzer/2.8.3_@parcel+core@2.8.3:
+    resolution: {integrity: sha512-4h0JwqOCmHlbzFwgYyEqgchMwk2N1zXmDltO2vIhPikvdsJCJXoRqvJvVTeLeL5bPOYLduMhlaAvn5B3jqcsFA==}
+    engines: {node: '>= 12.0.0', parcel: ^2.8.3}
+    dependencies:
+      '@parcel/plugin': 2.8.3_@parcel+core@2.8.3
+      '@parcel/utils': 2.8.3
+      nullthrows: 1.1.1
+    transitivePeerDependencies:
+      - '@parcel/core'
+    dev: true
+
+  /@parcel/reporter-bundle-buddy/2.8.3_@parcel+core@2.8.3:
+    resolution: {integrity: sha512-NuM0mvXGIwXmXIXXZk8Y10eCLaQuxQ8VQ1AL3bA5xD5xQFspMuYatRZM82J8Zt51Sw4amLF66NCdCsZSonXmUQ==}
+    engines: {node: '>= 12.0.0', parcel: ^2.8.3}
+    dependencies:
+      '@parcel/plugin': 2.8.3_@parcel+core@2.8.3
+    transitivePeerDependencies:
+      - '@parcel/core'
+    dev: true
+
   /@parcel/reporter-cli/2.8.3_@parcel+core@2.8.3:
     resolution: {integrity: sha512-3sJkS6tFFzgIOz3u3IpD/RsmRxvOKKiQHOTkiiqRt1l44mMDGKS7zANRnJYsQzdCsgwc9SOP30XFgJwtoVlMbw==}
     engines: {node: '>= 12.0.0', parcel: ^2.8.3}
@@ -2922,6 +2950,11 @@ packages:
       has-property-descriptors: 1.0.0
       object-keys: 1.1.1
 
+  /detect-indent/6.0.0:
+    resolution: {integrity: sha512-oSyFlqaTHCItVRGK5RmrmjB+CmaMOW7IaNA/kdxqhoa6d17j/5ce9O9eWXmV/KEdRwqpQA+Vqe8a8Bsybu4YnA==}
+    engines: {node: '>=8'}
+    dev: true
+
   /detect-libc/1.0.3:
     resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
     engines: {node: '>=0.10'}
@@ -2938,6 +2971,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       path-type: 4.0.0
+    dev: true
+
+  /docopt/0.6.2:
+    resolution: {integrity: sha512-NqTbaYeE4gA/wU1hdKFdU+AFahpDOpgGLzHP42k6H6DKExJd0A55KEVWYhL9FEmHmgeLvEU2vuKXDuU+4yToOw==}
+    engines: {node: '>=0.10.0'}
     dev: true
 
   /doctrine/2.1.0:
@@ -2986,6 +3024,15 @@ packages:
       dom-serializer: 1.4.1
       domelementtype: 2.3.0
       domhandler: 4.3.1
+    dev: true
+
+  /dot-json/1.2.2:
+    resolution: {integrity: sha512-AKL+GsO4wSEU4LU+fAk/PqN4nQ6PB1vT3HpMiZous9xCzK5S0kh4DzfUY0EfU67jsIXLlu0ty71659N9Nmg+Tw==}
+    hasBin: true
+    dependencies:
+      detect-indent: 6.0.0
+      docopt: 0.6.2
+      underscore-keypath: 0.0.22
     dev: true
 
   /dotenv-expand/5.1.0:
@@ -5655,6 +5702,16 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
+  /underscore-keypath/0.0.22:
+    resolution: {integrity: sha512-fU7aYj1J2LQd+jqdQ67AlCOZKK3Pl+VErS8fGYcgZG75XB9/bY+RLM+F2xEcKHhHNtLvqqFyXAoZQlLYfec3Xg==}
+    dependencies:
+      underscore: 1.13.6
+    dev: true
+
+  /underscore/1.13.6:
+    resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
+    dev: true
+
   /unload/2.4.1:
     resolution: {integrity: sha512-IViSAm8Z3sRBYA+9wc0fLQmU9Nrxb16rcDmIiR6Y9LJSZzI7QY5QsDhqPpKOjAn0O9/kfK1TfNEMMAGPTIraPw==}
     dev: false
@@ -5716,6 +5773,12 @@ packages:
     dependencies:
       react: 18.2.0
     dev: false
+
+  /utc-version/2.0.2:
+    resolution: {integrity: sha512-DblGt/1KFe3Jl1BbTZN7P8SFNw6L0zU/zahdgCJ+a/LPW6SE7VPY3RfpEg0W0ksyx6NewZYu7WD/7NzV7xljlA==}
+    engines: {node: '>=6'}
+    hasBin: true
+    dev: true
 
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}

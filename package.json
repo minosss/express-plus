@@ -3,10 +3,16 @@
 	"private": true,
 	"author": "mino",
 	"license": "MIT",
-	"keywords": [],
+	"keywords": [
+		"express",
+		"react",
+		"web-extension",
+		"chrome-extension"
+	],
 	"scripts": {
 		"dev": "parcel watch src/manifest.json",
-		"build": "parcel build src/manifest.json"
+		"build": "rm -rf dist && parcel build --no-source-maps src/manifest.json",
+		"release": "pnpm build; VERSION=$(utc-version); echo $VERSION; dot-json dist/manifest.json version $VERSION; zip -r $VERSION.zip dist; mv $VERSION.zip release/;"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.10.5",
@@ -27,6 +33,8 @@
 		"@babel/core": "^7.20.12",
 		"@parcel/config-webextension": "^2.8.3",
 		"@parcel/core": "^2.8.3",
+		"@parcel/reporter-bundle-analyzer": "^2.8.3",
+		"@parcel/reporter-bundle-buddy": "^2.8.3",
 		"@types/node": "^18.13.0",
 		"@types/react": "^18.0.27",
 		"@types/react-dom": "^18.0.10",
@@ -35,11 +43,13 @@
 		"@yme/prettier-config": "^0.1.3",
 		"@yme/tsconfig": "^1.0.0",
 		"buffer": "^6.0.3",
+		"dot-json": "^1.2.2",
 		"eslint": "^8.33.0",
 		"parcel": "^2.8.3",
 		"prettier": "^2.8.3",
 		"process": "^0.11.10",
-		"typescript": "^4.9.5"
+		"typescript": "^4.9.5",
+		"utc-version": "^2.0.2"
 	},
 	"alias": {
 		"process": "process/browser.js",

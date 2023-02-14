@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "快递助手",
-	"version": "23.2.9",
+	"version": "0.0.0",
 	"minimum_chrome_version": "109",
 	"action": {
 		"default_title": "快递助手",
