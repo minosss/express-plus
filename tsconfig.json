@@ -1,0 +1,9 @@
+{
+    "extends": "@yme/tsconfig",
+    "compilerOptions": {
+		"target": "es2020",
+		"isolatedModules": true,
+		"jsx": "preserve"
+    },
+    "include": ["src"]
+}

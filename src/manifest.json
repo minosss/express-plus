@@ -1,0 +1,28 @@
+{
+	"manifest_version": 3,
+	"name": "快递助手",
+	"version": "23.2.9",
+	"minimum_chrome_version": "109",
+	"action": {
+		"default_title": "快递助手",
+		"default_popup": "popup.html",
+		"default_icon": {
+			"128": "icons/icon.png"
+		}
+	},
+	"icons": {
+		"128": "icons/icon.png"
+	},
+	"background": {
+		"service_worker": "background/background.ts",
+		"type": "module"
+	},
+	"web_accessible_resources": [
+		{
+			"resources": ["offscreen.html"],
+			"matches": ["<all_urls>"]
+		}
+	],
+	"permissions": ["alarms", "storage", "notifications", "webRequest", "offscreen"],
+	"host_permissions": ["https://*.kuaidi100.com/*"]
+}
