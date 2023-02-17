@@ -1,5 +1,6 @@
 import {runtime} from 'webextension-polyfill';
+import {resetAlarm} from './alarm';
 
 runtime.onInstalled.addListener((details) => {
-	console.log('install extension');
+	resetAlarm();
 });

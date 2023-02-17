@@ -1,9 +1,10 @@
 import {useQuery} from '@tanstack/react-query';
 import {useAtom} from 'jotai';
-import dayjs from 'dayjs';
+import {useEffect} from 'react';
 import {QueryItem} from '../../api/types';
 import {MessageKind, Track} from '../../types';
 import {fetcher} from '../../utils/fetcher';
+import {now} from '../../utils/helper';
 import {queryAtom} from './jotai';
 
 export function useDetail() {
@@ -43,11 +44,24 @@ export function useDetail() {
 					state: data.state,
 					context: data.data[0]?.context,
 					updatedAt: data.updatedAt,
-					createdAt: dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+					createdAt: now(),
 			  } as Track));
 
 		await refetch();
 	}
+
+	useEffect(() => {
+		if (isTracking && data != null && data.updatedAt > saved.updatedAt) {
+			// 不想放在 offscreen 上，只发送更新
+			fetcher(MessageKind.PutTrack, {
+				...saved,
+				context: data.data[0]?.context,
+				updatedAt: data.updatedAt,
+			} as Track);
+		}
+	}, [data, isTracking, saved]);
+
+	// saved
 
 	return {
 		query,

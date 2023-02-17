@@ -1,5 +1,7 @@
 import {createRxDatabase} from 'rxdb';
 import {getRxStorageDexie} from 'rxdb/plugins/storage-dexie';
+import {QueryState} from '../api/types';
+import {Settings, TrackList} from '../types';
 
 export async function createDb() {
 	const db = await createRxDatabase({
@@ -9,6 +11,7 @@ export async function createDb() {
 
 	await db.addCollections({
 		track: {
+			autoMigrate: true,
 			schema: {
 				title: 'track',
 				primaryKey: 'id',
@@ -23,14 +26,20 @@ export async function createDb() {
 					phone: {
 						type: 'string',
 					},
-					tags: {
-						type: 'array',
+					context: {
+						type: 'string',
+					},
+					state: {
+						type: 'string',
 					},
 					updatedAt: {
 						type: ['string', 'number'],
 					},
 					createdAt: {
 						type: ['string', 'number'],
+					},
+					tags: {
+						type: 'array',
 					},
 				},
 				type: 'object',
@@ -66,22 +75,53 @@ type Database = Awaited<ReturnType<typeof createDb>>;
 
 let db: Database | null = null;
 
-function initGlobalDb() {
-	if (db != null) return;
-
-	createDb()
-		.then((db_) => {
-			db = db_;
-		})
-		.catch((error) => {
-			console.error('Initial database fail');
-			console.error(error);
-		});
+async function initGlobalDb() {
+	return createDb().then((db_) => {
+		db = db_;
+	});
 }
 
-initGlobalDb();
-
-export function getDb() {
-	if (db == null) throw new Error('Database is null');
+export async function getDb() {
+	if (db == null) {
+		await initGlobalDb();
+	}
+	if (db == null) {
+		throw new Error('Database is null');
+	}
 	return db;
+}
+
+export const defaultSettings: Partial<Settings> = {
+	autoInterval: 60,
+	enableFilterDelivered: true,
+};
+
+export async function getUncheckList() {
+	const db_ = await getDb();
+	const list = await db_.track
+		?.find({
+			selector: {
+				state: {
+					$not: `${QueryState.Delivered}`,
+				},
+			},
+		})
+		.exec();
+
+	return (list ?? []).map((doc) => doc.toJSON()) as TrackList;
+}
+
+export async function getSettings() {
+	const db_ = await getDb();
+	const settings = await db_.settings?.find().exec();
+
+	if (settings == null) return defaultSettings;
+
+	const result: Record<string, any> = {...defaultSettings};
+	for (const {key, value} of settings) {
+		if (typeof key === 'string' && result[key] != null) {
+			result[key] = value;
+		}
+	}
+	return result as Partial<Settings>;
 }

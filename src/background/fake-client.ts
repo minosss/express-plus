@@ -1,4 +1,7 @@
-const latestRefresh = 0;
+import {TheLastRefresh} from '../types';
+import {log} from '../utils/log';
+
+let latestRefresh = 0;
 export async function refreshCookies(force = false) {
 	const frame = (window.frames as any)['kuaidi'];
 	if (!frame) {
@@ -6,9 +9,15 @@ export async function refreshCookies(force = false) {
 	}
 
 	const diff = Date.now() - latestRefresh;
-	if (!force || diff < 720_000) {
+
+	log(`touch cookies: ${latestRefresh} in ${diff}`);
+
+	// 15min
+	if (!force && diff < 900_000) {
 		return latestRefresh;
 	}
+
+	log(`refresh cookies`);
 
 	return new Promise((resolve, reject) => {
 		frame.addEventListener(
@@ -23,6 +32,9 @@ export async function refreshCookies(force = false) {
 					async () => {
 						const now = Date.now();
 						resolve(now);
+						latestRefresh = now;
+						log(`refresh done at ${now}`);
+						localStorage.setItem(TheLastRefresh, `${now}`);
 					},
 					{once: true}
 				);

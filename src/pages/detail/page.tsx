@@ -6,8 +6,9 @@ import {
 	WifiOffIcon,
 	BookmarkMinusIcon,
 	BookmarkPlusIcon,
+	XCircleIcon,
 } from 'lucide-react';
-import {Page} from '../../components/index';
+import {Empty, Page} from '../../components/index';
 import {QueryStateMap} from '../../api/state-map';
 import {KuaidiMap} from '../../api/kuaidi-map';
 import {Loader} from './loader';
@@ -128,6 +129,9 @@ export const DetailPage = () => {
 						</Box>
 					</SimpleGrid>
 					<Stack px='md' py='xs' spacing='xs'>
+						{data.data.length === 0 && (
+							<Empty iconComponent={XCircleIcon} description='查无记录' />
+						)}
 						{data.data.map((item, i) => (
 							<Group key={`timeline-${i}`} noWrap spacing='xs' align='flex-start'>
 								<Text

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import {runtime} from 'webextension-polyfill';
 
 export const getVersion = () => runtime.getManifest().version;
@@ -20,3 +21,5 @@ ${navigator.userAgent}`;
 
 	window.open(url);
 };
+
+export const now = (): string => dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss');

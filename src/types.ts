@@ -49,3 +49,5 @@ export enum SettingsKind {
 }
 
 export type Settings = Record<SettingsKind, any>;
+
+export const TheLastRefresh = 'theLastRefresh';

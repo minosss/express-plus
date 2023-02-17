@@ -3,8 +3,10 @@ import {XIcon, GithubIcon, ChromeIcon, BugIcon} from 'lucide-react';
 import {useAtom, useSetAtom} from 'jotai';
 import {useQuery} from '@tanstack/react-query';
 import {useId} from 'react';
+import {useLocalStorage} from '@mantine/hooks';
+import dayjs from 'dayjs';
 import {Page} from '../../components/index';
-import {MessageKind} from '../../types';
+import {MessageKind, TheLastRefresh} from '../../types';
 import {fetcher} from '../../utils/fetcher';
 import {getHomePageUrl, getStoreUrl, getVersion, reportIssue} from '../../utils/helper';
 import {openSettingsAtom, openClearModalAtom} from './jotai';
@@ -32,6 +34,8 @@ export const SettingsPage = () => {
 	const upInterval = useUpdateInterval();
 	const upFilter = useFilterDelivered();
 	const refresh = useRefreshCookies();
+
+	const [refreshAt] = useLocalStorage({key: TheLastRefresh});
 
 	return (
 		<Page
@@ -89,7 +93,9 @@ export const SettingsPage = () => {
 						onClose={() => setOpenClearModal(false)}
 					/>
 					<SettingItem
-						title='刷新Cookies'
+						title={`刷新Cookies ${
+							/^\d+$/.test(refreshAt) ? dayjs(refreshAt).fromNow() : ''
+						}`}
 						description='频繁刷新可能被列入黑名单'
 						rightSection={
 							<Button

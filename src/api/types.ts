@@ -5,15 +5,15 @@ export interface AutoItem {
 }
 
 export enum QueryState {
-	InTransit = 0,
-	Accepted,
-	Question,
-	Delivered,
-	Reject,
-	Delivering,
-	Return,
-	Transfer,
-	Error = 999,
+	InTransit = '0',
+	Accepted = '1',
+	Question = '2',
+	Delivered = '3',
+	Reject = '4',
+	Delivering = '5',
+	Return = '6',
+	Transfer = '7',
+	Error = '999',
 }
 
 export interface QueryItem {

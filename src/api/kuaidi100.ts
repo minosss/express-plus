@@ -1,4 +1,5 @@
-import type {KuaidiClient} from './types.js';
+import {now} from '../utils/helper';
+import type {KuaidiClient} from './types';
 
 const toURLSearchParams = (params: Record<string, any>) => {
 	const r = new URLSearchParams();
@@ -51,7 +52,7 @@ export function createKuaidi100Client(_options: Kuaidi100Options = {}): KuaidiCl
 				kind,
 				phone,
 				state,
-				updatedAt: messages[0]?.time ?? `${Date.now()}`,
+				updatedAt: messages[0]?.time ?? now(),
 				data: messages.map(({context, time}) => ({context, time})),
 			};
 		},
