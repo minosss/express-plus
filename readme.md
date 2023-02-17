@@ -10,6 +10,14 @@
 - 查询记录
 - 标签管理
 
+### 界面
+
+<div>
+<img src="./screenshots/home.png" width="300">
+<img src="./screenshots/settings.png" width="300">
+<img src="./screenshots/detail.png" width="300">
+</div>
+
 ### 安装
 
 - Chrome: WebStore
