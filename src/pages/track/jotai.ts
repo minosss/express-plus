@@ -1,4 +1,4 @@
-import {atom} from 'jotai';
-import type {Track} from '../../types';
+import type { TrackList } from '../../types';
+import { atom } from 'jotai';
 
-export const trackListAtom = atom<Track[]>([]);
+export const trackListAtom = atom<TrackList>([]);

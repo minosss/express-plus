@@ -1,37 +1,45 @@
-import {runtime} from 'webextension-polyfill';
-import {createKuaidi100Client} from '../api/kuaidi100';
-import {ExtensionMessage, MessageKind} from '../types';
-import {log} from '../utils/log';
-import {wait} from '../utils/wait';
-import {refreshCookies} from './fake-client';
+import type { ExtensionMessage } from '../types';
+import { runtime } from 'webextension-polyfill';
+import { createKuaidi100Client } from '../api/kuaidi100';
+import { MessageKind } from '../types';
+import { log } from '../utils/log';
+import { refreshCookies } from './fake-client';
 
 const client = createKuaidi100Client();
 
-runtime.onMessage.addListener(async (message, sender) => {
-	const {kind, data} = message as ExtensionMessage;
+runtime.onMessage.addListener(async (message) => {
+  log('offscreen', message);
 
-	log('offscreen', message);
+  const { kind, data } = message as ExtensionMessage;
 
-	switch (kind) {
-		// api
-		case MessageKind.Auto: {
-			if (typeof data === 'string' && data.length > 5) {
-				return client.auto(data);
-			}
-			// empty list
-			return [];
-		}
-		case MessageKind.Query: {
-			if (typeof data === 'object' && data.kind && data.id) {
-				await refreshCookies();
-				return client.query(data);
-			}
-			throw new Error('Invalid query data');
-		}
-		case MessageKind.RefreshCookies: {
-			return refreshCookies(true);
-		}
-	}
+  if ([
+    MessageKind.Auto,
+    MessageKind.Query,
+    MessageKind.RefreshCookies,
+  ].includes(kind) === false) {
+    return new Promise(() => {});
+  }
 
-	await wait('hack', 10_000);
+  switch (kind) {
+    // api
+    case MessageKind.Auto: {
+      if (typeof data === 'string' && data.length > 5) {
+        return client.auto(data);
+      }
+      // empty list
+      return [];
+    }
+    case MessageKind.Query: {
+      if (typeof data === 'object' && data.kind && data.id) {
+        await refreshCookies();
+        return client.query(data);
+      }
+      throw new Error('Invalid query data');
+    }
+    case MessageKind.RefreshCookies: {
+      return refreshCookies(true);
+    }
+  }
+
+  return false;
 });

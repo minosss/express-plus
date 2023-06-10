@@ -1,9 +1,13 @@
 {
     "extends": "@yme/tsconfig",
     "compilerOptions": {
-		"target": "es2020",
-		"isolatedModules": true,
-		"jsx": "preserve"
+      "moduleResolution": "node",
+      "target": "ESNext",
+      "module": "ESNext",
+      "lib": ["ESNext", "DOM"],
+      "isolatedModules": true,
+      "resolveJsonModule": true,
+      "jsx": "preserve"
     },
     "include": ["src"]
 }

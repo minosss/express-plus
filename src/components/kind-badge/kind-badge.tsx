@@ -1,9 +1,10 @@
-import {Badge, BadgeProps} from '@mantine/core';
+import type { BadgeProps } from '@mantine/core';
+import { Badge } from '@mantine/core';
 import * as React from 'react';
-import {KuaidiMap} from '../../api/kuaidi-map';
+import { KuaidiMap } from '../../api';
 
-type KindBadgeProps = BadgeProps & {kind: string};
+type KindBadgeProps = BadgeProps & { kind: string };
 
-export const KindBadge: React.FC<KindBadgeProps> = ({kind, ...props}) => {
-	return <Badge {...props}>{KuaidiMap[kind] ?? kind}</Badge>;
+export const KindBadge: React.FC<KindBadgeProps> = ({ kind, ...props }) => {
+  return <Badge {...props}>{KuaidiMap.get(kind) ?? kind}</Badge>;
 };
