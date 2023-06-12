@@ -2,6 +2,10 @@
 
 新版的使用了 `chrome.offscreen`, 必需是 **Chrome 109+** 以上版本才支持
 
+![Chrome Web Store](https://img.shields.io/chrome-web-store/rating/hghlokkgbicmblinhepcibacaiegldeg?style=for-the-badge)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/hghlokkgbicmblinhepcibacaiegldeg?style=for-the-badge)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/hghlokkgbicmblinhepcibacaiegldeg?style=for-the-badge)](https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg)
+
 ### 功能
 
 - 自动识别单号
