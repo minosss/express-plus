@@ -1,5 +1,5 @@
 import { useSetAtom, useAtom, atom } from 'jotai';
-import { queryAtom } from './jotai';
+import { queryAtom } from './store';
 
 export const openKindSelectAtom = atom(false);
 

@@ -14,7 +14,7 @@ export function useUpdateInterval() {
 
     showNotification({
       id: notificationId,
-      message: `更新自动刷新时间为 ${nextInterval}`,
+      message: nextInterval === '0' ? '关闭自动刷新' : `更新自动刷新时间为 ${nextInterval}`,
       color: 'teal',
       loading: true,
     });
@@ -48,6 +48,6 @@ export function useUpdateInterval() {
   return {
     loading,
     updateInterval,
-    options: ['0', '30', '60', '120', '240'],
+    options: ['0', '60', '120', '240'],
   };
 }

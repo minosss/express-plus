@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { MessageKind } from '../../types';
 import { fetcher } from '../../utils/fetcher';
 import { now } from '../../utils/helper';
-import { queryAtom } from './jotai';
+import { queryAtom } from './store';
 
 export function useDetail() {
   const [query, setQuery] = useAtom(queryAtom);

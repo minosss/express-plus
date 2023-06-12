@@ -9,8 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Empty, Page } from '../../components/index';
 import { MessageKind } from '../../types';
 import { fetcher } from '../../utils/fetcher';
-import { queryAtom } from '../detail/jotai';
-import { openSearchAtom } from './jotai';
+import { queryAtom } from '../detail/store';
+import { openSearchAtom } from './store';
 import { useHistory } from './use-history';
 import { HistoryItem } from './history-item';
 

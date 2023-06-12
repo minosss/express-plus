@@ -1,4 +1,4 @@
-import type { ColorScheme } from './jotai';
+import type { ColorScheme } from './store';
 import { Text, ActionIcon, Group, Box, Button, Switch, Select, Tooltip } from '@mantine/core';
 import { XIcon, GithubIcon, ChromeIcon, BugIcon } from 'lucide-react';
 import { useAtom, useSetAtom } from 'jotai';
@@ -10,7 +10,7 @@ import { Page } from '../../components/index';
 import { MessageKind } from '../../types';
 import { fetcher } from '../../utils/fetcher';
 import { getHomePageUrl, getStoreUrl, getVersion, reportIssue } from '../../utils/helper';
-import { openSettingsAtom, openClearModalAtom, colorSchemeAtom } from './jotai';
+import { openSettingsAtom, openClearModalAtom, colorSchemeAtom } from './store';
 import { SettingItem } from './setting-item';
 import { Loader as PageLoader } from './loader';
 import { ClearModal } from './clear-modal';
