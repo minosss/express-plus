@@ -24,8 +24,9 @@
 
 ### 安装
 
-- Chrome: WebStore
-- ~~Firefox: Add-ons~~ 还不支持 manifest V3
+[![Chrome Web Store](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png)](https://chrome.google.com/webstore/detail/hghlokkgbicmblinhepcibacaiegldeg)
+
+~~Firefox: Add-ons~~ 还不支持 manifest V3
 
 ### 感谢
 
