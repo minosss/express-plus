@@ -30,12 +30,14 @@ export enum MessageKind {
   Settings = 'settings',
   PutSettings = 'post_settings',
   History = 'history',
-  PutHistory = 'put_history',
   // api
   Auto = 'auto',
   Query = 'query',
   //
   RefreshCookies = 'refresh_cookies',
+  //
+  //
+  Clear = 'clear',
 }
 
 export interface ExtensionMessage {

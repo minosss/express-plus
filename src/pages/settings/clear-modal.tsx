@@ -1,11 +1,18 @@
 import type { ModalProps } from '@mantine/core';
 import { Box, Button, Checkbox, Group, Modal } from '@mantine/core';
+import { useMutation } from '@tanstack/react-query';
 import * as React from 'react';
+import { fetcher } from '../../utils/fetcher';
+import { MessageKind } from '../../types';
 
 export interface ClearModalProps extends Pick<ModalProps, 'opened' | 'onClose'> {}
 
 export const ClearModal: React.FC<ClearModalProps> = (props) => {
   const [values, setValues] = React.useState<string[]>([]);
+  const { isLoading, mutate } = useMutation({
+    mutationKey: ['clear-data'],
+    mutationFn: () => fetcher(MessageKind.Clear, values),
+  });
 
   return (
     <Modal centered title='清空数据' {...props}>
@@ -27,7 +34,9 @@ export const ClearModal: React.FC<ClearModalProps> = (props) => {
         </Checkbox.Group>
       </Box>
       <Group position='right' mt='md'>
-        <Button color='red' onClick={() => {}} disabled={values.length === 0}>
+        <Button color='red' loading={isLoading} onClick={() => {
+          mutate();
+        }} disabled={values.length === 0}>
           清空
         </Button>
       </Group>

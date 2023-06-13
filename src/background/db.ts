@@ -1,7 +1,6 @@
 import type { Settings, TrackList } from '../types';
 import { createRxDatabase } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { QueryState } from '../api/types';
 
 export async function createDb() {
   const db = await createRxDatabase({
@@ -46,6 +45,32 @@ export async function createDb() {
         version: 0,
         required: ['id', 'kind'],
         indexes: ['updatedAt'],
+      },
+    },
+    history: {
+      autoMigrate: true,
+      schema: {
+        title: 'history',
+        primaryKey: 'id',
+        properties: {
+          id: {
+            type: 'string',
+            maxLength: 100,
+          },
+          kind: {
+            type: 'string',
+          },
+          phone: {
+            type: 'string',
+          },
+          createdAt: {
+            type: ['string', 'number'],
+          },
+        },
+        type: 'object',
+        version: 0,
+        required: ['id', 'kind'],
+        indexes: ['createdAt'],
       },
     },
     settings: {

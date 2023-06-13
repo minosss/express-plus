@@ -66,7 +66,7 @@ export const SearchPage = () => {
         : (
           <Stack spacing={4}>
             {histories.map((history) => (
-              <HistoryItem key={history.id} />
+              <HistoryItem key={history.id} history={history} />
             ))}
           </Stack>
           )}

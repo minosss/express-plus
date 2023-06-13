@@ -1,9 +1,15 @@
+import type { History } from '../../types';
 import { Text } from '@mantine/core';
+import { KuaidiMap } from '../../api';
 
-export const HistoryItem = () => {
+export interface HistoryItemProps {
+  history: History;
+}
+
+export const HistoryItem = ({ history }: HistoryItemProps) => {
   return (
     <Text color='dimmed' size='sm'>
-      216817773
+      {KuaidiMap.get(history.kind)} {history.id}
     </Text>
   );
 };
