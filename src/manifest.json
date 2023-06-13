@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "快递助手",
   "version": "0.0.0",
+  "homepage_url": "https://github.com/minosss/express-plus",
   "minimum_chrome_version": "109",
   "action": {
     "default_title": "快递助手",
