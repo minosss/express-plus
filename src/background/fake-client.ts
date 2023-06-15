@@ -9,13 +9,13 @@ function getLastRefresh() {
   return Number.parseInt(last, 10);
 }
 
-const lastRefresh = getLastRefresh();
 export async function refreshCookies(force = false) {
   const frame = (window.frames as any).kuaidi;
   if (!frame) {
     throw new Error('iframe (kuaidi) not found');
   }
 
+  const lastRefresh = getLastRefresh();
   const diff = Date.now() - lastRefresh;
 
   log(`touch cookies: ${lastRefresh} in ${diff}`);
