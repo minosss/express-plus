@@ -38,14 +38,20 @@ export function createKuaidi100Client(_options: Kuaidi100Options = {}): KuaidiCl
       }
 
       const data = await res.json();
-      const { state, data: messages } = data as {
+      const { state, data: messages, status, message } = data as {
         nu: string;
         ischeck: string;
         com: string;
         status: string;
         state: string;
         data: any[];
+        message: string;
       };
+
+      // eslint-disable-next-line eqeqeq
+      if (status != '200') {
+        throw new Error(message);
+      }
 
       return {
         id,
@@ -58,11 +64,11 @@ export function createKuaidi100Client(_options: Kuaidi100Options = {}): KuaidiCl
     },
     async auto(id) {
       const res = await fetch(
-				`${host}/apicenter/kdquerytools.do?method=autoComNum&text=${id}`,
-				{
-				  method: 'POST',
-				  body: toURLSearchParams({}),
-				},
+        `${host}/apicenter/kdquerytools.do?method=autoComNum&text=${id}`,
+        {
+          method: 'POST',
+          body: toURLSearchParams({}),
+        },
       );
       const data = await res.json();
 

@@ -13,7 +13,7 @@ export function useDetail() {
 
   const { data, isLoading, error, refetch: refetchDetail } = useQuery({
     queryKey: ['query', query],
-    queryFn: async () => await fetcher<QueryItem>(MessageKind.Query, query),
+    queryFn: async () => fetcher<QueryItem>(MessageKind.Query, query),
     enabled: query != null,
   });
 
@@ -36,19 +36,19 @@ export function useDetail() {
   const isTracking = saved != null;
 
   async function toggleTracking() {
-    if (data == null) throw new Error('Can not tracking without data');
-
-    await (isTracking
-      ? fetcher(MessageKind.DeleteTrack, query?.id)
-      : fetcher(MessageKind.PutTrack, {
+    if (isTracking && query?.id) {
+      await fetcher(MessageKind.DeleteTrack, query.id);
+      await refetch();
+    } else if (data != null) {
+      await fetcher(MessageKind.PutTrack, {
         ...query,
         state: data.state,
         context: data.data[0]?.context,
         updatedAt: data.updatedAt,
         createdAt: now(),
-      } as Track));
-
-    await refetch();
+      } as Track);
+      await refetch();
+    }
   }
 
   useEffect(() => {

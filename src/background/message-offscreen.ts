@@ -34,7 +34,8 @@ runtime.onMessage.addListener(async (message) => {
         await refreshCookies();
         return client.query(data);
       }
-      throw new Error('Invalid query data');
+
+      throw new Error(`数据错误 ${data.id}`);
     }
     case MessageKind.RefreshCookies: {
       return refreshCookies(true);
