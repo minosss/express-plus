@@ -30,58 +30,56 @@ async function autoQuery() {
 
     let updates: Track[] = [];
     for (const item of list) {
-      if (item.state !== QueryState.Delivered) {
-        try {
-          const data = await runtime.sendMessage({
-            kind: MessageKind.Query,
-            data: { id: item.id, kind: item.kind, phone: item.phone },
-          });
+      try {
+        const data = await runtime.sendMessage({
+          kind: MessageKind.Query,
+          data: { id: item.id, kind: item.kind, phone: item.phone },
+        });
 
-          const context = data.data[0]?.context;
-          const next: Track = {
-            ...item,
-          };
+        const context = data.data[0]?.context;
+        const next: Track = {
+          ...item,
+        };
 
-          // null? or fake data
-          if (
-            context != null &&
-            context !== '查无结果' &&
-            // 只判断更新时间有没更新
-            data.updatedAt > item.updatedAt
-          ) {
-            next.context = context;
-            next.updatedAt = data.updatedAt;
+        // null? or fake data
+        if (
+          context != null &&
+          context !== '查无结果' &&
+          // 只判断更新时间有没更新
+          data.updatedAt > item.updatedAt
+        ) {
+          next.context = context;
+          next.updatedAt = data.updatedAt;
 
-            updates.push(next);
-          }
-        } catch {
-          // ignore
+          updates.push(next);
         }
+      } catch {
+        // ignore
       }
     }
 
-    if (updates.length === 0) return;
-
-    const db_ = await getDb();
-    await db_.track?.bulkUpsert(updates);
-
-    const settings = await getSettings();
-    const deliveredOnly = settings.enableFilterDelivered === true;
-    if (deliveredOnly) {
-      updates = updates.filter((n) => n.state === QueryState.Delivered);
-    }
-
     if (updates.length > 0) {
-      notifications.create({
-        iconUrl: 'icon.png',
-        type: 'list',
-        message: `有 ${updates.length} 个快递有新的信息！`,
-        title: '快递助手',
-        items: updates.map((n) => ({ title: n.id, message: n.context ?? '' })),
-      });
+      const db_ = await getDb();
+      await db_.track?.bulkUpsert(updates);
+
+      const settings = await getSettings();
+      const deliveredOnly = settings.enableFilterDelivered === true;
+      if (deliveredOnly) {
+        updates = updates.filter((n) => n.state === QueryState.Delivered);
+      }
+
+      if (updates.length > 0) {
+        notifications.create({
+          iconUrl: 'icon.png',
+          type: 'list',
+          message: `有 ${updates.length} 个快递有新的信息！`,
+          title: '快递助手',
+          items: updates.map((n) => ({ title: n.id, message: n.context ?? '' })),
+        });
+      }
     }
-  } catch {
-    // ignore
+  } catch (error) {
+    console.error(error);
   }
 
   running = false;
@@ -96,7 +94,8 @@ export async function resetAlarm() {
 
   let interval = Math.floor(settings.autoInterval ?? '0');
   if (interval > 0) {
-    interval = Math.max(30, interval);
+    // 最小 60 分钟
+    interval = Math.max(60, interval);
     alarms.create(AUTO_QUERY_ALRAM, { periodInMinutes: interval });
   }
 }

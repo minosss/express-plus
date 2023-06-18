@@ -122,7 +122,7 @@ export const defaultSettings: Partial<Settings> = {
 };
 
 // 不在查询的状态
-const regex = !/^(3|301|302|303|304|14|401|4)$/;
+const regex = /^(?!3|301|302|303|304|14|401|4)\d+$/;
 export async function getUncheckList() {
   const db_ = await getDb();
   const list = await db_.track
