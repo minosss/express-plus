@@ -9,7 +9,7 @@ export interface HistoryItemProps {
 export const HistoryItem = ({ history }: HistoryItemProps) => {
   return (
     <Text color='dimmed' size='sm'>
-      {KuaidiMap.get(history.kind)} {history.id}
+      {KuaidiMap.get(history.kind) || history.kind} {history.id}
     </Text>
   );
 };

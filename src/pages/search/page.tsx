@@ -64,7 +64,7 @@ export const SearchPage = () => {
       {histories.length === 0
         ? (<Empty iconComponent={HistoryIcon} description='还没有任何记录' />)
         : (
-          <Stack spacing={4}>
+          <Stack spacing={4} align='center'>
             {histories.map((history) => (
               <HistoryItem key={history.id} history={history} />
             ))}

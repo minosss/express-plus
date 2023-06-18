@@ -4,6 +4,7 @@ import { createKuaidi100Client } from '../api/kuaidi100';
 import { MessageKind } from '../types';
 import { log } from '../utils/log';
 import { refreshCookies } from './fake-client';
+import { addHistory, clearHistories, getHistories } from './history';
 
 const client = createKuaidi100Client();
 
@@ -16,6 +17,8 @@ runtime.onMessage.addListener(async (message) => {
     MessageKind.Auto,
     MessageKind.Query,
     MessageKind.RefreshCookies,
+    MessageKind.History,
+    MessageKind.Clear,
   ].includes(kind) === false) {
     return new Promise(() => {});
   }
@@ -31,6 +34,13 @@ runtime.onMessage.addListener(async (message) => {
     }
     case MessageKind.Query: {
       if (typeof data === 'object' && data.kind && data.id) {
+        addHistory({
+          id: data.id,
+          kind: data.kind,
+          phone: data.phone,
+          createdAt: Date.now(),
+        });
+
         await refreshCookies();
         return client.query(data);
       }
@@ -39,6 +49,15 @@ runtime.onMessage.addListener(async (message) => {
     }
     case MessageKind.RefreshCookies: {
       return refreshCookies(true);
+    }
+    case MessageKind.History: {
+      return getHistories();
+    }
+    case MessageKind.Clear: {
+      if (Array.isArray(data) && data.includes('history')) {
+        clearHistories();
+      }
+      return;
     }
   }
 

@@ -17,8 +17,6 @@ runtime.onMessage.addListener(async (message) => {
     MessageKind.DeleteTrack,
     MessageKind.Settings,
     MessageKind.PutSettings,
-    MessageKind.History,
-    MessageKind.Query,
     MessageKind.Clear,
   ].includes(kind) === false) {
     return new Promise(() => {});
@@ -61,28 +59,9 @@ runtime.onMessage.addListener(async (message) => {
 
       return;
     }
-    case MessageKind.Query: {
-      // append history
-      await $db.history?.upsert({
-        id: data.id,
-        kind: data.kind,
-        phone: data.phone,
-        createdAt: Date.now(),
-      });
-      return new Promise(() => {});
-    }
-    case MessageKind.History: {
-      const history = await $db.history?.find({ sort: [{ createdAt: 'desc' }] }).exec();
-      return (history ?? []).map((doc) => doc.toJSON());
-    }
     case MessageKind.Clear: {
-      if (Array.isArray(data)) {
-        if (data.includes('track')) {
-          $db.track?.remove();
-        }
-        if (data.includes('history')) {
-          $db.history?.remove();
-        }
+      if (Array.isArray(data) && data.includes('track')) {
+        $db.track?.remove();
       }
       return;
     }

@@ -47,32 +47,6 @@ export async function createDb() {
         indexes: ['updatedAt'],
       },
     },
-    history: {
-      autoMigrate: true,
-      schema: {
-        title: 'history',
-        primaryKey: 'id',
-        properties: {
-          id: {
-            type: 'string',
-            maxLength: 100,
-          },
-          kind: {
-            type: 'string',
-          },
-          phone: {
-            type: 'string',
-          },
-          createdAt: {
-            type: ['string', 'number'],
-          },
-        },
-        type: 'object',
-        version: 0,
-        required: ['id', 'kind'],
-        indexes: ['createdAt'],
-      },
-    },
     settings: {
       schema: {
         title: 'settings',
