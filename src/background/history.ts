@@ -1,12 +1,7 @@
+import type { QueryHistory } from '../types';
+
 const STORE_KEY = 'histories';
 const store = window.localStorage;
-
-interface QueryHistory {
-  id: string;
-  kind: string;
-  phone?: string;
-  createdAt: number;
-}
 
 export function getHistories() {
   const histories = store.getItem(STORE_KEY);

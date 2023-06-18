@@ -13,13 +13,14 @@ export interface Track {
 
 export type TrackList = Track[];
 
-export interface History {
+export interface QueryHistory {
   id: string;
   kind: string;
   phone?: string;
+  createdAt: number;
 }
 
-export type HistoryList = History[];
+export type QueryHistoryList = QueryHistory[];
 
 export enum MessageKind {
   // data

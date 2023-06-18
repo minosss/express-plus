@@ -1,6 +1,6 @@
 import type { AutocompleteItem } from '@mantine/core';
 import type { AutoItem } from '../../api/types';
-import { ActionIcon, Group, Autocomplete, Loader, Stack } from '@mantine/core';
+import { ActionIcon, Group, Autocomplete, Loader, Stack, Text } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { SearchIcon, XIcon, HistoryIcon } from 'lucide-react';
 import { useSetAtom } from 'jotai';
@@ -64,9 +64,12 @@ export const SearchPage = () => {
       {histories.length === 0
         ? (<Empty iconComponent={HistoryIcon} description='还没有任何记录' />)
         : (
-          <Stack spacing={4} align='center'>
+          <Stack spacing={6} py='md' align='center'>
+            <Text color='dimmed' size='xs'>最近 20 条查询记录</Text>
             {histories.map((history) => (
-              <HistoryItem key={history.id} history={history} />
+              <HistoryItem key={history.id} history={history} onQuery={() => {
+                setQuery({ id: history.id, kind: history.kind, phone: history.phone });
+              }} />
             ))}
           </Stack>
           )}
