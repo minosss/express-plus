@@ -15,7 +15,7 @@ React.PropsWithChildren<{ header: React.ReactNode; style?: React.CSSProperties }
         main: {
           backgroundColor:
             theme.colorScheme === 'dark'
-              ? theme.colors.dark[8]
+              ? theme.colors.gray[9]
               : theme.colors.gray[0],
         },
       })}

@@ -12,6 +12,7 @@ export const HistoryItem = ({ history, onQuery }: HistoryItemProps) => {
   return (
     <Text color='dimmed' size='sm' sx={(theme) => ({
       'userSelect': 'none',
+      'cursor': 'pointer',
       ':hover': {
         color: theme.colors.blue[7],
       },
