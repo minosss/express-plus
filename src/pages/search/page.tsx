@@ -21,13 +21,17 @@ export const SearchPage = () => {
   const [value, setValue] = useState('');
   const [debouncedValue] = useDebouncedValue(value, 500);
 
+  const enabled = debouncedValue.length > 4;
   const { data, isFetching: isLoading } = useQuery({
     queryKey: ['auto', debouncedValue],
     queryFn: () => fetcher<AutoItem[]>(MessageKind.Auto, debouncedValue),
-    enabled: debouncedValue.length > 4,
+    enabled,
   });
 
-  const options: AutocompleteItem[] = data?.map(({ id, kind, name }) => ({ value: `${id}@${kind}`, label: name })) || [];
+  const fallback = !isLoading && enabled && data?.length === 0;
+  const options: AutocompleteItem[] = fallback
+    ? [{ value: debouncedValue, disabled: true, label: '或者再输入其它试试' }]
+    : (data?.map(({ id, kind, name }) => ({ value: `${id}@${kind}`, label: name })) || []);
 
   const { data: histories = [] } = useHistory();
 
