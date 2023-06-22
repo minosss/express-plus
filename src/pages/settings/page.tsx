@@ -62,7 +62,7 @@ export const SettingsPage = () => {
                   size='xs'
                   w={70}
                   defaultValue={colorScheme}
-                  data={['auto', 'dark', 'light']}
+                  data={[{ value: 'auto', label: '系统' }, { value: 'light', label: '明亮' }, { value: 'dark', label: '暗黑' }]}
                   onChange={(value: ColorScheme) => { setColorScheme(value || 'auto'); }}
                 />
               }
