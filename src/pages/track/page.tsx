@@ -13,7 +13,7 @@ export const TrackPage = () => {
   const setOpenSearch = useSetAtom(openSearchAtom);
   const setOpenSettings = useSetAtom(openSettingsAtom);
   const setQuery = useSetAtom(queryAtom);
-  const { isLoading, data } = useTrack();
+  const { isLoading, data, deleteTrack } = useTrack();
 
   return (
     <Page
@@ -47,6 +47,7 @@ export const TrackPage = () => {
                       key={item.id}
                       track={item}
                       onQuery={() => setQuery({ id: item.id, kind: item.kind, phone: item.phone }) }
+                      onDelete={() => { deleteTrack(item.id); }}
                     />
                   ))}
                 </Box>
