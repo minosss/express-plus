@@ -69,8 +69,9 @@ async function autoQuery() {
       }
 
       if (updates.length > 0) {
+        const iconUrl = runtime.getManifest().icons?.['128'];
         notifications.create({
-          iconUrl: 'icon.png',
+          iconUrl,
           type: 'list',
           message: `有 ${updates.length} 个快递有新的信息！`,
           title: '快递助手',
