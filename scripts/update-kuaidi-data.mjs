@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import axios from 'axios';
 import { load } from 'cheerio';
+import patch from './patch.mjs';
 
 const all = 'https://www.kuaidi100.com/all/';
 
@@ -26,7 +27,7 @@ async function main() {
   console.log(`Found ${list.length} companies`);
 
   // unique by kind
-  const data = [...new Map(list).values()];
+  const data = [...new Map([...list, ...patch]).values()];
 
   console.log(`Unique ${data.length} companies`);
 

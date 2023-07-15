@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1686386811994,
+  "updatedAt": 1689406703287,
   "data": [
     {
       "name": "A2U速递",
@@ -360,6 +360,11 @@
       "name": "程洋快递",
       "kind": "chengyangex",
       "url": "https://www.kuaidi100.com/all/chengyangex.shtml"
+    },
+    {
+      "name": "成都捷信安达物流",
+      "kind": "jxad56",
+      "url": "https://www.kuaidi100.com/all/jxad56.shtml"
     },
     {
       "name": "DHL中国",
@@ -1647,6 +1652,16 @@
       "url": "https://www.kuaidi100.com/all/nuokelai.shtml"
     },
     {
+      "name": "诺信特快递",
+      "kind": "nxtwuliu",
+      "url": "https://www.kuaidi100.com/all/nxtwuliu.shtml"
+    },
+    {
+      "name": "南京合纵连横物流",
+      "kind": "njhzlh",
+      "url": "https://www.kuaidi100.com/all/njhzlh.shtml"
+    },
+    {
       "name": "OCS",
       "kind": "ocs",
       "url": "https://www.kuaidi100.com/all/ocs.shtml"
@@ -2117,6 +2132,16 @@
       "url": "https://www.kuaidi100.com/all/sanstar.shtml"
     },
     {
+      "name": "三乐物流",
+      "kind": "sanle56",
+      "url": "https://www.kuaidi100.com/all/sanle56.shtml"
+    },
+    {
+      "name": "盛泰物流",
+      "kind": "stwles",
+      "url": "https://www.kuaidi100.com/all/stwles.shtml"
+    },
+    {
       "name": "TNT快递",
       "kind": "tnt",
       "url": "https://www.kuaidi100.com/all/tnt.shtml"
@@ -2350,6 +2375,11 @@
       "name": "无限速递",
       "kind": "igcaexpress",
       "url": "https://www.kuaidi100.com/all/igcaexpress.shtml"
+    },
+    {
+      "name": "万家通急送",
+      "kind": "wanjiatong",
+      "url": "https://www.kuaidi100.com/all/wanjiatong.shtml"
     },
     {
       "name": "迅达速递",
@@ -3115,6 +3145,15 @@
       "name": "志方物流",
       "kind": "zfex56",
       "url": "https://www.kuaidi100.com/all/zfex56.shtml"
+    },
+    {
+      "name": "中铁物流供应链",
+      "kind": "ztwlgyl",
+      "url": "https://www.kuaidi100.com/all/ztwlgyl.shtml"
+    },
+    {
+      "name": "顺丰",
+      "kind": "shunfeng"
     }
   ]
 }
