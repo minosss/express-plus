@@ -1,9 +1,9 @@
 import type { AutocompleteItem } from '@mantine/core';
 import type { AutoItem } from '../../api/types';
-import { ActionIcon, Group, Autocomplete, Loader, Stack, Text } from '@mantine/core';
+import { ActionIcon, Group, Autocomplete, Loader, Stack, Text, Modal, PinInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { SearchIcon, XIcon, HistoryIcon } from 'lucide-react';
-import { useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Empty, Page } from '../../components/index';
@@ -14,9 +14,14 @@ import { openSearchAtom } from './store';
 import { useHistory } from './use-history';
 import { HistoryItem } from './history-item';
 
+type QueryIntput = { id: string; kind: string; phone?: string };
+
+const stashAtom = atom<QueryIntput>({ id: '', kind: '', phone: '' });
+
 export const SearchPage = () => {
   const setOpenSearch = useSetAtom(openSearchAtom);
   const setQuery = useSetAtom(queryAtom);
+  const [stash, setStash] = useAtom(stashAtom);
 
   const [value, setValue] = useState('');
   const [debouncedValue] = useDebouncedValue(value, 500);
@@ -34,6 +39,21 @@ export const SearchPage = () => {
     : (data?.map(({ id, kind, name }) => ({ value: `${id}@${kind}`, label: name })) || []);
 
   const { data: histories = [] } = useHistory();
+
+  //
+  const [show, setShow] = useState(false);
+
+  //
+  const handleQuery = ({ id, kind, phone }: QueryIntput) => {
+    if (kind === 'shunfeng' && phone?.length !== 4) {
+      // save tmp query data
+      setStash({ id, kind, phone: '' });
+      // show dialog to input last 4 digits of phone number
+      setShow(true);
+    } else {
+      setQuery({ id, kind, phone });
+    }
+  };
 
   return (
     <Page
@@ -54,7 +74,7 @@ export const SearchPage = () => {
                 const [idValue = '', kindValue] = value_.split('@');
                 nextValue = idValue;
                 if (idValue && kindValue) {
-                  setQuery({ id: idValue, kind: kindValue });
+                  handleQuery({ id: idValue, kind: kindValue });
                 }
                 return;
               }
@@ -65,6 +85,16 @@ export const SearchPage = () => {
         </Group>
       }
     >
+      <Modal onClose={() => setShow(false)} opened={show} title='请输入验证码'>
+        <Stack spacing={6} align='center'>
+          <Text fz='sm'>顺丰需要收件人或者寄件人电话后 4 位</Text>
+          <PinInput type='number' autoFocus defaultValue='' onComplete={(phone) => {
+            setShow(false);
+            setQuery({ id: stash.id, kind: stash.kind, phone });
+            setStash({ id: '', kind: '', phone: '' });
+          }} />
+        </Stack>
+      </Modal>
       {histories.length === 0
         ? (<Empty iconComponent={HistoryIcon} description='还没有任何记录' />)
         : (
@@ -72,7 +102,7 @@ export const SearchPage = () => {
             <Text color='dimmed' size='xs'>最近 20 条查询记录</Text>
             {histories.map((history) => (
               <HistoryItem key={history.id} history={history} onQuery={() => {
-                setQuery({ id: history.id, kind: history.kind, phone: history.phone });
+                handleQuery(history);
               }} />
             ))}
           </Stack>
