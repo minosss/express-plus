@@ -1,10 +1,9 @@
 import type { QueryHistory } from '../types';
 
 const STORE_KEY = 'histories';
-const store = window.localStorage;
 
 export function getHistories() {
-  const histories = store.getItem(STORE_KEY);
+  const histories = window.localStorage.getItem(STORE_KEY);
   if (histories == null) {
     return [];
   }
@@ -24,9 +23,9 @@ export function addHistory(history: QueryHistory) {
     history,
     ...histories.filter((item: QueryHistory) => item.id !== history.id),
   ].slice(0, 20);
-  store.setItem(STORE_KEY, JSON.stringify(histories));
+  window.localStorage.setItem(STORE_KEY, JSON.stringify(histories));
 }
 
 export function clearHistories() {
-  store.removeItem(STORE_KEY);
+  window.localStorage.removeItem(STORE_KEY);
 }

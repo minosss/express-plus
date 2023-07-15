@@ -1,4 +1,8 @@
-export {};
+declare global {
+  // ignore the error: chrome not found
+  const chrome: any;
+  const clients: any;
+}
 
 export interface Track {
   id: string;
@@ -37,8 +41,11 @@ export enum MessageKind {
   //
   RefreshCookies = 'refresh_cookies',
   //
-  //
+  ResetAlarm = 'reset_alarm',
+  // @deprecated
   Clear = 'clear',
+  ClearTrack = 'clear_track',
+  ClearHistory = 'clear_history',
 }
 
 export interface ExtensionMessage {

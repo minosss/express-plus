@@ -1,29 +1,51 @@
 import type { ExtensionMessage } from '../types';
 import { runtime } from 'webextension-polyfill';
+import { createKuaidi100Client } from '../api/kuaidi100';
 import { MessageKind, SettingsKind } from '../types';
 import { log } from '../utils/log';
-import { resetAlarm } from './alarm';
+import { refreshCookies } from './fake-client';
+import { addHistory, clearHistories, getHistories } from './history';
 import { getDb, getSettings } from './db';
+
+const client = createKuaidi100Client();
 
 runtime.onMessage.addListener(async (message) => {
   log('resolve', message);
 
   const { kind, data } = message as ExtensionMessage;
 
-  if ([
-    MessageKind.Track,
-    MessageKind.GetTrack,
-    MessageKind.PutTrack,
-    MessageKind.DeleteTrack,
-    MessageKind.Settings,
-    MessageKind.PutSettings,
-    MessageKind.Clear,
-  ].includes(kind) === false) {
-    return new Promise(() => {});
-  }
-
   const $db = await getDb();
   switch (kind) {
+    // api
+    case MessageKind.Auto: {
+      if (typeof data === 'string' && data.length > 5) {
+        return client.auto(data);
+      }
+      // empty list
+      return [];
+    }
+    case MessageKind.Query: {
+      if (typeof data === 'object' && data.kind && data.id) {
+        addHistory({
+          id: data.id,
+          kind: data.kind,
+          phone: data.phone,
+          createdAt: Date.now(),
+        });
+
+        await refreshCookies();
+        return client.query(data);
+      }
+
+      throw new Error(`数据错误 ${data.id}`);
+    }
+    case MessageKind.RefreshCookies: {
+      return refreshCookies(true);
+    }
+    case MessageKind.History: {
+      return getHistories();
+    }
+    //
     case MessageKind.Track: {
       const track = await $db.track?.find({ sort: [{ updatedAt: 'asc' }] }).exec();
       return (track ?? []).map((doc) => doc.toJSON());
@@ -54,12 +76,14 @@ runtime.onMessage.addListener(async (message) => {
         data[SettingsKind.AutoInterval] != null &&
         typeof data[SettingsKind.AutoInterval] === 'number'
       ) {
-        return await resetAlarm();
+        return runtime.sendMessage({ kind: MessageKind.ResetAlarm });
       }
-
-      return;
+      break;
     }
     case MessageKind.Clear: {
+      if (Array.isArray(data) && data.includes('history')) {
+        clearHistories();
+      }
       if (Array.isArray(data) && data.includes('track')) {
         $db.track?.remove();
       }

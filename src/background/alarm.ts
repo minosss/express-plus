@@ -1,5 +1,4 @@
 import type { Track } from '../types';
-import { alarms, runtime, notifications } from 'webextension-polyfill';
 import { QueryState } from '../api/types';
 import { MessageKind } from '../types';
 import { log } from '../utils/log';
@@ -7,15 +6,40 @@ import { getDb, getSettings, getUncheckList } from './db';
 
 export const AUTO_QUERY_ALRAM = 'auto_query_alram';
 
+const { alarms, runtime, notifications } = chrome;
+
+export async function resetAlarm(focus = false) {
+  const found = await alarms.get(AUTO_QUERY_ALRAM);
+
+  if (found && !focus) return;
+
+  const settings = await getSettings();
+
+  if (found) {
+    await alarms.clear(AUTO_QUERY_ALRAM);
+  }
+
+  let interval = Math.floor(settings.autoInterval ?? '0');
+  if (interval > 0) {
+    // 最小 60 分钟
+    interval = Math.max(60, interval);
+    alarms.create(AUTO_QUERY_ALRAM, { periodInMinutes: interval });
+    log(`auto query every ${interval} minutes`);
+  } else {
+    log('auto query disabled');
+  }
+}
+
+// eslint-disable-next-line unicorn/prefer-top-level-await
+resetAlarm();
+
 alarms.onAlarm.addListener(async (alarm) => {
-  if (alarm.name === 'auto_query_alram') {
+  if (alarm.name === AUTO_QUERY_ALRAM) {
     autoQuery();
   }
 });
 
 let running = false;
-
-// task
 async function autoQuery() {
   if (running) {
     log(`the auto task is running, skipped at ${Date.now()}`);
@@ -84,19 +108,4 @@ async function autoQuery() {
   }
 
   running = false;
-}
-
-export async function resetAlarm() {
-  log('reset alarm');
-
-  const settings = await getSettings();
-
-  await alarms.clear(AUTO_QUERY_ALRAM);
-
-  let interval = Math.floor(settings.autoInterval ?? '0');
-  if (interval > 0) {
-    // 最小 60 分钟
-    interval = Math.max(60, interval);
-    alarms.create(AUTO_QUERY_ALRAM, { periodInMinutes: interval });
-  }
 }
