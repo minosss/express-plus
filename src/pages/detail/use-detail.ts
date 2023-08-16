@@ -65,14 +65,20 @@ export function useDetail() {
   }
 
   useEffect(() => {
-    if (isTracking && data != null && data.updatedAt > saved.updatedAt) {
-      // 不想放在 offscreen 上，只发送更新
-      fetcher(MessageKind.PutTrack, {
-        ...saved,
-        context: data.data[0]?.context,
-        updatedAt: data.updatedAt,
-      } as Track);
+    async function update() {
+      if (isTracking && data != null && data.updatedAt > saved.updatedAt) {
+        // 不想放在 offscreen 上，只发送更新
+        await fetcher(MessageKind.PutTrack, {
+          ...saved,
+          state: data.state,
+          context: data.data[0]?.context,
+          updatedAt: data.updatedAt,
+        } as Track);
+        await refetch();
+      }
     }
+
+    update();
   }, [data, isTracking, saved]);
 
   // saved
