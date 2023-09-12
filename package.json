@@ -16,16 +16,16 @@
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
-    "@mantine/core": "^6.0.16",
-    "@mantine/hooks": "^6.0.16",
-    "@mantine/notifications": "^6.0.16",
-    "@tanstack/react-query": "^4.29.19",
+    "@mantine/core": "^6.0.20",
+    "@mantine/hooks": "^6.0.20",
+    "@mantine/notifications": "^6.0.20",
+    "@tanstack/react-query": "^4.35.0",
     "dayjs": "^1.11.9",
-    "jotai": "^2.2.1",
-    "lucide-react": "^0.259.0",
+    "jotai": "^2.4.2",
+    "lucide-react": "^0.276.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rxdb": "^14.14.1",
+    "rxdb": "^14.16.0",
     "rxjs": "^7.8.1",
     "webextension-polyfill": "^0.10.0"
   },
@@ -39,7 +39,7 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@types/webextension-polyfill": "^0.10.0",
-    "@yme/eslint-config": "^0.3.2",
+    "@yme/eslint-config": "^0.3.3",
     "@yme/tsconfig": "^1.0.0",
     "axios": "1.4.0",
     "buffer": "^6.0.3",
@@ -51,7 +51,7 @@
     "typescript": "^5.1.6",
     "utc-version": "^2.0.2"
   },
-  "packageManager": "pnpm@8.6.5",
+  "packageManager": "pnpm@8.7.5",
   "alias": {
     "process": "process/browser.js",
     "buffer": "buffer/index.js"
