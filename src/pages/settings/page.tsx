@@ -1,6 +1,6 @@
 import type { ColorScheme } from './store';
 import { Text, ActionIcon, Group, Box, Button, Switch, Select, Tooltip } from '@mantine/core';
-import { IconX, IconBrandGithub, IconBrandChrome, IconBug } from '@tabler/icons-react';
+import { IconX, IconBrandGithub, IconBrandChrome } from '@tabler/icons-react';
 import { useAtom, useSetAtom } from 'jotai';
 import { useQuery } from '@tanstack/react-query';
 import { useId } from 'react';
@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { Page } from '../../components/index';
 import { MessageKind } from '../../types';
 import { fetcher } from '../../utils/fetcher';
-import { getHomePageUrl, getStoreUrl, getVersion, reportIssue } from '../../utils/helper';
+import { getHomePageUrl, getStoreUrl, getVersion } from '../../utils/helper';
 import { openSettingsAtom, openClearModalAtom, colorSchemeAtom } from './store';
 import { SettingItem } from './setting-item';
 import { Loader as PageLoader } from './loader';
@@ -122,15 +122,6 @@ export const SettingsPage = () => {
                     </ActionIcon>
                   </Tooltip>
                 </Group>
-              }
-            />
-            <SettingItem title='出错了' description='提了也不一定看，看了也不一定改'
-              rightSection={
-                <Tooltip label='报错'>
-                  <ActionIcon size='sm' onClick={() => { reportIssue(); }}>
-                    <IconBug />
-                  </ActionIcon>
-                </Tooltip>
               }
             />
           </Box>
