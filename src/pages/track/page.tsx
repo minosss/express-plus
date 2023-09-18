@@ -1,5 +1,5 @@
 import { Text, ActionIcon, Group, Tooltip, Box } from '@mantine/core';
-import { EyeOffIcon, SearchIcon, SettingsIcon } from 'lucide-react';
+import { IconEyeOff, IconSearch, IconSettings } from '@tabler/icons-react';
 import { useSetAtom } from 'jotai';
 import { Empty, Page } from '../../components/index';
 import { openSearchAtom } from '../search/store';
@@ -23,12 +23,12 @@ export const TrackPage = () => {
           <Group>
             <Tooltip label='点这里搜索' withArrow>
               <ActionIcon onClick={() => setOpenSearch(true)}>
-                <SearchIcon />
+                <IconSearch />
               </ActionIcon>
             </Tooltip>
             <Tooltip label='设置' withArrow>
               <ActionIcon onClick={() => setOpenSettings(true)}>
-                <SettingsIcon />
+                <IconSettings />
               </ActionIcon>
             </Tooltip>
           </Group>
@@ -39,7 +39,7 @@ export const TrackPage = () => {
         {isLoading
           ? (<Loader />)
           : (data?.length === 0
-              ? (<Empty iconComponent={EyeOffIcon} description='还没有任何记录' />)
+              ? (<Empty iconComponent={IconEyeOff} description='还没有任何记录' />)
               : (
                 <Box>
                   {data?.map((item) => (

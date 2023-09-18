@@ -1,13 +1,12 @@
 import { ActionIcon, Box, Group, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core';
 import {
-  XIcon,
-  RefreshCwIcon,
-  PhoneIcon,
-  WifiOffIcon,
-  BookmarkMinusIcon,
-  BookmarkPlusIcon,
-  XCircleIcon,
-} from 'lucide-react';
+  IconX,
+  IconRefresh,
+  IconPhone,
+  IconWifiOff,
+  IconBookmarkMinus,
+  IconBookmarkPlus,
+} from '@tabler/icons-react';
 import { Empty, Page } from '../../components/index';
 import { QueryStateMap, KuaidiMap } from '../../api/state-map';
 import { Loader } from './loader';
@@ -42,7 +41,7 @@ export const DetailPage = () => {
         <Group position='apart' h='100%'>
           <Group>
             <ActionIcon onClick={() => cleanQuery()}>
-              <XIcon />
+              <IconX />
             </ActionIcon>
             <Text>{query?.id}</Text>
           </Group>
@@ -50,7 +49,7 @@ export const DetailPage = () => {
             {needPhone && (
               <Tooltip label='手机后四位'>
                 <ActionIcon>
-                  <PhoneIcon />
+                  <IconPhone />
                 </ActionIcon>
               </Tooltip>
             )}
@@ -60,14 +59,14 @@ export const DetailPage = () => {
                 onClick={() => { toggleTracking(); }}
                 color={isTracking ? 'blue' : undefined}
               >
-                {isTracking ? <BookmarkMinusIcon /> : <BookmarkPlusIcon />}
+                {isTracking ? <IconBookmarkMinus /> : <IconBookmarkPlus />}
               </ActionIcon>
             </Tooltip>
             <Tooltip label='刷新'>
               <ActionIcon onClick={() => {
                 refetchDetail();
               }}>
-                <RefreshCwIcon />
+                <IconRefresh />
               </ActionIcon>
             </Tooltip>
           </Group>
@@ -79,7 +78,7 @@ export const DetailPage = () => {
         : (data == null
             ? (
               <Text size='sm' color='dimmed' py={89} align='center'>
-                <WifiOffIcon fontSize={64} />
+                <IconWifiOff fontSize={64} />
                 <Box component='p' m={0}>{(error as any)?.message || '出错了'}</Box>
               </Text>
               )
@@ -120,7 +119,7 @@ export const DetailPage = () => {
                   </Box>
                 </SimpleGrid>
                 <Stack px='md' py='xs' spacing='xs'>
-                  {data.data.length === 0 && <Empty iconComponent={XCircleIcon} description='查无记录' />}
+                  {data.data.length === 0 && <Empty iconComponent={IconX} description='查无记录' />}
                   {data.data.map((item, i) => (
                     <Group key={`timeline-${i}`} noWrap spacing='xs' align='flex-start'>
                       <Text

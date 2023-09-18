@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { showNotification, updateNotification } from '@mantine/notifications';
-import { CheckIcon, XIcon } from 'lucide-react';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { fetcher } from '../../utils/fetcher';
 import { MessageKind, SettingsKind } from '../../types';
 
@@ -25,7 +25,7 @@ export function useFilterDelivered() {
         id: notificationId,
         message: '更新过滤已签收快递成功',
         color: 'teal',
-        icon: <CheckIcon />,
+        icon: <IconCheck />,
         autoClose: 1000,
       });
     } catch {
@@ -33,7 +33,7 @@ export function useFilterDelivered() {
         id: notificationId,
         message: '更新过滤已签收快递失败',
         color: 'red',
-        icon: <XIcon />,
+        icon: <IconX />,
         autoClose: 1000,
       });
     }

@@ -1,5 +1,5 @@
 import { showNotification, updateNotification } from '@mantine/notifications';
-import { XIcon, CheckIcon } from 'lucide-react';
+import { IconX, IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import { MessageKind, SettingsKind } from '../../types';
 import { fetcher } from '../../utils/fetcher';
@@ -29,7 +29,7 @@ export function useUpdateInterval() {
         id: notificationId,
         message: '更新自动刷新时间成功',
         color: 'teal',
-        icon: <CheckIcon />,
+        icon: <IconCheck />,
         autoClose: 1000,
       });
     } catch {
@@ -37,7 +37,7 @@ export function useUpdateInterval() {
         id: notificationId,
         message: '更新自动刷新时间失败',
         color: 'red',
-        icon: <XIcon />,
+        icon: <IconX />,
         autoClose: 1000,
       });
     }

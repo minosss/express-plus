@@ -1,6 +1,6 @@
 import { Box, Group, Modal, ScrollArea, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
 import { useDebouncedValue, useUncontrolled } from '@mantine/hooks';
-import { SearchIcon } from 'lucide-react';
+import { IconSearch } from '@tabler/icons-react';
 import * as React from 'react';
 import KuaidiData from '../../api/kuaidi-map.json';
 
@@ -35,7 +35,7 @@ export const KindSelect: React.FC<KindSelectProps> = (props) => {
             autoFocus
             size='sm'
             w='100%'
-            icon={<SearchIcon />}
+            icon={<IconSearch />}
             value={value}
             onChange={(e) => setValue(e.currentTarget.value)}
           />

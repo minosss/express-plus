@@ -1,6 +1,6 @@
 import type { Track } from '../../types';
 import { ActionIcon, Box, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { SearchIcon, TrashIcon } from 'lucide-react';
+import { IconSearch, IconTrash } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import * as React from 'react';
 import { KindBadge, StateBadge } from '../../components/index';
@@ -43,12 +43,12 @@ export const TrackItem: React.FC<TrackItemProps> = (props) => {
           <Group spacing={4} data-extra noWrap>
             <Tooltip label={'查询'}>
               <ActionIcon size='sm' onClick={onQuery}>
-                <SearchIcon fontSize={12} />
+                <IconSearch fontSize={12} />
               </ActionIcon>
             </Tooltip>
             <Tooltip label={'删除'}>
               <ActionIcon size='sm' color='red' onClick={onDelete}>
-                <TrashIcon fontSize={12} />
+                <IconTrash fontSize={12} />
               </ActionIcon>
             </Tooltip>
           </Group>

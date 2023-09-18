@@ -1,6 +1,6 @@
 import type { ColorScheme } from './store';
 import { Text, ActionIcon, Group, Box, Button, Switch, Select, Tooltip } from '@mantine/core';
-import { XIcon, GithubIcon, ChromeIcon, BugIcon } from 'lucide-react';
+import { IconX, IconBrandGithub, IconBrandChrome, IconBug } from '@tabler/icons-react';
 import { useAtom, useSetAtom } from 'jotai';
 import { useQuery } from '@tanstack/react-query';
 import { useId } from 'react';
@@ -45,7 +45,7 @@ export const SettingsPage = () => {
       header={
         <Group h='100%'>
           <ActionIcon onClick={() => setOpened(false)}>
-            <XIcon />
+            <IconX />
           </ActionIcon>
           <Text>设置</Text>
         </Group>
@@ -113,12 +113,12 @@ export const SettingsPage = () => {
                 <Group>
                   <Tooltip label='Chrome 商店'>
                     <ActionIcon size='sm' onClick={() => { window.open(STORE); }}>
-                      <ChromeIcon />
+                      <IconBrandChrome />
                     </ActionIcon>
                   </Tooltip>
                   <Tooltip label='Github'>
                     <ActionIcon size='sm' onClick={() => { window.open(HOMEPAGE); }}>
-                      <GithubIcon fontSize={14} />
+                      <IconBrandGithub fontSize={14} />
                     </ActionIcon>
                   </Tooltip>
                 </Group>
@@ -128,7 +128,7 @@ export const SettingsPage = () => {
               rightSection={
                 <Tooltip label='报错'>
                   <ActionIcon size='sm' onClick={() => { reportIssue(); }}>
-                    <BugIcon />
+                    <IconBug />
                   </ActionIcon>
                 </Tooltip>
               }

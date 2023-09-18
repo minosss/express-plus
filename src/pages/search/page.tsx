@@ -2,7 +2,7 @@ import type { AutocompleteItem } from '@mantine/core';
 import type { AutoItem } from '../../api/types';
 import { ActionIcon, Group, Autocomplete, Loader, Stack, Text, Modal, PinInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { SearchIcon, XIcon, HistoryIcon } from 'lucide-react';
+import { IconSearch, IconX, IconHistory } from '@tabler/icons-react';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -60,13 +60,13 @@ export const SearchPage = () => {
       header={
         <Group h='100%'>
           <ActionIcon onClick={() => setOpenSearch(false)}>
-            <XIcon />
+            <IconX />
           </ActionIcon>
           <Autocomplete
             placeholder='输入快递单号'
             autoFocus
             style={{ flex: 1 }}
-            rightSection={isLoading ? <Loader size='xs' color='gray' /> : <SearchIcon />}
+            rightSection={isLoading ? <Loader size='xs' color='gray' /> : <IconSearch />}
             value={value}
             onChange={(value_) => {
               let nextValue = value_;
@@ -96,7 +96,7 @@ export const SearchPage = () => {
         </Stack>
       </Modal>
       {histories.length === 0
-        ? (<Empty iconComponent={HistoryIcon} description='还没有任何记录' />)
+        ? (<Empty iconComponent={IconHistory} description='还没有任何记录' />)
         : (
           <Stack spacing={6} py='md' align='center'>
             <Text color='dimmed' size='xs'>最近 20 条查询记录</Text>
