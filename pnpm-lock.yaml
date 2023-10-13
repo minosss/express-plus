@@ -80,8 +80,8 @@ devDependencies:
     specifier: ^0.3.3
     version: 0.3.3(eslint@8.43.0)(typescript@5.1.6)
   '@yme/tsconfig':
-    specifier: ^1.0.0
-    version: 1.0.0
+    specifier: ^2.0.0
+    version: 2.0.0
   axios:
     specifier: 1.4.0
     version: 1.4.0
@@ -2682,9 +2682,9 @@ packages:
       - typescript
     dev: true
 
-  /@yme/tsconfig@1.0.0:
-    resolution: {integrity: sha512-2yj5FLEYnvDPgM0Qqz9QcYo0E9HIqn2nkDIHkTCazv0G5k26mvDXURX1wyTc6AR6U/niCwQb5jw8kmJImPnWdg==}
-    engines: {node: '>=14'}
+  /@yme/tsconfig@2.0.0:
+    resolution: {integrity: sha512-2nOuu7RaoRBOEq7DZIn1hw3v7uGIetzyh9+5POGgm64NKIxl6SMcLmzVTQdrzX2ELSC2iVSNKWDRWH6TFCKOBg==}
+    engines: {node: '>=16'}
     dev: true
 
   /abortcontroller-polyfill@1.7.5:
