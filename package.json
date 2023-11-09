@@ -41,7 +41,7 @@
     "@types/webextension-polyfill": "^0.10.0",
     "@yme/eslint-config": "^0.3.3",
     "@yme/tsconfig": "^1.0.0",
-    "axios": "1.4.0",
+    "axios": "1.6.1",
     "buffer": "^6.0.3",
     "cheerio": "1.0.0-rc.12",
     "dot-json": "^1.3.0",
