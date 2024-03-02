@@ -75,7 +75,7 @@ devDependencies:
     version: 18.2.6
   '@types/webextension-polyfill':
     specifier: ^0.10.0
-    version: 0.10.0
+    version: 0.10.7
   '@yme/eslint-config':
     specifier: ^0.3.3
     version: 0.3.3(eslint@8.43.0)(typescript@5.1.6)
@@ -2470,8 +2470,8 @@ packages:
       '@types/node': 18.16.18
     dev: false
 
-  /@types/webextension-polyfill@0.10.0:
-    resolution: {integrity: sha512-If4EcaHzYTqcbNMp/FdReVdRmLL/Te42ivnJII551bYjhX19bWem5m14FERCqdJA732OloGuxCRvLBvcMGsn4A==}
+  /@types/webextension-polyfill@0.10.7:
+    resolution: {integrity: sha512-10ql7A0qzBmFB+F+qAke/nP1PIonS0TXZAOMVOxEUsm+lGSW6uwVcISFNa0I4Oyj0884TZVWGGMIWeXOVSNFHw==}
     dev: true
 
   /@types/ws@8.5.5:
